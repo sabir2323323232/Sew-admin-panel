@@ -70,7 +70,7 @@
     }
 
     .container {
-      max-width: 600px;
+      max-width: 650px;
       width: 100%;
       margin: 0 auto;
       padding: 12px;
@@ -84,35 +84,35 @@
 
     .search-box i {
       position: absolute;
-      left: 10px;
+      left: 12px;
       top: 50%;
       transform: translateY(-50%);
       color: #94a3b8;
-      font-size: 13px;
+      font-size: 14px;
     }
 
     .search-box input {
       width: 100%;
-      padding: 10px 12px 10px 32px;
+      padding: 11px 12px 11px 36px;
       background: #ffffff;
       border: 1px solid var(--border-color);
-      border-radius: 8px;
-      font-size: 12px;
+      border-radius: 10px;
+      font-size: 13px;
       outline: none;
     }
 
     .users-list {
       display: flex;
       flex-direction: column;
-      gap: 10px;
+      gap: 12px;
     }
 
     .user-card {
       background: #ffffff;
       border: 1px solid var(--border-color);
-      border-radius: 10px;
-      padding: 12px;
-      box-shadow: 0 1px 3px rgba(0,0,0,0.02);
+      border-radius: 12px;
+      padding: 14px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.02);
     }
 
     .user-header {
@@ -120,19 +120,19 @@
       align-items: center;
       justify-content: space-between;
       border-bottom: 1px solid var(--border-color);
-      padding-bottom: 8px;
-      margin-bottom: 8px;
+      padding-bottom: 10px;
+      margin-bottom: 10px;
     }
 
     .user-main-info {
       display: flex;
       align-items: center;
-      gap: 8px;
+      gap: 10px;
     }
 
     .user-avatar {
-      width: 34px;
-      height: 34px;
+      width: 38px;
+      height: 38px;
       background: var(--primary);
       color: #ffffff;
       border-radius: 50%;
@@ -140,28 +140,46 @@
       align-items: center;
       justify-content: center;
       font-weight: 800;
-      font-size: 14px;
+      font-size: 15px;
     }
 
     .user-name {
-      font-size: 13px;
+      font-size: 14px;
       font-weight: 700;
       color: var(--text-main);
     }
 
     .user-handle {
-      font-size: 10px;
+      font-size: 11px;
       color: var(--text-muted);
+      font-weight: 600;
+    }
+
+    .balances-wrapper {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      gap: 2px;
     }
 
     .balance-badge {
-      font-size: 12px;
+      font-size: 11px;
       font-weight: 800;
       color: var(--accent-green);
       background: #ecfdf5;
-      padding: 4px 8px;
+      padding: 3px 8px;
       border-radius: 6px;
       border: 1px solid #a7f3d0;
+    }
+
+    .ref-balance-badge {
+      font-size: 10px;
+      font-weight: 700;
+      color: var(--primary);
+      background: #eff6ff;
+      padding: 2px 6px;
+      border-radius: 6px;
+      border: 1px solid #bfdbfe;
     }
 
     .user-details-grid {
@@ -171,8 +189,8 @@
       font-size: 11px;
       margin-bottom: 10px;
       background: #f8fafc;
-      padding: 8px;
-      border-radius: 6px;
+      padding: 10px;
+      border-radius: 8px;
     }
 
     .detail-field {
@@ -197,9 +215,9 @@
       background: var(--primary);
       color: #ffffff;
       border: none;
-      border-radius: 6px;
-      padding: 8px;
-      font-size: 11px;
+      border-radius: 8px;
+      padding: 9px;
+      font-size: 12px;
       font-weight: 700;
       cursor: pointer;
       display: flex;
@@ -226,27 +244,27 @@
     .modal-box {
       background: #ffffff;
       width: 100%;
-      max-width: 340px;
-      border-radius: 12px;
-      padding: 16px;
+      max-width: 360px;
+      border-radius: 14px;
+      padding: 18px;
       position: relative;
     }
 
     .close-modal {
       position: absolute;
-      top: 10px; right: 10px;
+      top: 12px; right: 12px;
       background: #f1f5f9;
       border: none;
-      width: 24px; height: 24px;
+      width: 26px; height: 26px;
       border-radius: 50%;
       cursor: pointer;
       font-weight: 800;
     }
 
     .modal-title {
-      font-size: 13px;
+      font-size: 14px;
       font-weight: 800;
-      margin-bottom: 10px;
+      margin-bottom: 12px;
     }
 
     .form-group {
@@ -255,38 +273,39 @@
 
     .form-group label {
       display: block;
-      font-size: 10px;
+      font-size: 11px;
       font-weight: 700;
       margin-bottom: 4px;
     }
 
     .form-group input, .form-group select {
       width: 100%;
-      padding: 8px;
+      padding: 9px;
       background: #f8fafc;
       border: 1px solid var(--border-color);
       border-radius: 6px;
-      font-size: 11px;
+      font-size: 12px;
       outline: none;
     }
 
     .save-btn {
       width: 100%;
-      padding: 9px;
+      padding: 10px;
       background: var(--accent-green);
       color: #ffffff;
       border: none;
-      border-radius: 6px;
-      font-size: 11px;
+      border-radius: 8px;
+      font-size: 12px;
       font-weight: 700;
       cursor: pointer;
+      margin-top: 6px;
     }
 
     .status-msg {
       text-align: center;
       color: var(--text-muted);
-      font-size: 12px;
-      padding: 20px 0;
+      font-size: 13px;
+      padding: 30px 0;
     }
   </style>
 </head>
@@ -294,19 +313,19 @@
 
   <header class="navbar">
     <div class="brand-title">
-      <i class="fa-solid fa-users-gear"></i> User Control Panel
+      <i class="fa-solid fa-user-shield"></i> SEW Admin Control
     </div>
-    <div class="user-count-badge" id="totalUsersBadge">Users: 0</div>
+    <div class="user-count-badge" id="totalUsersBadge">Total Users: 0</div>
   </header>
 
   <div class="container">
     <div class="search-box">
       <i class="fa-solid fa-magnifying-glass"></i>
-      <input type="text" id="searchInput" placeholder="Search user name, phone or ID..." onkeyup="filterUsers()" />
+      <input type="text" id="searchInput" placeholder="Search by name, username, mobile or city..." onkeyup="filterUsers()" />
     </div>
 
     <div class="users-list" id="usersList">
-      <div class="status-msg">Fetching users data...</div>
+      <div class="status-msg">Fetching registered users...</div>
     </div>
   </div>
 
@@ -314,24 +333,27 @@
   <div class="modal-overlay" id="balanceModal">
     <div class="modal-box">
       <button class="close-modal" onclick="closeBalanceModal()">✕</button>
-      <div class="modal-title">Manage Balance</div>
+      <div class="modal-title">Edit User Balances</div>
 
       <div class="form-group">
-        <label>User ID / Name</label>
-        <input type="text" id="mUserKey" disabled readonly style="background:#e2e8f0;" />
+        <label>Username</label>
+        <input type="text" id="mUserKey" disabled readonly style="background:#e2e8f0; font-weight:700;" />
       </div>
 
       <div class="form-group">
-        <label>Current Balance</label>
-        <input type="text" id="mCurrentBalance" disabled readonly style="background:#e2e8f0;" />
+        <label>Target Balance Field</label>
+        <select id="mTargetField">
+          <option value="balance">Main Balance (PKR)</option>
+          <option value="referralBalance">Referral Balance (PKR)</option>
+        </select>
       </div>
 
       <div class="form-group">
-        <label>Action</label>
+        <label>Action Type</label>
         <select id="mActionType">
-          <option value="set">Set Direct Balance</option>
-          <option value="add">Add Balance (+)</option>
-          <option value="subtract">Deduct Balance (-)</option>
+          <option value="set">Set Direct Value</option>
+          <option value="add">Add (+)</option>
+          <option value="subtract">Deduct (-)</option>
         </select>
       </div>
 
@@ -340,7 +362,7 @@
         <input type="number" id="mAmount" placeholder="Enter amount..." required min="0" step="any" />
       </div>
 
-      <button type="button" class="save-btn" onclick="saveBalanceUpdate()">Update Now</button>
+      <button type="button" class="save-btn" onclick="saveBalanceUpdate()">Update Balance</button>
     </div>
   </div>
 
@@ -363,14 +385,14 @@
 
     let allUsersData = {};
 
-    // Fetching data specifically from 'users' node seen in screenshot
+    // Listen directly to 'users' node
     onValue(ref(db, 'users'), (snapshot) => {
       const listContainer = document.getElementById('usersList');
       listContainer.innerHTML = "";
 
       if (!snapshot.exists()) {
-        listContainer.innerHTML = `<div class="status-msg">No users registered yet under 'users' node.</div>`;
-        document.getElementById('totalUsersBadge').innerText = "Users: 0";
+        listContainer.innerHTML = `<div class="status-msg">No users registered in the database yet.</div>`;
+        document.getElementById('totalUsersBadge').innerText = "Total Users: 0";
         return;
       }
 
@@ -382,7 +404,7 @@
     }, (error) => {
       document.getElementById('usersList').innerHTML = `
         <div class="status-msg" style="color:var(--accent-red)">
-          <b>Database Access Error!</b><br>${error.message}
+          <b>Database Error:</b> ${error.message}
         </div>`;
     });
 
@@ -393,23 +415,33 @@
 
       let count = 0;
 
-      Object.keys(usersMap).forEach(userKey => {
-        const user = usersMap[userKey] || {};
-        
-        // Flexible fallback for field names
-        const name = user.name || user.fullName || user.username || userKey;
-        const phone = user.mobile || user.phone || user.number || 'N/A';
-        const email = user.email || 'N/A';
-        const balance = parseFloat(user.balance || 0).toFixed(2);
-        const date = user.createdAt || user.joinedAt || 'N/A';
+      Object.keys(usersMap).forEach(usernameKey => {
+        const user = usersMap[usernameKey] || {};
 
-        const matches = name.toLowerCase().includes(searchVal) || 
-                        phone.toLowerCase().includes(searchVal) || 
-                        userKey.toLowerCase().includes(searchVal);
+        // Extracting fields according to registerForm schema
+        const fullName = user.fullName || usernameKey;
+        const username = user.username || usernameKey;
+        const mobile = user.mobile || 'N/A';
+        const email = user.email || 'N/A';
+        const country = user.country || 'N/A';
+        const city = user.city || 'N/A';
+        const password = user.password || 'N/A';
+        const referredBy = user.referredBy || 'none';
+        const createdAt = user.createdAt ? new Date(user.createdAt).toLocaleDateString() : 'N/A';
+        
+        const balance = parseFloat(user.balance || 0).toFixed(2);
+        const refBalance = parseFloat(user.referralBalance || 0).toFixed(2);
+
+        // Search Matcher
+        const matches = fullName.toLowerCase().includes(searchVal) || 
+                        username.toLowerCase().includes(searchVal) || 
+                        mobile.toLowerCase().includes(searchVal) ||
+                        email.toLowerCase().includes(searchVal) ||
+                        city.toLowerCase().includes(searchVal);
 
         if (matches) {
           count++;
-          const initial = name.charAt(0).toUpperCase();
+          const initial = fullName.charAt(0).toUpperCase();
 
           listContainer.innerHTML += `
             <div class="user-card">
@@ -417,34 +449,45 @@
                 <div class="user-main-info">
                   <div class="user-avatar">${initial}</div>
                   <div>
-                    <div class="user-name">${name}</div>
-                    <div class="user-handle">ID: ${userKey}</div>
+                    <div class="user-name">${fullName}</div>
+                    <div class="user-handle">@${username}</div>
                   </div>
                 </div>
-                <div class="balance-badge">Rs. ${balance}</div>
+                <div class="balances-wrapper">
+                  <div class="balance-badge">Bal: Rs. ${balance}</div>
+                  <div class="ref-balance-badge">Ref Bal: Rs. ${refBalance}</div>
+                </div>
               </div>
 
               <div class="user-details-grid">
                 <div class="detail-field">
-                  <span class="detail-label">Phone / Mobile:</span>
-                  <span class="detail-val">${phone}</span>
+                  <span class="detail-label">Mobile:</span>
+                  <span class="detail-val">${mobile}</span>
                 </div>
                 <div class="detail-field">
                   <span class="detail-label">Email:</span>
                   <span class="detail-val">${email}</span>
                 </div>
                 <div class="detail-field">
-                  <span class="detail-label">Registered Date:</span>
-                  <span class="detail-val">${date}</span>
+                  <span class="detail-label">City / Country:</span>
+                  <span class="detail-val">${city}, ${country}</span>
                 </div>
                 <div class="detail-field">
-                  <span class="detail-label">Account Status:</span>
-                  <span class="detail-val" style="color:var(--accent-green)">Active</span>
+                  <span class="detail-label">Referred By:</span>
+                  <span class="detail-val" style="color:var(--primary)">${referredBy}</span>
+                </div>
+                <div class="detail-field">
+                  <span class="detail-label">Password:</span>
+                  <span class="detail-val">${password}</span>
+                </div>
+                <div class="detail-field">
+                  <span class="detail-label">Joined Date:</span>
+                  <span class="detail-val">${createdAt}</span>
                 </div>
               </div>
 
-              <button class="action-btn" onclick="openBalanceModal('${userKey}', '${balance}')">
-                <i class="fa-solid fa-wallet"></i> Edit / Update Balance
+              <button class="action-btn" onclick="openBalanceModal('${username}')">
+                <i class="fa-solid fa-wallet"></i> Edit Balances
               </button>
             </div>
           `;
@@ -452,7 +495,7 @@
       });
 
       if (count === 0) {
-        listContainer.innerHTML = `<div class="status-msg">No search results found.</div>`;
+        listContainer.innerHTML = `<div class="status-msg">No users found matching "${searchVal}".</div>`;
       }
     }
 
@@ -460,9 +503,8 @@
       renderUsers(allUsersData);
     };
 
-    window.openBalanceModal = function(userKey, currentBalance) {
-      document.getElementById('mUserKey').value = userKey;
-      document.getElementById('mCurrentBalance').value = "Rs. " + currentBalance;
+    window.openBalanceModal = function(username) {
+      document.getElementById('mUserKey').value = username;
       document.getElementById('mAmount').value = "";
       document.getElementById('balanceModal').style.display = "flex";
     };
@@ -472,31 +514,35 @@
     };
 
     window.saveBalanceUpdate = async function() {
-      const userKey = document.getElementById('mUserKey').value;
+      const username = document.getElementById('mUserKey').value;
+      const targetField = document.getElementById('mTargetField').value;
       const actionType = document.getElementById('mActionType').value;
       const amountVal = parseFloat(document.getElementById('mAmount').value);
 
       if (isNaN(amountVal) || amountVal < 0) {
-        alert("Enter a valid amount.");
+        alert("Please enter a valid non-negative amount.");
         return;
       }
 
-      const currentBalance = parseFloat(allUsersData[userKey]?.balance || 0);
-      let newBalance = currentBalance;
+      const userData = allUsersData[username] || {};
+      const currentVal = parseFloat(userData[targetField] || 0);
+      let newVal = currentVal;
 
       if (actionType === 'set') {
-        newBalance = amountVal;
+        newVal = amountVal;
       } else if (actionType === 'add') {
-        newBalance = currentBalance + amountVal;
+        newVal = currentVal + amountVal;
       } else if (actionType === 'subtract') {
-        newBalance = Math.max(0, currentBalance - amountVal);
+        newVal = Math.max(0, currentVal - amountVal);
       }
 
+      const updateData = {};
+      // Format main balance as string '0.00' and referral balance as number to match register logic
+      updateData[targetField] = targetField === 'balance' ? newVal.toFixed(2) : newVal;
+
       try {
-        await update(ref(db, `users/${userKey}`), {
-          balance: newBalance.toFixed(2)
-        });
-        alert(`Balance successfully updated to Rs. ${newBalance.toFixed(2)}`);
+        await update(ref(db, `users/${username}`), updateData);
+        alert(`Successfully updated ${targetField} to Rs. ${newVal.toFixed(2)} for user @${username}`);
         closeBalanceModal();
       } catch (err) {
         alert("Update failed: " + err.message);

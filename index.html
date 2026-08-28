@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -328,15 +327,20 @@
       font-weight: 800;
     }
 
-    /* PREVIEW THUMBNAIL STYLE */
+    /* MULTIPLE PREVIEW THUMBNAILS CONTAINER */
+    .img-preview-container {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-top: 6px;
+    }
+
     .img-preview {
-      width: 60px;
-      height: 60px;
+      width: 55px;
+      height: 55px;
       object-fit: cover;
       border-radius: 6px;
-      margin-top: 6px;
       border: 1px solid var(--border-color);
-      display: none;
     }
   </style>
 </head>
@@ -395,7 +399,7 @@
       </div>
     </section>
 
-    <!-- 3. ADD PRODUCT TAB (UPDATED WITH BASE64 FILE INPUT) -->
+    <!-- 3. ADD PRODUCT TAB (UPDATED FOR 3 PHOTOS UPLOAD) -->
     <section id="productsTab" class="tab-content">
       <div class="card">
         <h3 style="font-size: 13px; font-weight: 800; margin-bottom: 10px;"><i class="fa-solid fa-plus-circle"></i> Add New Market Product</h3>
@@ -422,16 +426,16 @@
             <input type="number" id="pPrice" placeholder="2499" required min="1" />
           </div>
 
-          <!-- PHOTO FILE INPUT & BASE64 PREVIEW -->
+          <!-- MULTIPLE PHOTO FILE INPUT (UP TO 3 PHOTOS) -->
           <div class="form-group">
-            <label>Select Product Image File</label>
-            <input type="file" id="productImageFile" accept="image/*" style="margin-bottom: 6px;" />
+            <label>Select Product Images (Max 3 Photos)</label>
+            <input type="file" id="productImageFile" accept="image/*" multiple style="margin-bottom: 6px;" />
             
             <label style="font-size:10px; color:var(--text-muted);">OR Enter Image Direct URL:</label>
             <input type="url" id="pImage" placeholder="https://..." />
             
-            <!-- Live Preview Thumbnail -->
-            <img id="imagePreview" class="img-preview" alt="Image Preview" />
+            <!-- Previews for Selected Images -->
+            <div id="imagePreviewContainer" class="img-preview-container"></div>
           </div>
 
           <div class="form-group">
@@ -543,27 +547,33 @@
     const pageSize = 10;
     let allOrdersMap = {};
 
-    // BASE64 IMAGE STORAGE VARIABLE
-    let imageBase64String = "";
+    // ARRAY FOR STORING UP TO 3 BASE64 IMAGES
+    let imagesBase64Array = [];
 
-    // PHOTO INPUT FILE LISTENER (BASE64 CONVERSION)
+    // FILE INPUT HANDLER FOR UP TO 3 PHOTOS
     const fileInput = document.getElementById('productImageFile');
-    const imagePreview = document.getElementById('imagePreview');
+    const previewContainer = document.getElementById('imagePreviewContainer');
 
     if (fileInput) {
       fileInput.addEventListener('change', (e) => {
-        const file = e.target.files[0];
-        if (file) {
+        const files = Array.from(e.target.files).slice(0, 3); // Maximum 3 photos
+        imagesBase64Array = [];
+        previewContainer.innerHTML = "";
+
+        if (files.length === 0) return;
+
+        files.forEach((file) => {
           const reader = new FileReader();
           reader.onload = function(evt) {
-            imageBase64String = evt.target.result; // DataURL String
-            if (imagePreview) {
-              imagePreview.src = imageBase64String;
-              imagePreview.style.display = 'block';
-            }
+            imagesBase64Array.push(evt.target.result);
+
+            const img = document.createElement('img');
+            img.src = evt.target.result;
+            img.className = 'img-preview';
+            previewContainer.appendChild(img);
           };
           reader.readAsDataURL(file);
-        }
+        });
       });
     }
 
@@ -712,15 +722,15 @@
       }
     };
 
-    // 3. ADD PRODUCT LOGIC (FIREBASE PUSH WITH BASE64 / URL FALLBACK)
+    // 3. ADD PRODUCT LOGIC (FIREBASE PUSH FOR 3 PHOTOS ARRAY + FALLBACK)
     window.handleAddProduct = async function(e) {
       e.preventDefault();
 
       const urlImage = document.getElementById('pImage').value.trim();
-      const finalImage = imageBase64String || urlImage;
+      let finalImages = imagesBase64Array.length > 0 ? imagesBase64Array : (urlImage ? [urlImage] : []);
 
-      if (!finalImage) {
-        alert("Please select an image file or enter an Image URL.");
+      if (finalImages.length === 0) {
+        alert("Please select at least 1 image file or enter an Image URL.");
         return;
       }
 
@@ -728,21 +738,21 @@
         name: document.getElementById('pName').value.trim(),
         category: document.getElementById('pCategory').value,
         price: parseFloat(document.getElementById('pPrice').value),
-        image: finalImage,
+        image: finalImages[0], // Main display image
+        images: finalImages,   // Complete array containing up to 3 images
         details: document.getElementById('pDetails').value.trim(),
         createdAt: Date.now()
       };
 
       try {
         await push(ref(db, 'products'), pData);
-        alert("Product added successfully to Dashboard!");
+        alert("Product with images added successfully to Dashboard!");
 
         // Reset Form & Base64 State
         document.getElementById('addProductForm').reset();
-        imageBase64String = "";
-        if (imagePreview) {
-          imagePreview.style.display = 'none';
-          imagePreview.src = "";
+        imagesBase64Array = [];
+        if (previewContainer) {
+          previewContainer.innerHTML = "";
         }
       } catch (err) {
         alert("Failed to add product: " + err.message);
@@ -761,13 +771,16 @@
       const productsObj = snapshot.val();
       Object.keys(productsObj).forEach(pKey => {
         const p = productsObj[pKey];
+        const mainImg = p.image || (p.images && p.images[0]) || '';
+        const imgCount = p.images ? p.images.length : (p.image ? 1 : 0);
+
         container.innerHTML += `
-          <div class="card" style="display:flex; justify-content:space-between; align-items:center;">
+          <div class="card" style="display:flex; justify-space-between; align-items:center;">
             <div style="display:flex; gap:10px; align-items:center;">
-              <img src="${p.image}" style="width:40px; height:40px; object-fit:cover; border-radius:6px;" />
+              <img src="${mainImg}" style="width:40px; height:40px; object-fit:cover; border-radius:6px;" />
               <div>
                 <b style="font-size:12px;">${p.name}</b>
-                <div style="font-size:10px; color:var(--text-muted);">Cat: ${p.category} | Rs. ${p.price}</div>
+                <div style="font-size:10px; color:var(--text-muted);">Cat: ${p.category} | Rs. ${p.price} | (${imgCount} Photos)</div>
               </div>
             </div>
             <button class="action-btn" style="background:var(--accent-red);" onclick="deleteProduct('${pKey}')">

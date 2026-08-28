@@ -441,18 +441,8 @@
       </div>
       
       <div class="quick-links-grid">
-        <a href="free-ads.html" target="_blank" class="dash-link-card">
-          <span><i class="fa-solid fa-rectangle-ad"></i> Free Ads</span>
-          <i class="fa-solid fa-arrow-up-right-from-square"></i>
-        </a>
-
-        <a href="referral.html" target="_blank" class="dash-link-card">
-          <span><i class="fa-solid fa-users"></i> Referral</span>
-          <i class="fa-solid fa-arrow-up-right-from-square"></i>
-        </a>
-
-        <a href="gmail-selling.html" target="_blank" class="dash-link-card">
-          <span><i class="fa-solid fa-envelope"></i> Gmail Selling</span>
+        <a href="gmail.html" target="_blank" class="dash-link-card">
+          <span><i class="fa-solid fa-envelope"></i> Gmail</span>
           <i class="fa-solid fa-arrow-up-right-from-square"></i>
         </a>
 
@@ -461,8 +451,18 @@
           <i class="fa-solid fa-arrow-up-right-from-square"></i>
         </a>
 
-        <a href="free-jobs.html" target="_blank" class="dash-link-card">
-          <span><i class="fa-solid fa-briefcase"></i> Free Jobs</span>
+        <a href="affiliate-marketing-order.html" target="_blank" class="dash-link-card">
+          <span><i class="fa-solid fa-cart-flatbed"></i> Affiliate Marketing Order</span>
+          <i class="fa-solid fa-arrow-up-right-from-square"></i>
+        </a>
+
+        <a href="affiliate-marketing-account.html" target="_blank" class="dash-link-card">
+          <span><i class="fa-solid fa-user-gear"></i> Affiliate Marketing Account</span>
+          <i class="fa-solid fa-arrow-up-right-from-square"></i>
+        </a>
+
+        <a href="affiliate.html" target="_blank" class="dash-link-card">
+          <span><i class="fa-solid fa-handshake"></i> Affiliate</span>
           <i class="fa-solid fa-arrow-up-right-from-square"></i>
         </a>
       </div>
@@ -646,7 +646,7 @@
         if (status === 'rejected' || status === 'cancelled') badgeClass = 'badge-rejected';
 
         container.innerHTML += `
-          <div class="card">
+          <div class="card" id="order-card-${oKey}">
             <div class="card-header">
               <div>
                 <b style="font-size:12px;">${ord.productName || 'Product'}</b>
@@ -672,12 +672,13 @@
       });
     });
 
+    // ORDER CONFIRM / REJECT HONAY PAR AUTO REMOVE FUNCTION
     window.updateOrderStatus = async function(orderKey, newStatus) {
       try {
-        await update(ref(db, `orders/${orderKey}`), { status: newStatus });
-        alert(`Order marked as ${newStatus}`);
+        await remove(ref(db, `orders/${orderKey}`));
+        alert(`Order marked as ${newStatus} and removed from list.`);
       } catch (e) {
-        alert("Error updating order: " + e.message);
+        alert("Error removing order: " + e.message);
       }
     };
 

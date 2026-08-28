@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SEW Admin - User Management</title>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+  <style>
+    :root {
+      --bg-body: #f1f5f9;
+      --card-bg: #ffffff;
+      --primary: #2563eb;
+      --primary-soft: #eff6ff;
+      --text-main: #0f172a;
+      --text-muted: #64748b;
+      --border-color: #e2e8f0;
+      --accent-green: #10b981;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Plus Jakarta Sans', sans-serif; }
+    body { background-color: var(--bg-body); color: var(--text-main); padding: 12px; }
+    .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
+    .header h2 { font-size: 18px; font-weight: 800; color: var(--primary); }
+    .search-input { padding: 8px 12px; border: 1px solid var(--border-color); border-radius: 6px; font-size: 12px; width: 100%; max-width: 300px; outline: none; }
+    .user-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 10px; }
+    .user-card { background: #fff; border-radius: 10px; padding: 12px; border: 1px solid var(--border-color); }
+    .user-card-header { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; }
+    .avatar { width: 32px; height: 32px; background: var(--primary); color: #fff; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 14px; }
+    .user-title h4 { font-size: 12px; font-weight: 700; }
+    .user-title p { font-size: 10px; color: var(--text-muted); }
+    .info-row { font-size: 11px; margin-bottom: 4px; display: flex; justify-content: space-between; }
+    .earning-edit-box { margin-top: 10px; padding-top: 8px; border-top: 1px dashed var(--border-color); display: flex; gap: 6px; align-items: center; }
+    .earning-input { width: 100px; padding: 5px; border: 1px solid var(--border-color); border-radius: 4px; font-size: 11px; font-weight: 700; }
+    .save-btn { background: var(--accent-green); color: #fff; border: none; padding: 5px 10px; border-radius: 4px; font-size: 10px; font-weight: 700; cursor: pointer; }
+    .save-btn:hover { opacity: 0.9; }
+  </style>
+</head>
+<body>
+
+  <div class="header">
+    <h2><i class="fa-solid fa-users-gear"></i> User Management Admin</h2>
+    <input type="text" id="userSearch" class="search-input" placeholder="Search user by name or mobile..." onkeyup="filterUsers()" />
+  </div>
+
+  <div class="user-grid" id="userContainer">Loading Users...</div>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+    import { getDatabase, ref, onValue, update } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyAsnATksiqZzMHOPO64i_bKqLJW6yjq9lw",
+      authDomain: "newweb-d50af.firebaseapp.com",
+      databaseURL: "https://newweb-d50af-default-rtdb.firebaseio.com",
+      projectId: "newweb-d50af",
+      storageBucket: "newweb-d50af.firebasestorage.app",
+      messagingSenderId: "358603295768",
+      appId: "1:358603295768:web:82a9666514a7cb468c476d"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getDatabase(app);
+    let allUsersData = {};
+
+    onValue(ref(db, 'users'), (snapshot) => {
+      const container = document.getElementById('userContainer');
+      container.innerHTML = "";
+      if (!snapshot.exists()) {
+        container.innerHTML = "<div>No registered users found.</div>";
+        return;
+      }
+
+      allUsersData = snapshot.val();
+      renderUsers(allUsersData);
+    });
+
+    function renderUsers(usersMap) {
+      const container = document.getElementById('userContainer');
+      container.innerHTML = "";
+      const searchVal = document.getElementById('userSearch').value.toLowerCase();
+
+      Object.keys(usersMap).forEach(usernameKey => {
+        const u = usersMap[usernameKey];
+        const name = u.fullName || u.username || usernameKey;
+        const mobile = u.mobile || "N/A";
+
+        if (searchVal && !name.toLowerCase().includes(searchVal) && !mobile.includes(searchVal)) {
+          return;
+        }
+
+        container.innerHTML += `
+          <div class="user-card">
+            <div class="user-card-header">
+              <div class="avatar">${name.charAt(0).toUpperCase()}</div>
+              <div class="user-title">
+                <h4>${name}</h4>
+                <p>@${u.username || usernameKey}</p>
+              </div>
+            </div>
+            <div class="info-row"><span>Mobile:</span> <strong>${mobile}</strong></div>
+            <div class="info-row"><span>Email:</span> <strong>${u.email || 'N/A'}</strong></div>
+            <div class="info-row"><span>City/Country:</span> <strong>${u.city || ''}, ${u.country || ''}</strong></div>
+            <div class="info-row"><span>Current Balance:</span> <strong style="color:var(--accent-green)">Rs. ${u.balance || '0.00'}</strong></div>
+
+            <div class="earning-edit-box">
+              <span style="font-size:10px; font-weight:700;">Edit Balance:</span>
+              <input type="number" id="bal_${usernameKey}" class="earning-input" value="${u.balance || 0}" step="any" />
+              <button class="save-btn" onclick="updateUserBalance('${usernameKey}')">Update</button>
+            </div>
+          </div>
+        `;
+      });
+    }
+
+    window.filterUsers = function() {
+      renderUsers(allUsersData);
+    };
+
+    window.updateUserBalance = function(usernameKey) {
+      const newBal = document.getElementById(`bal_${usernameKey}`).value;
+      if (newBal === "") return alert("Please enter a balance value.");
+
+      update(ref(db, 'users/' + usernameKey), {
+        balance: parseFloat(newBal).toFixed(2)
+      }).then(() => {
+        alert(`Balance updated for @${usernameKey} successfully!`);
+      }).catch((err) => {
+        alert("Error updating balance: " + err.message);
+      });
+    };
+  </script>
+</body>
+</html>

@@ -4,22 +4,22 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-  <title>Admin Dashboard</title>
+  <title>SEW Admin - User Management</title>
   
-  <!-- Fonts & Icons -->
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
 
   <style>
     :root {
-      --bg-color: #f8fafc;
+      --bg-body: #f8fafc;
       --card-bg: #ffffff;
-      --primary-blue: #2563eb;
-      --primary-hover: #1d4ed8;
+      --primary: #2563eb;
+      --primary-dark: #1e40af;
       --text-main: #0f172a;
       --text-muted: #64748b;
       --border-color: #e2e8f0;
-      --danger-color: #ef4444;
+      --accent-green: #10b981;
+      --accent-red: #ef4444;
     }
 
     * {
@@ -27,341 +27,481 @@
       margin: 0;
       padding: 0;
       font-family: 'Plus Jakarta Sans', sans-serif;
-      -webkit-tap-highlight-color: transparent;
     }
 
     body {
-      background-color: var(--bg-color);
+      background-color: var(--bg-body);
       color: var(--text-main);
       min-height: 100vh;
       display: flex;
-      justify-content: center;
-      align-items: center;
-      padding: 20px 16px;
+      flex-direction: column;
     }
 
-    /* CONTAINER STYLES */
-    .admin-card {
-      width: 100%;
-      max-width: 440px;
-      background: var(--card-bg);
-      border: 1px solid var(--border-color);
-      border-radius: 20px;
-      padding: 28px 24px;
-      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.04);
-      transition: all 0.3s ease;
-    }
-
-    .hidden {
-      display: none !important;
-    }
-
-    /* HEADER */
-    .panel-header {
-      text-align: center;
-      margin-bottom: 24px;
-    }
-
-    .panel-header h2 {
-      font-size: 22px;
-      font-weight: 800;
-      color: var(--text-main);
-    }
-
-    .panel-header p {
-      font-size: 13px;
-      color: var(--text-muted);
-      margin-top: 4px;
-      font-weight: 500;
-    }
-
-    /* FORM STYLES */
-    .input-group {
-      margin-bottom: 16px;
-      text-align: left;
-    }
-
-    .input-group label {
-      display: block;
-      font-size: 12px;
-      font-weight: 700;
-      color: var(--text-muted);
-      margin-bottom: 6px;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-    }
-
-    .input-group input {
-      width: 100%;
-      padding: 14px 16px;
-      border-radius: 12px;
-      border: 1px solid var(--border-color);
-      background: #f8fafc;
-      font-size: 14px;
-      color: var(--text-main);
-      outline: none;
-      transition: all 0.2s ease;
-    }
-
-    .input-group input:focus {
-      border-color: var(--primary-blue);
+    .navbar {
       background: #ffffff;
-      box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+      padding: 12px 16px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid var(--border-color);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.04);
     }
 
-    .btn-submit {
-      width: 100%;
-      padding: 14px;
-      border-radius: 12px;
-      border: none;
-      background: var(--primary-blue);
-      color: #ffffff;
-      font-size: 14px;
+    .brand-title {
+      font-size: 16px;
+      font-weight: 800;
+      color: var(--primary);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .user-count-badge {
+      background: #eff6ff;
+      color: var(--primary);
+      font-size: 11px;
       font-weight: 700;
-      cursor: pointer;
-      transition: background 0.2s ease;
-      margin-top: 8px;
+      padding: 3px 8px;
+      border-radius: 12px;
+      border: 1px solid #dbeafe;
     }
 
-    .btn-submit:hover {
-      background: var(--primary-hover);
+    .container {
+      max-width: 600px;
+      width: 100%;
+      margin: 0 auto;
+      padding: 12px;
+      flex: 1;
     }
 
-    .error-msg {
-      color: var(--danger-color);
+    .search-box {
+      position: relative;
+      margin-bottom: 12px;
+    }
+
+    .search-box i {
+      position: absolute;
+      left: 10px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: #94a3b8;
+      font-size: 13px;
+    }
+
+    .search-box input {
+      width: 100%;
+      padding: 10px 12px 10px 32px;
+      background: #ffffff;
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
       font-size: 12px;
-      font-weight: 600;
-      text-align: center;
-      margin-top: 10px;
+      outline: none;
     }
 
-    /* BUTTONS GRID FOR DASHBOARD */
-    .dashboard-grid {
+    .users-list {
       display: flex;
       flex-direction: column;
-      gap: 12px;
+      gap: 10px;
     }
 
-    .dash-btn {
+    .user-card {
+      background: #ffffff;
+      border: 1px solid var(--border-color);
+      border-radius: 10px;
+      padding: 12px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.02);
+    }
+
+    .user-header {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      padding: 16px 18px;
-      background: #ffffff;
-      border: 1px solid var(--border-color);
-      border-radius: 14px;
-      text-decoration: none;
-      color: var(--text-main);
-      font-weight: 700;
-      font-size: 14px;
-      transition: all 0.2s ease;
-      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.02);
+      border-bottom: 1px solid var(--border-color);
+      padding-bottom: 8px;
+      margin-bottom: 8px;
     }
 
-    .dash-btn-content {
+    .user-main-info {
       display: flex;
       align-items: center;
-      gap: 12px;
+      gap: 8px;
     }
 
-    .dash-btn .icon-box {
-      width: 38px;
-      height: 38px;
-      border-radius: 10px;
-      background: #eff6ff;
-      color: var(--primary-blue);
+    .user-avatar {
+      width: 34px;
+      height: 34px;
+      background: var(--primary);
+      color: #ffffff;
+      border-radius: 50%;
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 16px;
+      font-weight: 800;
+      font-size: 14px;
     }
 
-    .dash-btn:hover {
-      border-color: var(--primary-blue);
-      transform: translateY(-2px);
-      box-shadow: 0 6px 15px rgba(37, 99, 235, 0.1);
-    }
-
-    .dash-btn i.arrow {
-      color: #94a3b8;
-      font-size: 12px;
-      transition: transform 0.2s ease;
-    }
-
-    .dash-btn:hover i.arrow {
-      color: var(--primary-blue);
-      transform: translateX(4px);
-    }
-
-    /* LOGOUT BUTTON */
-    .btn-logout {
-      margin-top: 20px;
-      width: 100%;
-      padding: 12px;
-      border-radius: 12px;
-      border: 1px solid #fee2e2;
-      background: #fef2f2;
-      color: var(--danger-color);
+    .user-name {
       font-size: 13px;
+      font-weight: 700;
+      color: var(--text-main);
+    }
+
+    .user-handle {
+      font-size: 10px;
+      color: var(--text-muted);
+    }
+
+    .balance-badge {
+      font-size: 12px;
+      font-weight: 800;
+      color: var(--accent-green);
+      background: #ecfdf5;
+      padding: 4px 8px;
+      border-radius: 6px;
+      border: 1px solid #a7f3d0;
+    }
+
+    .user-details-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+      font-size: 11px;
+      margin-bottom: 10px;
+      background: #f8fafc;
+      padding: 8px;
+      border-radius: 6px;
+    }
+
+    .detail-field {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .detail-label {
+      color: var(--text-muted);
+      font-size: 10px;
+      font-weight: 600;
+    }
+
+    .detail-val {
+      color: var(--text-main);
+      font-weight: 700;
+      word-break: break-word;
+    }
+
+    .action-btn {
+      width: 100%;
+      background: var(--primary);
+      color: #ffffff;
+      border: none;
+      border-radius: 6px;
+      padding: 8px;
+      font-size: 11px;
       font-weight: 700;
       cursor: pointer;
       display: flex;
       align-items: center;
       justify-content: center;
-      gap: 8px;
-      transition: background 0.2s ease;
+      gap: 6px;
     }
 
-    .btn-logout:hover {
-      background: #fde8e8;
+    .action-btn:active {
+      background: var(--primary-dark);
+    }
+
+    .modal-overlay {
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(15, 23, 42, 0.5);
+      display: none;
+      justify-content: center;
+      align-items: center;
+      z-index: 200;
+      padding: 12px;
+    }
+
+    .modal-box {
+      background: #ffffff;
+      width: 100%;
+      max-width: 340px;
+      border-radius: 12px;
+      padding: 16px;
+      position: relative;
+    }
+
+    .close-modal {
+      position: absolute;
+      top: 10px; right: 10px;
+      background: #f1f5f9;
+      border: none;
+      width: 24px; height: 24px;
+      border-radius: 50%;
+      cursor: pointer;
+      font-weight: 800;
+    }
+
+    .modal-title {
+      font-size: 13px;
+      font-weight: 800;
+      margin-bottom: 10px;
+    }
+
+    .form-group {
+      margin-bottom: 10px;
+    }
+
+    .form-group label {
+      display: block;
+      font-size: 10px;
+      font-weight: 700;
+      margin-bottom: 4px;
+    }
+
+    .form-group input, .form-group select {
+      width: 100%;
+      padding: 8px;
+      background: #f8fafc;
+      border: 1px solid var(--border-color);
+      border-radius: 6px;
+      font-size: 11px;
+      outline: none;
+    }
+
+    .save-btn {
+      width: 100%;
+      padding: 9px;
+      background: var(--accent-green);
+      color: #ffffff;
+      border: none;
+      border-radius: 6px;
+      font-size: 11px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    .status-msg {
+      text-align: center;
+      color: var(--text-muted);
+      font-size: 12px;
+      padding: 20px 0;
     }
   </style>
 </head>
 <body>
 
-  <!-- 1. LOGIN SCREEN -->
-  <div id="loginScreen" class="admin-card">
-    <div class="panel-header">
-      <h2>Admin Portal</h2>
-      <p>Enter your credentials to continue</p>
+  <header class="navbar">
+    <div class="brand-title">
+      <i class="fa-solid fa-users-gear"></i> User Control Panel
+    </div>
+    <div class="user-count-badge" id="totalUsersBadge">Users: 0</div>
+  </header>
+
+  <div class="container">
+    <div class="search-box">
+      <i class="fa-solid fa-magnifying-glass"></i>
+      <input type="text" id="searchInput" placeholder="Search user name, phone or ID..." onkeyup="filterUsers()" />
     </div>
 
-    <form id="loginForm" onsubmit="handleLogin(event)">
-      <div class="input-group">
-        <label>Email Address</label>
-        <input type="email" id="email" placeholder="sabirkhansadre@gmail.com" required />
-      </div>
-
-      <div class="input-group">
-        <label>Password</label>
-        <input type="password" id="password" placeholder="••••••••" required />
-      </div>
-
-      <button type="submit" class="btn-submit">Login Control Panel</button>
-      <div id="errorMsg" class="error-msg"></div>
-    </form>
+    <div class="users-list" id="usersList">
+      <div class="status-msg">Fetching users data...</div>
+    </div>
   </div>
 
+  <!-- BALANCE UPDATE MODAL -->
+  <div class="modal-overlay" id="balanceModal">
+    <div class="modal-box">
+      <button class="close-modal" onclick="closeBalanceModal()">✕</button>
+      <div class="modal-title">Manage Balance</div>
 
-  <!-- 2. DASHBOARD PANEL SCREEN (Access Granted) -->
-  <div id="dashboardScreen" class="admin-card hidden">
-    <div class="panel-header">
-      <h2>Control Dashboard</h2>
-      <p>Select a section to manage</p>
+      <div class="form-group">
+        <label>User ID / Name</label>
+        <input type="text" id="mUserKey" disabled readonly style="background:#e2e8f0;" />
+      </div>
+
+      <div class="form-group">
+        <label>Current Balance</label>
+        <input type="text" id="mCurrentBalance" disabled readonly style="background:#e2e8f0;" />
+      </div>
+
+      <div class="form-group">
+        <label>Action</label>
+        <select id="mActionType">
+          <option value="set">Set Direct Balance</option>
+          <option value="add">Add Balance (+)</option>
+          <option value="subtract">Deduct Balance (-)</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label>Amount (PKR)</label>
+        <input type="number" id="mAmount" placeholder="Enter amount..." required min="0" step="any" />
+      </div>
+
+      <button type="button" class="save-btn" onclick="saveBalanceUpdate()">Update Now</button>
     </div>
-
-    <div class="dashboard-grid">
-      
-      <!-- User (Added) -->
-      <a href="user.html" class="dash-btn">
-        <div class="dash-btn-content">
-          <div class="icon-box"><i class="fa-solid fa-user"></i></div>
-          <span>User</span>
-        </div>
-        <i class="fa-solid fa-chevron-right arrow"></i>
-      </a>
-
-      <!-- Gmail User -->
-      <a href="gmail-user.html" class="dash-btn">
-        <div class="dash-btn-content">
-          <div class="icon-box"><i class="fa-solid fa-users"></i></div>
-          <span>Gmail User</span>
-        </div>
-        <i class="fa-solid fa-chevron-right arrow"></i>
-      </a>
-
-      <!-- Withdraw -->
-      <a href="withdraw.html" class="dash-btn">
-        <div class="dash-btn-content">
-          <div class="icon-box"><i class="fa-solid fa-wallet"></i></div>
-          <span>Withdraw</span>
-        </div>
-        <i class="fa-solid fa-chevron-right arrow"></i>
-      </a>
-
-      <!-- Ads Earning -->
-      <a href="ads-earning.html" class="dash-btn">
-        <div class="dash-btn-content">
-          <div class="icon-box"><i class="fa-solid fa-chart-line"></i></div>
-          <span>Ads Earning</span>
-        </div>
-        <i class="fa-solid fa-chevron-right arrow"></i>
-      </a>
-
-      <!-- Referral Market Orders -->
-      <a href="referral-market-orders.html" class="dash-btn">
-        <div class="dash-btn-content">
-          <div class="icon-box"><i class="fa-solid fa-boxes-packing"></i></div>
-          <span>Referral Market Orders</span>
-        </div>
-        <i class="fa-solid fa-chevron-right arrow"></i>
-      </a>
-
-      <!-- Affiliate Market Order -->
-      <a href="affiliate-market-order.html" class="dash-btn">
-        <div class="dash-btn-content">
-          <div class="icon-box"><i class="fa-solid fa-cart-shopping"></i></div>
-          <span>Affiliate Market Order</span>
-        </div>
-        <i class="fa-solid fa-chevron-right arrow"></i>
-      </a>
-
-      <!-- Affiliate Account Details -->
-      <a href="affiliate-account-details.html" class="dash-btn">
-        <div class="dash-btn-content">
-          <div class="icon-box"><i class="fa-solid fa-id-card"></i></div>
-          <span>Affiliate Account Details</span>
-        </div>
-        <i class="fa-solid fa-chevron-right arrow"></i>
-      </a>
-
-    </div>
-
-    <!-- Logout Button -->
-    <button onclick="handleLogout()" class="btn-logout">
-      <i class="fa-solid fa-right-from-bracket"></i> Logout Panel
-    </button>
   </div>
 
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+    import { getDatabase, ref, onValue, update } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
 
-  <!-- AUTH LOGIC -->
-  <script>
-    const AUTH_EMAIL = "sabirkhansadre@gmail.com";
-    const AUTH_PASS = "Sabirhira1@";
-
-    window.onload = function() {
-      if (sessionStorage.getItem("adminLoggedIn") === "true") {
-        showDashboard();
-      }
+    const firebaseConfig = {
+      apiKey: "AIzaSyAsnATksiqZzMHOPO64i_bKqLJW6yjq9lw",
+      authDomain: "newweb-d50af.firebaseapp.com",
+      databaseURL: "https://newweb-d50af-default-rtdb.firebaseio.com",
+      projectId: "newweb-d50af",
+      storageBucket: "newweb-d50af.firebasestorage.app",
+      messagingSenderId: "358603295768",
+      appId: "1:358603295768:web:82a9666514a7cb468c476d"
     };
 
-    function handleLogin(event) {
-      event.preventDefault();
-      const emailVal = document.getElementById("email").value.trim();
-      const passVal = document.getElementById("password").value;
-      const errorDiv = document.getElementById("errorMsg");
+    const app = initializeApp(firebaseConfig);
+    const db = getDatabase(app);
 
-      if (emailVal === AUTH_EMAIL && passVal === AUTH_PASS) {
-        sessionStorage.setItem("adminLoggedIn", "true");
-        errorDiv.innerText = "";
-        showDashboard();
-      } else {
-        errorDiv.innerText = "Invalid Email or Password!";
+    let allUsersData = {};
+
+    // Fetching data specifically from 'users' node seen in screenshot
+    onValue(ref(db, 'users'), (snapshot) => {
+      const listContainer = document.getElementById('usersList');
+      listContainer.innerHTML = "";
+
+      if (!snapshot.exists()) {
+        listContainer.innerHTML = `<div class="status-msg">No users registered yet under 'users' node.</div>`;
+        document.getElementById('totalUsersBadge').innerText = "Users: 0";
+        return;
+      }
+
+      allUsersData = snapshot.val();
+      const userKeys = Object.keys(allUsersData);
+      document.getElementById('totalUsersBadge').innerText = `Total Users: ${userKeys.length}`;
+
+      renderUsers(allUsersData);
+    }, (error) => {
+      document.getElementById('usersList').innerHTML = `
+        <div class="status-msg" style="color:var(--accent-red)">
+          <b>Database Access Error!</b><br>${error.message}
+        </div>`;
+    });
+
+    function renderUsers(usersMap) {
+      const listContainer = document.getElementById('usersList');
+      const searchVal = (document.getElementById('searchInput').value || '').toLowerCase();
+      listContainer.innerHTML = "";
+
+      let count = 0;
+
+      Object.keys(usersMap).forEach(userKey => {
+        const user = usersMap[userKey] || {};
+        
+        // Flexible fallback for field names
+        const name = user.name || user.fullName || user.username || userKey;
+        const phone = user.mobile || user.phone || user.number || 'N/A';
+        const email = user.email || 'N/A';
+        const balance = parseFloat(user.balance || 0).toFixed(2);
+        const date = user.createdAt || user.joinedAt || 'N/A';
+
+        const matches = name.toLowerCase().includes(searchVal) || 
+                        phone.toLowerCase().includes(searchVal) || 
+                        userKey.toLowerCase().includes(searchVal);
+
+        if (matches) {
+          count++;
+          const initial = name.charAt(0).toUpperCase();
+
+          listContainer.innerHTML += `
+            <div class="user-card">
+              <div class="user-header">
+                <div class="user-main-info">
+                  <div class="user-avatar">${initial}</div>
+                  <div>
+                    <div class="user-name">${name}</div>
+                    <div class="user-handle">ID: ${userKey}</div>
+                  </div>
+                </div>
+                <div class="balance-badge">Rs. ${balance}</div>
+              </div>
+
+              <div class="user-details-grid">
+                <div class="detail-field">
+                  <span class="detail-label">Phone / Mobile:</span>
+                  <span class="detail-val">${phone}</span>
+                </div>
+                <div class="detail-field">
+                  <span class="detail-label">Email:</span>
+                  <span class="detail-val">${email}</span>
+                </div>
+                <div class="detail-field">
+                  <span class="detail-label">Registered Date:</span>
+                  <span class="detail-val">${date}</span>
+                </div>
+                <div class="detail-field">
+                  <span class="detail-label">Account Status:</span>
+                  <span class="detail-val" style="color:var(--accent-green)">Active</span>
+                </div>
+              </div>
+
+              <button class="action-btn" onclick="openBalanceModal('${userKey}', '${balance}')">
+                <i class="fa-solid fa-wallet"></i> Edit / Update Balance
+              </button>
+            </div>
+          `;
+        }
+      });
+
+      if (count === 0) {
+        listContainer.innerHTML = `<div class="status-msg">No search results found.</div>`;
       }
     }
 
-    function showDashboard() {
-      document.getElementById("loginScreen").classList.add("hidden");
-      document.getElementById("dashboardScreen").classList.remove("hidden");
-    }
+    window.filterUsers = function() {
+      renderUsers(allUsersData);
+    };
 
-    function handleLogout() {
-      sessionStorage.removeItem("adminLoggedIn");
-      document.getElementById("dashboardScreen").classList.add("hidden");
-      document.getElementById("loginScreen").classList.remove("hidden");
-      document.getElementById("loginForm").reset();
-    }
+    window.openBalanceModal = function(userKey, currentBalance) {
+      document.getElementById('mUserKey').value = userKey;
+      document.getElementById('mCurrentBalance').value = "Rs. " + currentBalance;
+      document.getElementById('mAmount').value = "";
+      document.getElementById('balanceModal').style.display = "flex";
+    };
+
+    window.closeBalanceModal = function() {
+      document.getElementById('balanceModal').style.display = "none";
+    };
+
+    window.saveBalanceUpdate = async function() {
+      const userKey = document.getElementById('mUserKey').value;
+      const actionType = document.getElementById('mActionType').value;
+      const amountVal = parseFloat(document.getElementById('mAmount').value);
+
+      if (isNaN(amountVal) || amountVal < 0) {
+        alert("Enter a valid amount.");
+        return;
+      }
+
+      const currentBalance = parseFloat(allUsersData[userKey]?.balance || 0);
+      let newBalance = currentBalance;
+
+      if (actionType === 'set') {
+        newBalance = amountVal;
+      } else if (actionType === 'add') {
+        newBalance = currentBalance + amountVal;
+      } else if (actionType === 'subtract') {
+        newBalance = Math.max(0, currentBalance - amountVal);
+      }
+
+      try {
+        await update(ref(db, `users/${userKey}`), {
+          balance: newBalance.toFixed(2)
+        });
+        alert(`Balance successfully updated to Rs. ${newBalance.toFixed(2)}`);
+        closeBalanceModal();
+      } catch (err) {
+        alert("Update failed: " + err.message);
+      }
+    };
   </script>
-
 </body>
 </html>

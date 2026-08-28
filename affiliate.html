@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -138,11 +139,18 @@
       outline: none;
     }
 
-    .prod-img-preview {
-      width: 60px;
-      height: 60px;
+    /* 3 IMAGES SIDE-BY-SIDE GALLERY LAYOUT */
+    .prod-gallery-preview {
+      display: flex;
+      gap: 6px;
+      width: 100%;
+    }
+    .prod-gallery-preview img {
+      width: 32.33%;
+      height: 80px;
       object-fit: cover;
-      border-radius: 6px;
+      border-radius: 8px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
     }
   </style>
 </head>
@@ -201,9 +209,10 @@
           </div>
         </div>
 
+        <!-- GALLERY FILE SELECTION (UP TO 3 IMAGES) -->
         <div class="form-group">
-          <label>Image URLs (Comma-separated for multiple images)</label>
-          <input type="text" id="pImages" placeholder="https://image1.jpg, https://image2.jpg" required />
+          <label><i class="fa-solid fa-images"></i> Select Product Images from Gallery (Max 3 Pictures)</label>
+          <input type="file" id="pFileInput" accept="image/*" multiple required style="padding: 8px;" />
         </div>
 
         <div class="form-group">
@@ -211,7 +220,7 @@
           <textarea id="pDetails" rows="2" placeholder="Fabric details, size, specifications..."></textarea>
         </div>
 
-        <button type="submit" class="btn-action btn-blue" style="width:100%; padding:11px;">
+        <button type="submit" id="submitBtn" class="btn-action btn-blue" style="width:100%; padding:11px;">
           <i class="fa-solid fa-cloud-arrow-up"></i> Upload Product to Store
         </button>
       </form>
@@ -305,15 +314,11 @@
       });
     });
 
-    // MARK ORDER AS COMPLETED AND AUTO CREDIT PROFIT TO RESELLER WALLET
     window.markOrderCompleted = async function(orderId, username, profit) {
       if(!confirm(`Kya order delivered ho gaya hai? Isse Rs. ${profit} Reseller (${username}) ke wallet me auto credit ho jayein ge.`)) return;
 
       try {
-        // Update Order Status
         await update(ref(db, `affiliate_orders/${orderId}`), { status: 'done' });
-
-        // Get Current Wallet Balance
         const walletRef = ref(db, `user_wallets/${username}`);
         const snap = await get(walletRef);
         let currentBalance = 0;
@@ -323,7 +328,6 @@
 
         const newBalance = currentBalance + parseFloat(profit);
 
-        // Update Wallet Balance & History
         await update(walletRef, { balance: newBalance });
         await push(ref(db, `user_wallets/${username}/history`), {
           amount: profit,
@@ -417,36 +421,66 @@
     };
 
     // -------------------------------------------------------------
-    // 3. PRODUCTS MANAGEMENT (ADD / DELETE)
+    // 3. PRODUCTS MANAGEMENT (GALLERY UPLOAD & 3 PICS DISPLAY)
     // -------------------------------------------------------------
-    window.handleProductAdd = function(e) {
+    
+    // Helper function: Convert File to Base64 String
+    const fileToBase64 = (file) => new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.readAsDataURL(file);
+      reader.onload = () => resolve(reader.result);
+      reader.onerror = (error) => reject(error);
+    });
+
+    window.handleProductAdd = async function(e) {
       e.preventDefault();
 
+      const btn = document.getElementById('submitBtn');
       const name = document.getElementById('pName').value;
       const category = document.getElementById('pCategory').value;
       const price = parseInt(document.getElementById('pPrice').value);
-      const rawImgs = document.getElementById('pImages').value;
+      const fileInput = document.getElementById('pFileInput');
       const details = document.getElementById('pDetails').value;
 
-      const imagesArray = rawImgs.split(',').map(url => url.trim()).filter(url => url.length > 0);
+      if (!fileInput.files || fileInput.files.length === 0) {
+        alert("Gallery se kam se kam 1 pic select karein!");
+        return;
+      }
 
-      const newProduct = {
-        name: name,
-        category: category,
-        price: price,
-        images: imagesArray,
-        details: details,
-        createdAt: Date.now()
-      };
+      btn.disabled = true;
+      btn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Uploading...`;
 
-      push(ref(db, 'products'), newProduct)
-        .then(() => {
-          alert("Product store me Add ho gaya!");
-          document.getElementById('addProductForm').reset();
-        })
-        .catch(err => alert("Error: " + err.message));
+      try {
+        // Select up to 3 files max
+        const selectedFiles = Array.from(fileInput.files).slice(0, 3);
+        const imagesArray = [];
+
+        for (let file of selectedFiles) {
+          const base64Img = await fileToBase64(file);
+          imagesArray.push(base64Img);
+        }
+
+        const newProduct = {
+          name: name,
+          category: category,
+          price: price,
+          images: imagesArray,
+          details: details,
+          createdAt: Date.now()
+        };
+
+        await push(ref(db, 'products'), newProduct);
+        alert("Product and Pictures successfully store me add ho gaye!");
+        document.getElementById('addProductForm').reset();
+      } catch (err) {
+        alert("Error: " + err.message);
+      } finally {
+        btn.disabled = false;
+        btn.innerHTML = `<i class="fa-solid fa-cloud-arrow-up"></i> Upload Product to Store`;
+      }
     };
 
+    // DISPLAY PRODUCTS ON DASHBOARD WITH 3 IMAGES SIDE-BY-SIDE
     onValue(ref(db, 'products'), (snapshot) => {
       const container = document.getElementById('productsContainer');
       container.innerHTML = "";
@@ -459,18 +493,30 @@
       const products = snapshot.val();
       Object.keys(products).forEach(id => {
         const p = products[id];
-        const mainImg = (p.images && p.images.length > 0) ? p.images[0] : (p.image || 'https://via.placeholder.com/150');
+        
+        let imgs = p.images || [];
+        if (typeof imgs === 'string') imgs = [imgs];
+        if (imgs.length === 0 && p.image) imgs = [p.image];
+
+        // Pick top 3 images
+        const displayImgs = imgs.slice(0, 3);
+
+        let galleryHTML = '<div class="prod-gallery-preview">';
+        displayImgs.forEach(imgSrc => {
+          galleryHTML += `<img src="${imgSrc}" alt="Product image" />`;
+        });
+        galleryHTML += '</div>';
 
         const card = document.createElement('div');
         card.className = 'item-card';
         card.innerHTML = `
-          <div style="display:flex; gap:10px; align-items:center;">
-            <img src="${mainImg}" class="prod-img-preview" alt="product" />
+          ${galleryHTML}
+          <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-top:4px;">
             <div>
-              <div style="font-size:13px; font-weight:700;">${p.name}</div>
+              <div style="font-size:13px; font-weight:700; color:#ffffff;">${p.name}</div>
               <div style="font-size:10px; color:#38bdf8; text-transform:uppercase;">Category: ${p.category}</div>
-              <div style="font-size:14px; font-weight:700; color:#34d399;">Wholesale: Rs. ${p.price}</div>
             </div>
+            <div style="font-size:14px; font-weight:700; color:#34d399;">Rs. ${p.price}</div>
           </div>
           <div style="font-size:11px; color:#94a3b8;">${p.details || 'No description'}</div>
           <button class="btn-action btn-red" onclick="deleteProduct('${id}')">

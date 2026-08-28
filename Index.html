@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>Admin Dashboard</title>
+  
+  <!-- Fonts & Icons -->
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+
+  <style>
+    :root {
+      --bg-color: #f8fafc;
+      --card-bg: #ffffff;
+      --primary-blue: #2563eb;
+      --primary-hover: #1d4ed8;
+      --text-main: #0f172a;
+      --text-muted: #64748b;
+      --border-color: #e2e8f0;
+      --danger-color: #ef4444;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    body {
+      background-color: var(--bg-color);
+      color: var(--text-main);
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 20px 16px;
+    }
+
+    /* CONTAINER STYLES */
+    .admin-card {
+      width: 100%;
+      max-width: 440px;
+      background: var(--card-bg);
+      border: 1px solid var(--border-color);
+      border-radius: 20px;
+      padding: 28px 24px;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.04);
+      transition: all 0.3s ease;
+    }
+
+    .hidden {
+      display: none !important;
+    }
+
+    /* HEADER */
+    .panel-header {
+      text-align: center;
+      margin-bottom: 24px;
+    }
+
+    .panel-header h2 {
+      font-size: 22px;
+      font-weight: 800;
+      color: var(--text-main);
+    }
+
+    .panel-header p {
+      font-size: 13px;
+      color: var(--text-muted);
+      margin-top: 4px;
+      font-weight: 500;
+    }
+
+    /* FORM STYLES */
+    .input-group {
+      margin-bottom: 16px;
+      text-align: left;
+    }
+
+    .input-group label {
+      display: block;
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--text-muted);
+      margin-bottom: 6px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .input-group input {
+      width: 100%;
+      padding: 14px 16px;
+      border-radius: 12px;
+      border: 1px solid var(--border-color);
+      background: #f8fafc;
+      font-size: 14px;
+      color: var(--text-main);
+      outline: none;
+      transition: all 0.2s ease;
+    }
+
+    .input-group input:focus {
+      border-color: var(--primary-blue);
+      background: #ffffff;
+      box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+    }
+
+    .btn-submit {
+      width: 100%;
+      padding: 14px;
+      border-radius: 12px;
+      border: none;
+      background: var(--primary-blue);
+      color: #ffffff;
+      font-size: 14px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: background 0.2s ease;
+      margin-top: 8px;
+    }
+
+    .btn-submit:hover {
+      background: var(--primary-hover);
+    }
+
+    .error-msg {
+      color: var(--danger-color);
+      font-size: 12px;
+      font-weight: 600;
+      text-align: center;
+      margin-top: 10px;
+    }
+
+    /* BUTTONS GRID FOR DASHBOARD */
+    .dashboard-grid {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .dash-btn {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 16px 18px;
+      background: #ffffff;
+      border: 1px solid var(--border-color);
+      border-radius: 14px;
+      text-decoration: none;
+      color: var(--text-main);
+      font-weight: 700;
+      font-size: 14px;
+      transition: all 0.2s ease;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.02);
+    }
+
+    .dash-btn-content {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .dash-btn .icon-box {
+      width: 38px;
+      height: 38px;
+      border-radius: 10px;
+      background: #eff6ff;
+      color: var(--primary-blue);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 16px;
+    }
+
+    .dash-btn:hover {
+      border-color: var(--primary-blue);
+      transform: translateY(-2px);
+      box-shadow: 0 6px 15px rgba(37, 99, 235, 0.1);
+    }
+
+    .dash-btn i.arrow {
+      color: #94a3b8;
+      font-size: 12px;
+      transition: transform 0.2s ease;
+    }
+
+    .dash-btn:hover i.arrow {
+      color: var(--primary-blue);
+      transform: translateX(4px);
+    }
+
+    /* LOGOUT BUTTON */
+    .btn-logout {
+      margin-top: 20px;
+      width: 100%;
+      padding: 12px;
+      border-radius: 12px;
+      border: 1px solid #fee2e2;
+      background: #fef2f2;
+      color: var(--danger-color);
+      font-size: 13px;
+      font-weight: 700;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      transition: background 0.2s ease;
+    }
+
+    .btn-logout:hover {
+      background: #fde8e8;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- 1. LOGIN SCREEN -->
+  <div id="loginScreen" class="admin-card">
+    <div class="panel-header">
+      <h2>Admin Portal</h2>
+      <p>Enter your credentials to continue</p>
+    </div>
+
+    <form id="loginForm" onsubmit="handleLogin(event)">
+      <div class="input-group">
+        <label>Email Address</label>
+        <input type="email" id="email" placeholder="sabirkhansadre@gmail.com" required />
+      </div>
+
+      <div class="input-group">
+        <label>Password</label>
+        <input type="password" id="password" placeholder="••••••••" required />
+      </div>
+
+      <button type="submit" class="btn-submit">Login Control Panel</button>
+      <div id="errorMsg" class="error-msg"></div>
+    </form>
+  </div>
+
+
+  <!-- 2. DASHBOARD PANEL SCREEN (Access Granted) -->
+  <div id="dashboardScreen" class="admin-card hidden">
+    <div class="panel-header">
+      <h2>Control Dashboard</h2>
+      <p>Select a section to manage</p>
+    </div>
+
+    <div class="dashboard-grid">
+      
+      <!-- Gmail User -->
+      <a href="gmail-user.html" class="dash-btn">
+        <div class="dash-btn-content">
+          <div class="icon-box"><i class="fa-solid fa-users"></i></div>
+          <span>Gmail User</span>
+        </div>
+        <i class="fa-solid fa-chevron-right arrow"></i>
+      </a>
+
+      <!-- Withdraw -->
+      <a href="withdraw.html" class="dash-btn">
+        <div class="dash-btn-content">
+          <div class="icon-box"><i class="fa-solid fa-wallet"></i></div>
+          <span>Withdraw</span>
+        </div>
+        <i class="fa-solid fa-chevron-right arrow"></i>
+      </a>
+
+      <!-- Ads Earning -->
+      <a href="ads-earning.html" class="dash-btn">
+        <div class="dash-btn-content">
+          <div class="icon-box"><i class="fa-solid fa-chart-line"></i></div>
+          <span>Ads Earning</span>
+        </div>
+        <i class="fa-solid fa-chevron-right arrow"></i>
+      </a>
+
+      <!-- Referral Market Orders -->
+      <a href="referral-market-orders.html" class="dash-btn">
+        <div class="dash-btn-content">
+          <div class="icon-box"><i class="fa-solid fa-boxes-packing"></i></div>
+          <span>Referral Market Orders</span>
+        </div>
+        <i class="fa-solid fa-chevron-right arrow"></i>
+      </a>
+
+      <!-- Affiliate Market Order -->
+      <a href="affiliate-market-order.html" class="dash-btn">
+        <div class="dash-btn-content">
+          <div class="icon-box"><i class="fa-solid fa-cart-shopping"></i></div>
+          <span>Affiliate Market Order</span>
+        </div>
+        <i class="fa-solid fa-chevron-right arrow"></i>
+      </a>
+
+      <!-- Affiliate Account Details -->
+      <a href="affiliate-account-details.html" class="dash-btn">
+        <div class="dash-btn-content">
+          <div class="icon-box"><i class="fa-solid fa-id-card"></i></div>
+          <span>Affiliate Account Details</span>
+        </div>
+        <i class="fa-solid fa-chevron-right arrow"></i>
+      </a>
+
+    </div>
+
+    <!-- Logout Button -->
+    <button onclick="handleLogout()" class="btn-logout">
+      <i class="fa-solid fa-right-from-bracket"></i> Logout Panel
+    </button>
+  </div>
+
+
+  <!-- AUTH LOGIC -->
+  <script>
+    const AUTH_EMAIL = "sabirkhansadre@gmail.com";
+    const AUTH_PASS = "Sabirhira1@";
+
+    // Auto login check session
+    window.onload = function() {
+      if (sessionStorage.getItem("adminLoggedIn") === "true") {
+        showDashboard();
+      }
+    };
+
+    function handleLogin(event) {
+      event.preventDefault();
+      const emailVal = document.getElementById("email").value.trim();
+      const passVal = document.getElementById("password").value;
+      const errorDiv = document.getElementById("errorMsg");
+
+      if (emailVal === AUTH_EMAIL && passVal === AUTH_PASS) {
+        sessionStorage.setItem("adminLoggedIn", "true");
+        errorDiv.innerText = "";
+        showDashboard();
+      } else {
+        errorDiv.innerText = "Invalid Email or Password!";
+      }
+    }
+
+    function showDashboard() {
+      document.getElementById("loginScreen").classList.add("hidden");
+      document.getElementById("dashboardScreen").classList.remove("hidden");
+    }
+
+    function handleLogout() {
+      sessionStorage.removeItem("adminLoggedIn");
+      document.getElementById("dashboardScreen").classList.add("hidden");
+      document.getElementById("loginScreen").classList.remove("hidden");
+      document.getElementById("loginForm").reset();
+    }
+  </script>
+
+</body>
+</html>

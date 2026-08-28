@@ -131,8 +131,8 @@
     }
 
     .user-avatar {
-      width: 32px;
-      height: 32px;
+      width: 34px;
+      height: 34px;
       background: var(--primary);
       color: #ffffff;
       border-radius: 50%;
@@ -140,11 +140,11 @@
       align-items: center;
       justify-content: center;
       font-weight: 800;
-      font-size: 13px;
+      font-size: 14px;
     }
 
     .user-name {
-      font-size: 12px;
+      font-size: 13px;
       font-weight: 700;
       color: var(--text-main);
     }
@@ -167,9 +167,12 @@
     .user-details-grid {
       display: grid;
       grid-template-columns: 1fr 1fr;
-      gap: 6px;
-      font-size: 10px;
+      gap: 8px;
+      font-size: 11px;
       margin-bottom: 10px;
+      background: #f8fafc;
+      padding: 8px;
+      border-radius: 6px;
     }
 
     .detail-field {
@@ -179,12 +182,14 @@
 
     .detail-label {
       color: var(--text-muted);
+      font-size: 10px;
       font-weight: 600;
     }
 
     .detail-val {
       color: var(--text-main);
       font-weight: 700;
+      word-break: break-word;
     }
 
     .action-btn {
@@ -200,7 +205,7 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      gap: 4px;
+      gap: 6px;
     }
 
     .action-btn:active {
@@ -277,10 +282,10 @@
       cursor: pointer;
     }
 
-    .loading-text {
+    .status-msg {
       text-align: center;
       color: var(--text-muted);
-      font-size: 11px;
+      font-size: 12px;
       padding: 20px 0;
     }
   </style>
@@ -289,31 +294,31 @@
 
   <header class="navbar">
     <div class="brand-title">
-      <i class="fa-solid fa-user-gear"></i> SEW Admin - Users
+      <i class="fa-solid fa-users-gear"></i> User Control Panel
     </div>
-    <div class="user-count-badge" id="totalUsersBadge">Total Users: 0</div>
+    <div class="user-count-badge" id="totalUsersBadge">Users: 0</div>
   </header>
 
   <div class="container">
     <div class="search-box">
       <i class="fa-solid fa-magnifying-glass"></i>
-      <input type="text" id="searchInput" placeholder="Search by name, username, or phone..." onkeyup="filterUsers()" />
+      <input type="text" id="searchInput" placeholder="Search user name, phone or ID..." onkeyup="filterUsers()" />
     </div>
 
     <div class="users-list" id="usersList">
-      <div class="loading-text">Loading users data...</div>
+      <div class="status-msg">Fetching users data...</div>
     </div>
   </div>
 
-  <!-- BALANCE MODAL -->
+  <!-- BALANCE UPDATE MODAL -->
   <div class="modal-overlay" id="balanceModal">
     <div class="modal-box">
       <button class="close-modal" onclick="closeBalanceModal()">✕</button>
-      <div class="modal-title">Update User Balance</div>
+      <div class="modal-title">Manage Balance</div>
 
       <div class="form-group">
-        <label>User</label>
-        <input type="text" id="mUsername" disabled readonly style="background:#e2e8f0;" />
+        <label>User ID / Name</label>
+        <input type="text" id="mUserKey" disabled readonly style="background:#e2e8f0;" />
       </div>
 
       <div class="form-group">
@@ -322,20 +327,20 @@
       </div>
 
       <div class="form-group">
-        <label>Action Type</label>
+        <label>Action</label>
         <select id="mActionType">
-          <option value="set">Set Exact Balance (Naya Balance Direct Select Karein)</option>
-          <option value="add">Add Balance (Balance Barhaaein)</option>
-          <option value="subtract">Deduct Balance (Balance Kam Karein)</option>
+          <option value="set">Set Direct Balance</option>
+          <option value="add">Add Balance (+)</option>
+          <option value="subtract">Deduct Balance (-)</option>
         </select>
       </div>
 
       <div class="form-group">
-        <label>Amount (Rs.)</label>
+        <label>Amount (PKR)</label>
         <input type="number" id="mAmount" placeholder="Enter amount..." required min="0" step="any" />
       </div>
 
-      <button type="button" class="save-btn" onclick="saveBalanceUpdate()">Update Balance</button>
+      <button type="button" class="save-btn" onclick="saveBalanceUpdate()">Update Now</button>
     </div>
   </div>
 
@@ -358,13 +363,14 @@
 
     let allUsersData = {};
 
+    // Fetching data specifically from 'users' node seen in screenshot
     onValue(ref(db, 'users'), (snapshot) => {
       const listContainer = document.getElementById('usersList');
       listContainer.innerHTML = "";
 
       if (!snapshot.exists()) {
-        listContainer.innerHTML = `<div class="loading-text">No registered users found.</div>`;
-        document.getElementById('totalUsersBadge').innerText = "Total Users: 0";
+        listContainer.innerHTML = `<div class="status-msg">No users registered yet under 'users' node.</div>`;
+        document.getElementById('totalUsersBadge').innerText = "Users: 0";
         return;
       }
 
@@ -373,6 +379,11 @@
       document.getElementById('totalUsersBadge').innerText = `Total Users: ${userKeys.length}`;
 
       renderUsers(allUsersData);
+    }, (error) => {
+      document.getElementById('usersList').innerHTML = `
+        <div class="status-msg" style="color:var(--accent-red)">
+          <b>Database Access Error!</b><br>${error.message}
+        </div>`;
     });
 
     function renderUsers(usersMap) {
@@ -380,33 +391,34 @@
       const searchVal = (document.getElementById('searchInput').value || '').toLowerCase();
       listContainer.innerHTML = "";
 
-      let found = 0;
+      let count = 0;
 
-      Object.keys(usersMap).forEach(key => {
-        const user = usersMap[key];
-        const fullName = user.fullName || user.name || key;
-        const username = user.username || key;
-        const mobile = user.mobile || user.phone || 'N/A';
+      Object.keys(usersMap).forEach(userKey => {
+        const user = usersMap[userKey] || {};
+        
+        // Flexible fallback for field names
+        const name = user.name || user.fullName || user.username || userKey;
+        const phone = user.mobile || user.phone || user.number || 'N/A';
         const email = user.email || 'N/A';
-        const city = user.city || 'N/A';
         const balance = parseFloat(user.balance || 0).toFixed(2);
+        const date = user.createdAt || user.joinedAt || 'N/A';
 
-        const match = fullName.toLowerCase().includes(searchVal) ||
-                      username.toLowerCase().includes(searchVal) ||
-                      mobile.toLowerCase().includes(searchVal);
+        const matches = name.toLowerCase().includes(searchVal) || 
+                        phone.toLowerCase().includes(searchVal) || 
+                        userKey.toLowerCase().includes(searchVal);
 
-        if (match) {
-          found++;
-          const avatarInitial = fullName.charAt(0).toUpperCase();
+        if (matches) {
+          count++;
+          const initial = name.charAt(0).toUpperCase();
 
           listContainer.innerHTML += `
             <div class="user-card">
               <div class="user-header">
                 <div class="user-main-info">
-                  <div class="user-avatar">${avatarInitial}</div>
+                  <div class="user-avatar">${initial}</div>
                   <div>
-                    <div class="user-name">${fullName}</div>
-                    <div class="user-handle">@${username}</div>
+                    <div class="user-name">${name}</div>
+                    <div class="user-handle">ID: ${userKey}</div>
                   </div>
                 </div>
                 <div class="balance-badge">Rs. ${balance}</div>
@@ -414,33 +426,33 @@
 
               <div class="user-details-grid">
                 <div class="detail-field">
-                  <span class="detail-label">Mobile:</span>
-                  <span class="detail-val">${mobile}</span>
+                  <span class="detail-label">Phone / Mobile:</span>
+                  <span class="detail-val">${phone}</span>
                 </div>
                 <div class="detail-field">
                   <span class="detail-label">Email:</span>
                   <span class="detail-val">${email}</span>
                 </div>
                 <div class="detail-field">
-                  <span class="detail-label">City:</span>
-                  <span class="detail-val">${city}</span>
+                  <span class="detail-label">Registered Date:</span>
+                  <span class="detail-val">${date}</span>
                 </div>
                 <div class="detail-field">
-                  <span class="detail-label">Country:</span>
-                  <span class="detail-val">${user.country || 'N/A'}</span>
+                  <span class="detail-label">Account Status:</span>
+                  <span class="detail-val" style="color:var(--accent-green)">Active</span>
                 </div>
               </div>
 
-              <button class="action-btn" onclick="openBalanceModal('${username}', '${balance}')">
-                <i class="fa-solid fa-pen-to-square"></i> Change / Update Balance
+              <button class="action-btn" onclick="openBalanceModal('${userKey}', '${balance}')">
+                <i class="fa-solid fa-wallet"></i> Edit / Update Balance
               </button>
             </div>
           `;
         }
       });
 
-      if (found === 0) {
-        listContainer.innerHTML = `<div class="loading-text">No user matched search criteria.</div>`;
+      if (count === 0) {
+        listContainer.innerHTML = `<div class="status-msg">No search results found.</div>`;
       }
     }
 
@@ -448,8 +460,8 @@
       renderUsers(allUsersData);
     };
 
-    window.openBalanceModal = function(username, currentBalance) {
-      document.getElementById('mUsername').value = username;
+    window.openBalanceModal = function(userKey, currentBalance) {
+      document.getElementById('mUserKey').value = userKey;
       document.getElementById('mCurrentBalance').value = "Rs. " + currentBalance;
       document.getElementById('mAmount').value = "";
       document.getElementById('balanceModal').style.display = "flex";
@@ -460,16 +472,16 @@
     };
 
     window.saveBalanceUpdate = async function() {
-      const username = document.getElementById('mUsername').value;
+      const userKey = document.getElementById('mUserKey').value;
       const actionType = document.getElementById('mActionType').value;
       const amountVal = parseFloat(document.getElementById('mAmount').value);
 
       if (isNaN(amountVal) || amountVal < 0) {
-        alert("Enter a valid positive number.");
+        alert("Enter a valid amount.");
         return;
       }
 
-      const currentBalance = parseFloat(allUsersData[username]?.balance || 0);
+      const currentBalance = parseFloat(allUsersData[userKey]?.balance || 0);
       let newBalance = currentBalance;
 
       if (actionType === 'set') {
@@ -481,13 +493,13 @@
       }
 
       try {
-        await update(ref(db, `users/${username}`), {
+        await update(ref(db, `users/${userKey}`), {
           balance: newBalance.toFixed(2)
         });
         alert(`Balance successfully updated to Rs. ${newBalance.toFixed(2)}`);
         closeBalanceModal();
       } catch (err) {
-        alert("Failed to update balance: " + err.message);
+        alert("Update failed: " + err.message);
       }
     };
   </script>

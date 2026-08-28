@@ -4,259 +4,345 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-  <title>SEW - Admin Control Panel</title>
-
-  <!-- CSS Framework & Icons -->
+  <title>SEW Admin - User Management</title>
+  
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
 
-  <!-- FIREBASE CLASSIC LIBRARIES (FAST & 100% RELIABLE) -->
-  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
-
   <style>
     :root {
-      --bg-body: #0f172a;
-      --card-bg: #1e293b;
-      --card-inner: #334155;
-      --primary: #3b82f6;
-      --primary-hover: #2563eb;
-      --text-main: #f8fafc;
-      --text-muted: #94a3b8;
-      --border-color: #334155;
+      --bg-body: #f8fafc;
+      --card-bg: #ffffff;
+      --primary: #2563eb;
+      --primary-dark: #1e40af;
+      --text-main: #0f172a;
+      --text-muted: #64748b;
+      --border-color: #e2e8f0;
       --accent-green: #10b981;
-      --accent-orange: #f59e0b;
       --accent-red: #ef4444;
     }
 
-    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Plus Jakarta Sans', sans-serif; }
-    body { background-color: var(--bg-body); color: var(--text-main); min-height: 100vh; padding-bottom: 30px; }
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+    }
 
-    /* HEADER */
-    .admin-header {
-      background: #1e293b;
-      border-bottom: 1px solid var(--border-color);
-      padding: 14px 16px;
+    body {
+      background-color: var(--bg-body);
+      color: var(--text-main);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .navbar {
+      background: #ffffff;
+      padding: 12px 16px;
       display: flex;
       justify-content: space-between;
       align-items: center;
-      position: sticky; top: 0; z-index: 100;
-    }
-    .brand { font-weight: 800; font-size: 16px; color: var(--primary); display: flex; align-items: center; gap: 8px; }
-    .brand-badge { background: rgba(59, 130, 246, 0.2); color: var(--primary); padding: 2px 8px; border-radius: 12px; font-size: 10px; }
-
-    /* STATS SUMMARY */
-    .stats-container {
-      max-width: 1100px; margin: 14px auto; padding: 0 12px;
-      display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px;
-    }
-    .stat-card { background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 10px; padding: 12px; text-align: center; }
-    .stat-number { font-size: 20px; font-weight: 800; color: var(--primary); }
-    .stat-label { font-size: 10px; color: var(--text-muted); font-weight: 700; text-transform: uppercase; }
-
-    /* TABS */
-    .tabs-wrapper { max-width: 1100px; margin: 0 auto 14px auto; padding: 0 12px; display: flex; gap: 6px; }
-    .tab-btn {
-      flex: 1; background: var(--card-bg); border: 1px solid var(--border-color);
-      color: var(--text-muted); padding: 10px; border-radius: 8px; font-weight: 700; font-size: 12px;
-      cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px;
-    }
-    .tab-btn.active { background: var(--primary); color: #fff; border-color: var(--primary); }
-
-    /* MAIN CONTENT */
-    .main-content { max-width: 1100px; margin: 0 auto; padding: 0 12px; }
-    .tab-content { display: none; }
-    .tab-content.active { display: block; }
-
-    /* SEARCH BAR */
-    .search-filter-bar { display: flex; gap: 8px; margin-bottom: 12px; flex-wrap: wrap; }
-    .search-input {
-      flex: 1; min-width: 200px; background: var(--card-bg); border: 1px solid var(--border-color);
-      color: var(--text-main); padding: 10px 12px; border-radius: 8px; font-size: 12px; outline: none;
-    }
-    .filter-select {
-      background: var(--card-bg); border: 1px solid var(--border-color); color: var(--text-main);
-      padding: 10px; border-radius: 8px; font-size: 12px; outline: none;
+      border-bottom: 1px solid var(--border-color);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.04);
     }
 
-    /* CARDS GRID */
-    .users-grid, .orders-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 12px; }
-    .data-card {
-      background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 10px; padding: 12px;
-      display: flex; flex-direction: column; gap: 8px;
+    .brand-title {
+      font-size: 16px;
+      font-weight: 800;
+      color: var(--primary);
+      display: flex;
+      align-items: center;
+      gap: 6px;
     }
+
+    .user-count-badge {
+      background: #eff6ff;
+      color: var(--primary);
+      font-size: 11px;
+      font-weight: 700;
+      padding: 3px 8px;
+      border-radius: 12px;
+      border: 1px solid #dbeafe;
+    }
+
+    .container {
+      max-width: 600px;
+      width: 100%;
+      margin: 0 auto;
+      padding: 12px;
+      flex: 1;
+    }
+
+    .search-box {
+      position: relative;
+      margin-bottom: 12px;
+    }
+
+    .search-box i {
+      position: absolute;
+      left: 10px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: #94a3b8;
+      font-size: 13px;
+    }
+
+    .search-box input {
+      width: 100%;
+      padding: 10px 12px 10px 32px;
+      background: #ffffff;
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      font-size: 12px;
+      outline: none;
+    }
+
+    .users-list {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .user-card {
+      background: #ffffff;
+      border: 1px solid var(--border-color);
+      border-radius: 10px;
+      padding: 12px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.02);
+    }
+
+    .user-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid var(--border-color);
+      padding-bottom: 8px;
+      margin-bottom: 8px;
+    }
+
+    .user-main-info {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
     .user-avatar {
-      width: 36px; height: 36px; background: var(--primary); color: #fff; font-weight: 800;
-      border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 14px;
+      width: 32px;
+      height: 32px;
+      background: var(--primary);
+      color: #ffffff;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 800;
+      font-size: 13px;
     }
-    .details-box {
-      background: var(--card-inner); border-radius: 6px; padding: 8px; font-size: 11px;
-      display: flex; flex-direction: column; gap: 5px;
+
+    .user-name {
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--text-main);
     }
-    .detail-row { display: flex; justify-content: space-between; }
-    .detail-row span:first-child { color: var(--text-muted); }
+
+    .user-handle {
+      font-size: 10px;
+      color: var(--text-muted);
+    }
+
+    .balance-badge {
+      font-size: 12px;
+      font-weight: 800;
+      color: var(--accent-green);
+      background: #ecfdf5;
+      padding: 4px 8px;
+      border-radius: 6px;
+      border: 1px solid #a7f3d0;
+    }
+
+    .user-details-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 6px;
+      font-size: 10px;
+      margin-bottom: 10px;
+    }
+
+    .detail-field {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .detail-label {
+      color: var(--text-muted);
+      font-weight: 600;
+    }
+
+    .detail-val {
+      color: var(--text-main);
+      font-weight: 700;
+    }
 
     .action-btn {
-      background: var(--primary); color: #fff; border: none; padding: 8px; border-radius: 6px;
-      font-size: 11px; font-weight: 700; cursor: pointer; text-align: center; width: 100%;
+      width: 100%;
+      background: var(--primary);
+      color: #ffffff;
+      border: none;
+      border-radius: 6px;
+      padding: 8px;
+      font-size: 11px;
+      font-weight: 700;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 4px;
     }
-    .action-btn:hover { background: var(--primary-hover); }
 
-    .badge { padding: 2px 6px; border-radius: 4px; font-size: 10px; font-weight: 800; text-transform: uppercase; }
-    .badge-pending { background: rgba(245, 158, 11, 0.2); color: var(--accent-orange); }
-    .badge-ok { background: rgba(16, 185, 129, 0.2); color: var(--accent-green); }
-    .badge-cancelled { background: rgba(239, 68, 68, 0.2); color: var(--accent-red); }
+    .action-btn:active {
+      background: var(--primary-dark);
+    }
 
-    /* MODAL */
     .modal-overlay {
-      position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.8);
-      display: none; justify-content: center; align-items: center; z-index: 200; padding: 12px;
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(15, 23, 42, 0.5);
+      display: none;
+      justify-content: center;
+      align-items: center;
+      z-index: 200;
+      padding: 12px;
     }
-    .modal-box {
-      background: var(--card-bg); width: 100%; max-width: 350px; border-radius: 12px;
-      padding: 16px; border: 1px solid var(--border-color);
-    }
-    .form-group { margin-bottom: 12px; }
-    .form-group label { display: block; font-size: 11px; color: var(--text-muted); margin-bottom: 4px; }
-    .form-group input, .form-group textarea, .form-group select {
-      width: 100%; padding: 8px; background: var(--card-inner); border: 1px solid var(--border-color);
-      color: #fff; border-radius: 6px; font-size: 12px; outline: none;
-    }
-    .quick-btns { display: flex; gap: 4px; margin-bottom: 10px; }
-    .quick-btns button {
-      flex: 1; background: var(--card-inner); border: 1px solid var(--border-color);
-      color: #fff; padding: 6px; font-size: 10px; font-weight: 700; border-radius: 4px; cursor: pointer;
-    }
-    .save-btn { width: 100%; padding: 10px; background: var(--accent-green); color: #fff; border: none; border-radius: 6px; font-weight: 800; cursor: pointer; }
 
-    .no-data { text-align: center; padding: 30px; color: var(--text-muted); font-size: 13px; grid-column: 1 / -1; }
+    .modal-box {
+      background: #ffffff;
+      width: 100%;
+      max-width: 340px;
+      border-radius: 12px;
+      padding: 16px;
+      position: relative;
+    }
+
+    .close-modal {
+      position: absolute;
+      top: 10px; right: 10px;
+      background: #f1f5f9;
+      border: none;
+      width: 24px; height: 24px;
+      border-radius: 50%;
+      cursor: pointer;
+      font-weight: 800;
+    }
+
+    .modal-title {
+      font-size: 13px;
+      font-weight: 800;
+      margin-bottom: 10px;
+    }
+
+    .form-group {
+      margin-bottom: 10px;
+    }
+
+    .form-group label {
+      display: block;
+      font-size: 10px;
+      font-weight: 700;
+      margin-bottom: 4px;
+    }
+
+    .form-group input, .form-group select {
+      width: 100%;
+      padding: 8px;
+      background: #f8fafc;
+      border: 1px solid var(--border-color);
+      border-radius: 6px;
+      font-size: 11px;
+      outline: none;
+    }
+
+    .save-btn {
+      width: 100%;
+      padding: 9px;
+      background: var(--accent-green);
+      color: #ffffff;
+      border: none;
+      border-radius: 6px;
+      font-size: 11px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    .loading-text {
+      text-align: center;
+      color: var(--text-muted);
+      font-size: 11px;
+      padding: 20px 0;
+    }
   </style>
 </head>
 <body>
 
-  <!-- HEADER -->
-  <header class="admin-header">
-    <div class="brand"><i class="fa-solid fa-user-shield"></i> SEW Admin <span class="brand-badge">Live Panel</span></div>
+  <header class="navbar">
+    <div class="brand-title">
+      <i class="fa-solid fa-user-gear"></i> SEW Admin - Users
+    </div>
+    <div class="user-count-badge" id="totalUsersBadge">Total Users: 0</div>
   </header>
 
-  <!-- STATS -->
-  <div class="stats-container">
-    <div class="stat-card">
-      <div class="stat-number" id="statUsers">0</div>
-      <div class="stat-label">Total Users</div>
+  <div class="container">
+    <div class="search-box">
+      <i class="fa-solid fa-magnifying-glass"></i>
+      <input type="text" id="searchInput" placeholder="Search by name, username, or phone..." onkeyup="filterUsers()" />
     </div>
-    <div class="stat-card">
-      <div class="stat-number" id="statOrders">0</div>
-      <div class="stat-label">Total Orders</div>
-    </div>
-    <div class="stat-card">
-      <div class="stat-number" id="statPending" style="color:var(--accent-orange)">0</div>
-      <div class="stat-label">Pending Orders</div>
+
+    <div class="users-list" id="usersList">
+      <div class="loading-text">Loading users data...</div>
     </div>
   </div>
 
-  <!-- NAVIGATION TABS -->
-  <div class="tabs-wrapper">
-    <button class="tab-btn active" onclick="switchTab('usersTab', this)">
-      <i class="fa-solid fa-users"></i> Registered Users
-    </button>
-    <button class="tab-btn" onclick="switchTab('ordersTab', this)">
-      <i class="fa-solid fa-cart-shopping"></i> Market Orders
-    </button>
-    <button class="tab-btn" onclick="switchTab('productsTab', this)">
-      <i class="fa-solid fa-plus-circle"></i> Add Product
-    </button>
-  </div>
+  <!-- BALANCE MODAL -->
+  <div class="modal-overlay" id="balanceModal">
+    <div class="modal-box">
+      <button class="close-modal" onclick="closeBalanceModal()">✕</button>
+      <div class="modal-title">Update User Balance</div>
 
-  <!-- MAIN CONTAINER -->
-  <div class="main-content">
-
-    <!-- TAB 1: USERS MANAGEMENT -->
-    <div id="usersTab" class="tab-content active">
-      <div class="search-filter-bar">
-        <input type="text" id="userSearchInput" class="search-input" placeholder="Search user by name, username, mobile, email..." oninput="renderUsers()" />
+      <div class="form-group">
+        <label>User</label>
+        <input type="text" id="mUsername" disabled readonly style="background:#e2e8f0;" />
       </div>
-      <div class="users-grid" id="usersGrid">
-        <div class="no-data"><i class="fa-solid fa-spinner fa-spin"></i> Connecting to Firebase Database...</div>
-      </div>
-    </div>
 
-    <!-- TAB 2: MARKET ORDERS -->
-    <div id="ordersTab" class="tab-content">
-      <div class="search-filter-bar">
-        <input type="text" id="orderSearchInput" class="search-input" placeholder="Search order by customer, product, phone..." oninput="renderOrders()" />
-        <select id="orderStatusFilter" class="filter-select" onchange="renderOrders()">
-          <option value="all">All Statuses</option>
-          <option value="Pending">Pending</option>
-          <option value="OK">OK / Confirmed</option>
-          <option value="Delivered">Delivered</option>
-          <option value="Cancelled">Cancelled</option>
+      <div class="form-group">
+        <label>Current Balance</label>
+        <input type="text" id="mCurrentBalance" disabled readonly style="background:#e2e8f0;" />
+      </div>
+
+      <div class="form-group">
+        <label>Action Type</label>
+        <select id="mActionType">
+          <option value="set">Set Exact Balance (Naya Balance Direct Select Karein)</option>
+          <option value="add">Add Balance (Balance Barhaaein)</option>
+          <option value="subtract">Deduct Balance (Balance Kam Karein)</option>
         </select>
       </div>
-      <div class="orders-grid" id="ordersGrid">
-        <div class="no-data">Loading market orders...</div>
-      </div>
-    </div>
 
-    <!-- TAB 3: ADD PRODUCTS -->
-    <div id="productsTab" class="tab-content">
-      <div style="background:var(--card-bg); padding:16px; border-radius:10px; border:1px solid var(--border-color); max-width:500px; margin:0 auto;">
-        <h3 style="font-size:14px; margin-bottom:12px; color:var(--primary);"><i class="fa-solid fa-box"></i> Add Market Product</h3>
-        <form id="addProductForm" onsubmit="handleAddProduct(event)">
-          <div class="form-group">
-            <label>Product Title</label>
-            <input type="text" id="pName" placeholder="e.g. Wireless Headphones" required />
-          </div>
-          <div class="form-group">
-            <label>Price (PKR)</label>
-            <input type="number" id="pPrice" placeholder="e.g. 1200" required />
-          </div>
-          <div class="form-group">
-            <label>Image Link (URL)</label>
-            <input type="url" id="pImage" placeholder="https://..." required />
-          </div>
-          <div class="form-group">
-            <label>Details / Description</label>
-            <textarea id="pDetails" rows="3" placeholder="Enter product specs..." required></textarea>
-          </div>
-          <button type="submit" class="save-btn" id="saveProdBtn">Publish Product to Market</button>
-        </form>
-
-        <h4 style="font-size:12px; margin:16px 0 8px 0;">Published Products</h4>
-        <div id="productsList" style="display:flex; flex-direction:column; gap:6px;"></div>
-      </div>
-    </div>
-
-  </div>
-
-  <!-- EDIT BALANCE MODAL -->
-  <div class="modal-overlay" id="editBalanceModal">
-    <div class="modal-box">
-      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
-        <h3 style="font-size:14px;">Edit User Earning / Balance</h3>
-        <button onclick="closeBalanceModal()" style="background:none; border:none; color:#fff; cursor:pointer; font-size:16px;">✕</button>
-      </div>
-      <p style="font-size:11px; margin-bottom:10px; color:var(--text-muted);" id="modalUserText">Target User: -</p>
-      
       <div class="form-group">
-        <label>Current Earning / Balance (PKR)</label>
-        <input type="number" step="0.01" id="newBalanceInput" placeholder="0.00" />
+        <label>Amount (Rs.)</label>
+        <input type="number" id="mAmount" placeholder="Enter amount..." required min="0" step="any" />
       </div>
 
-      <div class="quick-btns">
-        <button onclick="quickAdd(100)">+100</button>
-        <button onclick="quickAdd(500)">+500</button>
-        <button onclick="quickAdd(1000)">+1000</button>
-        <button onclick="quickAdd(-100)">-100</button>
-      </div>
-
-      <button class="save-btn" onclick="saveUserBalance()">Update Balance Now</button>
+      <button type="button" class="save-btn" onclick="saveBalanceUpdate()">Update Balance</button>
     </div>
   </div>
 
-  <!-- FIREBASE ENGINE SCRIPT -->
-  <script>
-    // 1. FIREBASE INITIALIZATION
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+    import { getDatabase, ref, onValue, update } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+
     const firebaseConfig = {
       apiKey: "AIzaSyAsnATksiqZzMHOPO64i_bKqLJW6yjq9lw",
       authDomain: "newweb-d50af.firebaseapp.com",
@@ -267,306 +353,143 @@
       appId: "1:358603295768:web:82a9666514a7cb468c476d"
     };
 
-    firebase.initializeApp(firebaseConfig);
-    const db = firebase.database();
+    const app = initializeApp(firebaseConfig);
+    const db = getDatabase(app);
 
-    let globalUsers = {};
-    let globalOrders = {};
-    let globalProducts = {};
-    let currentEditUserKey = null;
+    let allUsersData = {};
 
-    // 2. TAB SWITCHING FUNCTION
-    function switchTab(tabId, btnElement) {
-      document.querySelectorAll('.tab-content').forEach(tc => tc.classList.remove('active'));
-      document.querySelectorAll('.tab-btn').forEach(tb => tb.classList.remove('active'));
-      
-      document.getElementById(tabId).classList.add('active');
-      if (btnElement) btnElement.classList.add('active');
-    }
+    onValue(ref(db, 'users'), (snapshot) => {
+      const listContainer = document.getElementById('usersList');
+      listContainer.innerHTML = "";
 
-    // 3. LISTEN TO USERS FROM DATABASE
-    db.ref('users').on('value', (snapshot) => {
-      globalUsers = snapshot.val() || {};
-      const userKeys = Object.keys(globalUsers);
-      document.getElementById('statUsers').innerText = userKeys.length;
-      renderUsers();
-    }, (error) => {
-      document.getElementById('usersGrid').innerHTML = `<div class="no-data" style="color:#ef4444">Firebase Error: ${error.message}. Check Database Rules!</div>`;
-    });
-
-    // 4. LISTEN TO ORDERS FROM DATABASE
-    db.ref('orders').on('value', (snapshot) => {
-      globalOrders = snapshot.val() || {};
-      const orderKeys = Object.keys(globalOrders);
-      document.getElementById('statOrders').innerText = orderKeys.length;
-
-      let pending = 0;
-      orderKeys.forEach(k => {
-        if ((globalOrders[k].status || '').toLowerCase() === 'pending') pending++;
-      });
-      document.getElementById('statPending').innerText = pending;
-
-      renderOrders();
-    }, (error) => {
-      document.getElementById('ordersGrid').innerHTML = `<div class="no-data" style="color:#ef4444">Firebase Error: ${error.message}</div>`;
-    });
-
-    // 5. LISTEN TO PRODUCTS FROM DATABASE
-    db.ref('products').on('value', (snapshot) => {
-      globalProducts = snapshot.val() || {};
-      renderProducts();
-    });
-
-    // 6. RENDER USERS LIST
-    function renderUsers() {
-      const grid = document.getElementById('usersGrid');
-      grid.innerHTML = "";
-
-      const query = (document.getElementById('userSearchInput').value || '').toLowerCase().trim();
-      const keys = Object.keys(globalUsers);
-
-      if (keys.length === 0) {
-        grid.innerHTML = `<div class="no-data">No registered users found in Database path ("users").</div>`;
+      if (!snapshot.exists()) {
+        listContainer.innerHTML = `<div class="loading-text">No registered users found.</div>`;
+        document.getElementById('totalUsersBadge').innerText = "Total Users: 0";
         return;
       }
 
-      let count = 0;
-      keys.forEach(userKey => {
-        const u = globalUsers[userKey] || {};
-        const name = u.fullName || u.username || userKey;
-        const email = u.email || 'N/A';
-        const mobile = u.mobile || u.phone || 'N/A';
-        const balance = u.balance !== undefined ? u.balance : "0.00";
-        const city = u.city || 'N/A';
+      allUsersData = snapshot.val();
+      const userKeys = Object.keys(allUsersData);
+      document.getElementById('totalUsersBadge').innerText = `Total Users: ${userKeys.length}`;
 
-        const match = name.toLowerCase().includes(query) ||
-                      userKey.toLowerCase().includes(query) ||
-                      mobile.toLowerCase().includes(query) ||
-                      email.toLowerCase().includes(query);
+      renderUsers(allUsersData);
+    });
+
+    function renderUsers(usersMap) {
+      const listContainer = document.getElementById('usersList');
+      const searchVal = (document.getElementById('searchInput').value || '').toLowerCase();
+      listContainer.innerHTML = "";
+
+      let found = 0;
+
+      Object.keys(usersMap).forEach(key => {
+        const user = usersMap[key];
+        const fullName = user.fullName || user.name || key;
+        const username = user.username || key;
+        const mobile = user.mobile || user.phone || 'N/A';
+        const email = user.email || 'N/A';
+        const city = user.city || 'N/A';
+        const balance = parseFloat(user.balance || 0).toFixed(2);
+
+        const match = fullName.toLowerCase().includes(searchVal) ||
+                      username.toLowerCase().includes(searchVal) ||
+                      mobile.toLowerCase().includes(searchVal);
 
         if (match) {
-          count++;
-          const initial = name.charAt(0).toUpperCase();
+          found++;
+          const avatarInitial = fullName.charAt(0).toUpperCase();
 
-          grid.innerHTML += `
-            <div class="data-card">
-              <div style="display:flex; align-items:center; gap:10px;">
-                <div class="user-avatar">${initial}</div>
-                <div>
-                  <h4 style="font-size:13px;">${name}</h4>
-                  <p style="font-size:10px; color:var(--text-muted)">@${userKey}</p>
+          listContainer.innerHTML += `
+            <div class="user-card">
+              <div class="user-header">
+                <div class="user-main-info">
+                  <div class="user-avatar">${avatarInitial}</div>
+                  <div>
+                    <div class="user-name">${fullName}</div>
+                    <div class="user-handle">@${username}</div>
+                  </div>
+                </div>
+                <div class="balance-badge">Rs. ${balance}</div>
+              </div>
+
+              <div class="user-details-grid">
+                <div class="detail-field">
+                  <span class="detail-label">Mobile:</span>
+                  <span class="detail-val">${mobile}</span>
+                </div>
+                <div class="detail-field">
+                  <span class="detail-label">Email:</span>
+                  <span class="detail-val">${email}</span>
+                </div>
+                <div class="detail-field">
+                  <span class="detail-label">City:</span>
+                  <span class="detail-val">${city}</span>
+                </div>
+                <div class="detail-field">
+                  <span class="detail-label">Country:</span>
+                  <span class="detail-val">${user.country || 'N/A'}</span>
                 </div>
               </div>
 
-              <div class="details-box">
-                <div class="detail-row"><span>Mobile:</span> <strong>${mobile}</strong></div>
-                <div class="detail-row"><span>Email:</span> <strong>${email}</strong></div>
-                <div class="detail-row"><span>City:</span> <strong>${city}</strong></div>
-                <div class="detail-row">
-                  <span>Current Earning:</span>
-                  <strong style="color:var(--accent-green); font-size:12px;">Rs. ${balance}</strong>
-                </div>
-              </div>
-
-              <button class="action-btn" onclick="openBalanceModal('${userKey}')">
-                <i class="fa-solid fa-pen-to-square"></i> Edit User Balance
+              <button class="action-btn" onclick="openBalanceModal('${username}', '${balance}')">
+                <i class="fa-solid fa-pen-to-square"></i> Change / Update Balance
               </button>
             </div>
           `;
         }
       });
 
-      if (count === 0) {
-        grid.innerHTML = `<div class="no-data">No user matches "${query}"</div>`;
+      if (found === 0) {
+        listContainer.innerHTML = `<div class="loading-text">No user matched search criteria.</div>`;
       }
     }
 
-    // 7. EDIT BALANCE MODAL HANDLERS
-    function openBalanceModal(userKey) {
-      currentEditUserKey = userKey;
-      const u = globalUsers[userKey] || {};
-      document.getElementById('modalUserText').innerHTML = `User: <strong>${u.fullName || userKey}</strong> (@${userKey})`;
-      document.getElementById('newBalanceInput').value = u.balance !== undefined ? u.balance : "0.00";
-      document.getElementById('editBalanceModal').style.display = 'flex';
-    }
+    window.filterUsers = function() {
+      renderUsers(allUsersData);
+    };
 
-    function closeBalanceModal() {
-      document.getElementById('editBalanceModal').style.display = 'none';
-      currentEditUserKey = null;
-    }
+    window.openBalanceModal = function(username, currentBalance) {
+      document.getElementById('mUsername').value = username;
+      document.getElementById('mCurrentBalance').value = "Rs. " + currentBalance;
+      document.getElementById('mAmount').value = "";
+      document.getElementById('balanceModal').style.display = "flex";
+    };
 
-    function quickAdd(val) {
-      const input = document.getElementById('newBalanceInput');
-      let current = parseFloat(input.value) || 0;
-      current += val;
-      if (current < 0) current = 0;
-      input.value = current.toFixed(2);
-    }
+    window.closeBalanceModal = function() {
+      document.getElementById('balanceModal').style.display = "none";
+    };
 
-    function saveUserBalance() {
-      if (!currentEditUserKey) return;
-      const newBal = document.getElementById('newBalanceInput').value || "0.00";
+    window.saveBalanceUpdate = async function() {
+      const username = document.getElementById('mUsername').value;
+      const actionType = document.getElementById('mActionType').value;
+      const amountVal = parseFloat(document.getElementById('mAmount').value);
 
-      db.ref('users/' + currentEditUserKey).update({
-        balance: newBal
-      }).then(() => {
-        alert("Balance successfully updated to Rs. " + newBal);
+      if (isNaN(amountVal) || amountVal < 0) {
+        alert("Enter a valid positive number.");
+        return;
+      }
+
+      const currentBalance = parseFloat(allUsersData[username]?.balance || 0);
+      let newBalance = currentBalance;
+
+      if (actionType === 'set') {
+        newBalance = amountVal;
+      } else if (actionType === 'add') {
+        newBalance = currentBalance + amountVal;
+      } else if (actionType === 'subtract') {
+        newBalance = Math.max(0, currentBalance - amountVal);
+      }
+
+      try {
+        await update(ref(db, `users/${username}`), {
+          balance: newBalance.toFixed(2)
+        });
+        alert(`Balance successfully updated to Rs. ${newBalance.toFixed(2)}`);
         closeBalanceModal();
-      }).catch((err) => {
-        alert("Update Error: " + err.message);
-      });
-    }
-
-    // 8. RENDER MARKET ORDERS
-    function renderOrders() {
-      const grid = document.getElementById('ordersGrid');
-      grid.innerHTML = "";
-
-      const query = (document.getElementById('orderSearchInput').value || '').toLowerCase().trim();
-      const statusFilter = document.getElementById('orderStatusFilter').value;
-      const keys = Object.keys(globalOrders).reverse();
-
-      if (keys.length === 0) {
-        grid.innerHTML = `<div class="no-data">No orders placed in Database path ("orders").</div>`;
-        return;
+      } catch (err) {
+        alert("Failed to update balance: " + err.message);
       }
-
-      let count = 0;
-      keys.forEach(oKey => {
-        const ord = globalOrders[oKey] || {};
-        const pName = ord.productName || ord.title || 'Product Order';
-        const customer = ord.customerName || ord.username || 'Customer';
-        const mobile = ord.customerMobile || ord.mobile || '';
-        const qty = ord.quantity || 1;
-        const total = ord.totalPrice || ord.price || 0;
-        const status = ord.status || 'Pending';
-        const location = ord.customerLocation || ord.address || 'N/A';
-
-        const matchQuery = pName.toLowerCase().includes(query) || customer.toLowerCase().includes(query) || mobile.toLowerCase().includes(query);
-        const matchStatus = statusFilter === 'all' || status.toLowerCase() === statusFilter.toLowerCase();
-
-        if (matchQuery && matchStatus) {
-          count++;
-          let badgeClass = 'badge-pending';
-          if (status.toLowerCase() === 'ok' || status.toLowerCase() === 'delivered') badgeClass = 'badge-ok';
-          if (status.toLowerCase() === 'cancelled') badgeClass = 'badge-cancelled';
-
-          const cleanMobile = mobile.replace(/[^0-9]/g, '');
-
-          grid.innerHTML += `
-            <div class="data-card">
-              <div style="display:flex; justify-content:space-between; align-items:center;">
-                <h4 style="font-size:13px; color:var(--primary);">${pName}</h4>
-                <span class="badge ${badgeClass}">${status}</span>
-              </div>
-
-              <div class="details-box">
-                <div class="detail-row"><span>Customer:</span> <strong>${customer}</strong></div>
-                <div class="detail-row"><span>Mobile:</span> <strong>${mobile}</strong></div>
-                <div class="detail-row"><span>Address:</span> <strong>${location}</strong></div>
-                <div class="detail-row"><span>Quantity:</span> <strong>${qty} item(s)</strong></div>
-                <div class="detail-row">
-                  <span>Total Bill:</span>
-                  <strong style="color:var(--accent-green); font-size:12px;">Rs. ${total}</strong>
-                </div>
-              </div>
-
-              <div style="display:flex; gap:6px;">
-                ${cleanMobile ? `
-                  <a href="https://wa.me/${cleanMobile}" target="_blank" 
-                     style="background:#25d366; color:#fff; text-decoration:none; padding:8px; border-radius:6px; font-size:11px; font-weight:700; text-align:center; display:flex; align-items:center; justify-content:center; gap:4px;">
-                    <i class="fa-brands fa-whatsapp"></i> WhatsApp
-                  </a>
-                ` : ''}
-
-                <select style="flex:1; background:var(--card-inner); color:#fff; border:1px solid var(--border-color); padding:6px; border-radius:6px; font-size:11px; outline:none;"
-                        onchange="updateOrderStatus('${oKey}', this.value)">
-                  <option value="" disabled selected>Change Status...</option>
-                  <option value="Pending">Pending</option>
-                  <option value="OK">OK / Confirmed</option>
-                  <option value="Delivered">Delivered</option>
-                  <option value="Cancelled">Cancelled</option>
-                </select>
-              </div>
-            </div>
-          `;
-        }
-      });
-
-      if (count === 0) {
-        grid.innerHTML = `<div class="no-data">No orders found matching criteria.</div>`;
-      }
-    }
-
-    // 9. UPDATE ORDER STATUS
-    function updateOrderStatus(orderId, newStatus) {
-      if (!orderId || !newStatus) return;
-      db.ref('orders/' + orderId).update({
-        status: newStatus
-      }).then(() => {
-        alert("Order Status Updated to: " + newStatus);
-      }).catch(err => {
-        alert("Failed to update status: " + err.message);
-      });
-    }
-
-    // 10. ADD PRODUCT TO MARKET
-    function handleAddProduct(e) {
-      e.preventDefault();
-      const btn = document.getElementById('saveProdBtn');
-      btn.disabled = true;
-      btn.innerText = "Publishing...";
-
-      const newProd = {
-        name: document.getElementById('pName').value,
-        price: parseFloat(document.getElementById('pPrice').value) || 0,
-        image: document.getElementById('pImage').value,
-        details: document.getElementById('pDetails').value,
-        timestamp: Date.now()
-      };
-
-      db.ref('products').push(newProd).then(() => {
-        alert("New product published successfully!");
-        document.getElementById('addProductForm').reset();
-      }).catch(err => {
-        alert("Product Error: " + err.message);
-      }).finally(() => {
-        btn.disabled = false;
-        btn.innerText = "Publish Product to Market";
-      });
-    }
-
-    // 11. RENDER PUBLISHED PRODUCTS LIST
-    function renderProducts() {
-      const container = document.getElementById('productsList');
-      container.innerHTML = "";
-      const keys = Object.keys(globalProducts);
-
-      if (keys.length === 0) {
-        container.innerHTML = `<div class="no-data" style="padding:10px;">No products added yet.</div>`;
-        return;
-      }
-
-      keys.forEach(pId => {
-        const p = globalProducts[pId] || {};
-        container.innerHTML += `
-          <div style="background:var(--card-inner); padding:8px 10px; border-radius:6px; display:flex; justify-content:space-between; align-items:center; font-size:11px;">
-            <div>
-              <strong>${p.name || 'Item'}</strong> - <span style="color:var(--accent-green)">Rs. ${p.price || 0}</span>
-            </div>
-            <button onclick="deleteProduct('${pId}')" style="background:#ef4444; color:#fff; border:none; padding:4px 8px; border-radius:4px; font-size:10px; cursor:pointer;">
-              Delete
-            </button>
-          </div>
-        `;
-      });
-    }
-
-    function deleteProduct(pId) {
-      if (confirm("Delete this product from Market?")) {
-        db.ref('products/' + pId).remove().catch(err => alert("Delete Error: " + err.message));
-      }
-    }
+    };
   </script>
 </body>
 </html>

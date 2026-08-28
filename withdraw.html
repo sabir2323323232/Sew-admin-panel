@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SEW - Withdrawal Admin Panel</title>
+  
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+
+  <style>
+    :root {
+      --bg-body: #0f172a;
+      --card-bg: #1e293b;
+      --border-color: rgba(255, 255, 255, 0.1);
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+      --accent-green: #10b981;
+      --accent-red: #ef4444;
+      --accent-gold: #f59e0b;
+      --primary: #2563eb;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Plus Jakarta Sans', sans-serif; }
+    body { background: var(--bg-body); color: var(--text-main); min-height: 100vh; padding: 15px; }
+
+    .header {
+      max-width: 850px;
+      margin: 0 auto 15px auto;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: var(--card-bg);
+      padding: 14px 20px;
+      border-radius: 14px;
+      border: 1px solid var(--border-color);
+    }
+
+    .header h2 { font-size: 18px; font-weight: 800; color: #3b82f6; display: flex; align-items: center; gap: 8px; }
+
+    .stats-bar {
+      max-width: 850px;
+      margin: 0 auto 15px auto;
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 10px;
+    }
+
+    .stat-card {
+      background: var(--card-bg);
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      padding: 12px;
+      text-align: center;
+    }
+    .stat-card div:first-child { font-size: 10px; color: var(--text-muted); font-weight: 700; text-transform: uppercase; }
+    .stat-card div:last-child { font-size: 18px; font-weight: 800; margin-top: 4px; }
+
+    .container { max-width: 850px; margin: 0 auto; display: flex; flex-direction: column; gap: 12px; }
+
+    .withdraw-item {
+      background: var(--card-bg);
+      border: 1px solid var(--border-color);
+      border-radius: 14px;
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .item-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+      padding-bottom: 10px;
+    }
+
+    .user-tag { font-size: 13px; font-weight: 800; color: #60a5fa; display: flex; align-items: center; gap: 6px; }
+    .date-tag { font-size: 11px; color: var(--text-muted); font-weight: 600; }
+
+    .details-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 10px;
+      background: rgba(0, 0, 0, 0.25);
+      padding: 12px;
+      border-radius: 10px;
+      border: 1px solid rgba(255, 255, 255, 0.05);
+    }
+
+    .detail-box label { font-size: 9px; color: var(--text-muted); display: block; font-weight: 700; text-transform: uppercase; margin-bottom: 2px; }
+    .detail-box span { font-size: 12px; font-weight: 700; color: #ffffff; word-break: break-all; }
+    .detail-box .amount-val { font-size: 16px; color: #34d399; font-weight: 800; }
+
+    .item-bottom {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .btn-group { display: flex; gap: 8px; }
+
+    .btn {
+      padding: 8px 16px;
+      border-radius: 8px;
+      border: none;
+      font-size: 11px;
+      font-weight: 800;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.2s;
+    }
+
+    .btn-approve { background: var(--accent-green); color: #fff; }
+    .btn-reject { background: var(--accent-red); color: #fff; }
+    .btn:hover { opacity: 0.9; transform: translateY(-1px); }
+
+    .badge { font-size: 10px; font-weight: 800; padding: 5px 12px; border-radius: 20px; text-transform: uppercase; }
+    .badge-pending { background: rgba(245, 158, 11, 0.2); color: #fbbf24; border: 1px solid rgba(245, 158, 11, 0.3); }
+    .badge-approved { background: rgba(16, 185, 129, 0.2); color: #34d399; border: 1px solid rgba(16, 185, 129, 0.3); }
+    .badge-rejected { background: rgba(239, 68, 68, 0.2); color: #f87171; border: 1px solid rgba(239, 68, 68, 0.3); }
+  </style>
+</head>
+<body>
+
+  <div class="header">
+    <h2><i class="fa-solid fa-money-bill-transfer"></i> Withdrawal Requests Admin</h2>
+    <div style="font-size:11px; font-weight:700; color:var(--text-muted);" id="liveStatus">Live Sync</div>
+  </div>
+
+  <div class="stats-bar">
+    <div class="stat-card">
+      <div>Total Requests</div>
+      <div id="totalCount">0</div>
+    </div>
+    <div class="stat-card">
+      <div>Pending</div>
+      <div id="pendingCount" style="color:#fbbf24;">0</div>
+    </div>
+    <div class="stat-card">
+      <div>Approved</div>
+      <div id="approvedCount" style="color:#34d399;">0</div>
+    </div>
+    <div class="stat-card">
+      <div>Total Amount</div>
+      <div id="totalAmountSum" style="color:#60a5fa;">Rs. 0</div>
+    </div>
+  </div>
+
+  <div class="container" id="adminList">
+    <div style="text-align:center; padding:30px; color:var(--text-muted);">Loading Withdrawals...</div>
+  </div>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+    import { getDatabase, ref, onValue, update, get } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyAsnATksiqZzMHOPO64i_bKqLJW6yjq9lw",
+      authDomain: "newweb-d50af.firebaseapp.com",
+      databaseURL: "https://newweb-d50af-default-rtdb.firebaseio.com",
+      projectId: "newweb-d50af",
+      storageBucket: "newweb-d50af.firebasestorage.app",
+      messagingSenderId: "358603295768",
+      appId: "1:358603295768:web:82a9666514a7cb468c476d"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getDatabase(app);
+
+    // REAL-TIME LISTENER FOR WITHDRAWALS
+    onValue(ref(db, 'withdrawals'), (snapshot) => {
+      const container = document.getElementById('adminList');
+
+      if (!snapshot.exists()) {
+        container.innerHTML = `<div style="text-align:center; padding:30px; color:var(--text-muted);">Koi withdrawal request nahi mili.</div>`;
+        document.getElementById('totalCount').innerText = "0";
+        document.getElementById('pendingCount').innerText = "0";
+        document.getElementById('approvedCount').innerText = "0";
+        document.getElementById('totalAmountSum').innerText = "Rs. 0";
+        return;
+      }
+
+      const allData = snapshot.val();
+      const keys = Object.keys(allData).sort((a, b) => new Date(allData[b].timestamp || 0) - new Date(allData[a].timestamp || 0));
+
+      let total = 0, pending = 0, approved = 0, totalAmt = 0;
+      let html = "";
+
+      keys.forEach(key => {
+        const item = allData[key];
+        if (!item) return;
+
+        total++;
+        const amt = parseFloat(item.amount || 0);
+        totalAmt += amt;
+
+        const st = (item.status || 'pending').toLowerCase();
+        if (st === 'pending') pending++;
+        if (st === 'approved' || st === 'completed' || st === 'success') approved++;
+
+        let badgeClass = 'badge-pending';
+        let statusTxt = 'Pending';
+        if (st === 'approved' || st === 'completed' || st === 'success') {
+          badgeClass = 'badge-approved';
+          statusTxt = 'Approved';
+        } else if (st === 'rejected' || st === 'failed') {
+          badgeClass = 'badge-rejected';
+          statusTxt = 'Rejected';
+        }
+
+        html += `
+          <div class="withdraw-item">
+            <div class="item-top">
+              <span class="user-tag"><i class="fa-solid fa-user-circle"></i> ${item.username || 'Unknown'}</span>
+              <span class="date-tag"><i class="fa-regular fa-clock"></i> ${item.date || 'N/A'}</span>
+            </div>
+
+            <div class="details-grid">
+              <div class="detail-box">
+                <label>AMOUNT</label>
+                <span class="amount-val">Rs. ${amt.toFixed(2)}</span>
+              </div>
+              <div class="detail-box">
+                <label>METHOD</label>
+                <span>${item.paymentMethod || 'N/A'}</span>
+              </div>
+              <div class="detail-box">
+                <label>ACCOUNT TITLE</label>
+                <span>${item.fullName || 'N/A'}</span>
+              </div>
+              <div class="detail-box">
+                <label>MOBILE / ACC NUMBER</label>
+                <span style="color:#fbbf24;">${item.accountNumber || 'N/A'}</span>
+              </div>
+              <div class="detail-box" style="grid-column: span 2;">
+                <label>EMAIL</label>
+                <span>${item.email || 'N/A'}</span>
+              </div>
+            </div>
+
+            <div class="item-bottom">
+              <span class="badge ${badgeClass}">${statusTxt}</span>
+              ${st === 'pending' ? `
+                <div class="btn-group">
+                  <button class="btn btn-approve" onclick="window.approveWithdraw('${key}', '${item.username}', ${amt})">
+                    <i class="fa-solid fa-check"></i> Approve
+                  </button>
+                  <button class="btn btn-reject" onclick="window.rejectWithdraw('${key}', '${item.username}', ${amt})">
+                    <i class="fa-solid fa-xmark"></i> Reject & Refund
+                  </button>
+                </div>
+              ` : ''}
+            </div>
+          </div>
+        `;
+      });
+
+      document.getElementById('totalCount').innerText = total;
+      document.getElementById('pendingCount').innerText = pending;
+      document.getElementById('approvedCount').innerText = approved;
+      document.getElementById('totalAmountSum').innerText = "Rs. " + totalAmt.toFixed(0);
+
+      container.innerHTML = html;
+    });
+
+    // APPROVE ACTION
+    window.approveWithdraw = async (key, username, amount) => {
+      if (!confirm(`Kya aap ${username} ka Rs. ${amount} ka withdrawal APPROVE karna chahte hain?`)) return;
+
+      try {
+        await update(ref(db, `withdrawals/${key}`), { status: 'approved' });
+        alert(`Withdrawal Approved successfully!`);
+      } catch (e) {
+        alert("Error: " + e.message);
+      }
+    };
+
+    // REJECT ACTION (Refunds Balance Back to User)
+    window.rejectWithdraw = async (key, username, amount) => {
+      if (!confirm(`Kya aap is request ko REJECT karna chahte hain? Rs. ${amount} user ko wapas refund ho jayenge.`)) return;
+
+      try {
+        const userRef = ref(db, `users/${username}`);
+        const userSnap = await get(userRef);
+
+        let currentBalance = 0;
+        if (userSnap.exists()) {
+          currentBalance = parseFloat(userSnap.val().balance || 0);
+        }
+
+        const refundedBalance = (currentBalance + parseFloat(amount)).toFixed(2);
+
+        // Atomic multi-path update
+        const updates = {};
+        updates[`users/${username}/balance`] = refundedBalance;
+        updates[`withdrawals/${key}/status`] = 'rejected';
+
+        await update(ref(db), updates);
+        alert(`Withdrawal Reject kar diya gaya aur Rs. ${amount} user (${username}) ko refund ho gaye.`);
+
+      } catch (e) {
+        alert("Reject Error: " + e.message);
+      }
+    };
+  </script>
+</body>
+</html>

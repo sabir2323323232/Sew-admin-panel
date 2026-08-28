@@ -131,7 +131,6 @@
       outline: none;
     }
 
-    /* CARD DESIGN */
     .card {
       background: #ffffff;
       border: 1px solid var(--border-color);
@@ -179,7 +178,6 @@
       word-break: break-word;
     }
 
-    /* PAGINATION STYLES */
     .pagination-bar {
       display: flex;
       justify-content: space-between;
@@ -213,7 +211,6 @@
       color: var(--text-muted);
     }
 
-    /* DASHBOARD LINKS GRID */
     .quick-links-grid {
       display: grid;
       grid-template-columns: repeat(2, 1fr);
@@ -244,7 +241,6 @@
       color: var(--primary);
     }
 
-    /* FORM STYLES */
     .form-group {
       margin-bottom: 10px;
     }
@@ -331,6 +327,17 @@
       cursor: pointer;
       font-weight: 800;
     }
+
+    /* PREVIEW THUMBNAIL STYLE */
+    .img-preview {
+      width: 60px;
+      height: 60px;
+      object-fit: cover;
+      border-radius: 6px;
+      margin-top: 6px;
+      border: 1px solid var(--border-color);
+      display: none;
+    }
   </style>
 </head>
 <body>
@@ -363,7 +370,7 @@
 
   <div class="container">
 
-    <!-- 1. USERS MANAGEMENT TAB (WITH 10-PER-PAGE PAGINATION) -->
+    <!-- 1. USERS MANAGEMENT TAB -->
     <section id="usersTab" class="tab-content active">
       <div class="search-box">
         <i class="fa-solid fa-magnifying-glass"></i>
@@ -374,7 +381,6 @@
         <div style="text-align:center; color:var(--text-muted); padding:20px; font-size:12px;">Fetching registered users...</div>
       </div>
 
-      <!-- PAGINATION CONTROLS -->
       <div class="pagination-bar">
         <button id="prevPageBtn" class="page-btn" onclick="changePage(-1)"><i class="fa-solid fa-chevron-left"></i> Prev</button>
         <span id="pageInfoDisplay" class="page-info">Page 1 of 1</span>
@@ -389,7 +395,7 @@
       </div>
     </section>
 
-    <!-- 3. ADD PRODUCT TAB -->
+    <!-- 3. ADD PRODUCT TAB (UPDATED WITH BASE64 FILE INPUT) -->
     <section id="productsTab" class="tab-content">
       <div class="card">
         <h3 style="font-size: 13px; font-weight: 800; margin-bottom: 10px;"><i class="fa-solid fa-plus-circle"></i> Add New Market Product</h3>
@@ -416,9 +422,16 @@
             <input type="number" id="pPrice" placeholder="2499" required min="1" />
           </div>
 
+          <!-- PHOTO FILE INPUT & BASE64 PREVIEW -->
           <div class="form-group">
-            <label>Image URL</label>
-            <input type="url" id="pImage" placeholder="https://images.unsplash.com/photo-..." required />
+            <label>Select Product Image File</label>
+            <input type="file" id="productImageFile" accept="image/*" style="margin-bottom: 6px;" />
+            
+            <label style="font-size:10px; color:var(--text-muted);">OR Enter Image Direct URL:</label>
+            <input type="url" id="pImage" placeholder="https://..." />
+            
+            <!-- Live Preview Thumbnail -->
+            <img id="imagePreview" class="img-preview" alt="Image Preview" />
           </div>
 
           <div class="form-group">
@@ -525,13 +538,35 @@
     const app = initializeApp(firebaseConfig);
     const db = getDatabase(app);
 
-    // Global App States
     let allUsersList = [];
     let currentPage = 1;
     const pageSize = 10;
     let allOrdersMap = {};
 
-    // TAB SWITCHER FUNCTION
+    // BASE64 IMAGE STORAGE VARIABLE
+    let imageBase64String = "";
+
+    // PHOTO INPUT FILE LISTENER (BASE64 CONVERSION)
+    const fileInput = document.getElementById('productImageFile');
+    const imagePreview = document.getElementById('imagePreview');
+
+    if (fileInput) {
+      fileInput.addEventListener('change', (e) => {
+        const file = e.target.files[0];
+        if (file) {
+          const reader = new FileReader();
+          reader.onload = function(evt) {
+            imageBase64String = evt.target.result; // DataURL String
+            if (imagePreview) {
+              imagePreview.src = imageBase64String;
+              imagePreview.style.display = 'block';
+            }
+          };
+          reader.readAsDataURL(file);
+        }
+      });
+    }
+
     window.switchTab = function(tabId, btnElement) {
       document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
       document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
@@ -539,9 +574,7 @@
       if (btnElement) btnElement.classList.add('active');
     };
 
-    // -----------------------------------------------------------------
-    // 1. REALTIME USERS FETCH & 10-PER-PAGE PAGINATION
-    // -----------------------------------------------------------------
+    // 1. USERS FETCH & PAGINATION
     onValue(ref(db, 'users'), (snapshot) => {
       allUsersList = [];
       if (snapshot.exists()) {
@@ -625,9 +658,7 @@
       renderPaginatedUsers();
     };
 
-    // -----------------------------------------------------------------
-    // 2. REALTIME ORDERS MANAGEMENT
-    // -----------------------------------------------------------------
+    // 2. ORDERS MANAGEMENT
     onValue(ref(db, 'orders'), (snapshot) => {
       const container = document.getElementById('ordersList');
       container.innerHTML = "";
@@ -672,7 +703,6 @@
       });
     });
 
-    // ORDER CONFIRM / REJECT HONAY PAR AUTO REMOVE FUNCTION
     window.updateOrderStatus = async function(orderKey, newStatus) {
       try {
         await remove(ref(db, `orders/${orderKey}`));
@@ -682,16 +712,23 @@
       }
     };
 
-    // -----------------------------------------------------------------
-    // 3. PRODUCT MANAGEMENT (ADD NEW & LIST)
-    // -----------------------------------------------------------------
+    // 3. ADD PRODUCT LOGIC (FIREBASE PUSH WITH BASE64 / URL FALLBACK)
     window.handleAddProduct = async function(e) {
       e.preventDefault();
+
+      const urlImage = document.getElementById('pImage').value.trim();
+      const finalImage = imageBase64String || urlImage;
+
+      if (!finalImage) {
+        alert("Please select an image file or enter an Image URL.");
+        return;
+      }
+
       const pData = {
         name: document.getElementById('pName').value.trim(),
         category: document.getElementById('pCategory').value,
         price: parseFloat(document.getElementById('pPrice').value),
-        image: document.getElementById('pImage').value.trim(),
+        image: finalImage,
         details: document.getElementById('pDetails').value.trim(),
         createdAt: Date.now()
       };
@@ -699,7 +736,14 @@
       try {
         await push(ref(db, 'products'), pData);
         alert("Product added successfully to Dashboard!");
+
+        // Reset Form & Base64 State
         document.getElementById('addProductForm').reset();
+        imageBase64String = "";
+        if (imagePreview) {
+          imagePreview.style.display = 'none';
+          imagePreview.src = "";
+        }
       } catch (err) {
         alert("Failed to add product: " + err.message);
       }
@@ -740,9 +784,7 @@
       }
     };
 
-    // -----------------------------------------------------------------
-    // 4. EDIT USER BALANCE MODAL LOGIC
-    // -----------------------------------------------------------------
+    // 4. BALANCE MODAL FUNCTIONS
     window.openBalanceModal = function(username) {
       document.getElementById('mUserKey').value = username;
       document.getElementById('mAmount').value = "";

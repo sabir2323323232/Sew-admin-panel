@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -251,6 +252,15 @@
 
     <div class="dashboard-grid">
       
+      <!-- User (Added) -->
+      <a href="user.html" class="dash-btn">
+        <div class="dash-btn-content">
+          <div class="icon-box"><i class="fa-solid fa-user"></i></div>
+          <span>User</span>
+        </div>
+        <i class="fa-solid fa-chevron-right arrow"></i>
+      </a>
+
       <!-- Gmail User -->
       <a href="gmail-user.html" class="dash-btn">
         <div class="dash-btn-content">
@@ -319,7 +329,6 @@
     const AUTH_EMAIL = "sabirkhansadre@gmail.com";
     const AUTH_PASS = "Sabirhira1@";
 
-    // Auto login check session
     window.onload = function() {
       if (sessionStorage.getItem("adminLoggedIn") === "true") {
         showDashboard();

@@ -3,54 +3,594 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>SEW Admin - User Management</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>SEW - Control Admin Panel</title>
+
+  <!-- Fonts & Icons -->
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+
   <style>
     :root {
-      --bg-body: #f1f5f9;
-      --card-bg: #ffffff;
-      --primary: #2563eb;
-      --text-main: #0f172a;
-      --text-muted: #64748b;
-      --border-color: #e2e8f0;
+      --bg-body: #0f172a;
+      --card-bg: #1e293b;
+      --card-inner: #334155;
+      --primary: #3b82f6;
+      --primary-hover: #2563eb;
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+      --border-color: #334155;
       --accent-green: #10b981;
+      --accent-orange: #f59e0b;
       --accent-red: #ef4444;
     }
-    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Plus Jakarta Sans', sans-serif; }
-    body { background-color: var(--bg-body); color: var(--text-main); padding: 12px; }
-    .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; gap: 10px; flex-wrap: wrap; }
-    .header h2 { font-size: 18px; font-weight: 800; color: var(--primary); }
-    .search-input { padding: 8px 12px; border: 1px solid var(--border-color); border-radius: 6px; font-size: 12px; width: 100%; max-width: 300px; outline: none; }
-    .user-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 10px; }
-    .user-card { background: #fff; border-radius: 10px; padding: 12px; border: 1px solid var(--border-color); }
-    .user-card-header { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; }
-    .avatar { width: 32px; height: 32px; background: var(--primary); color: #fff; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 14px; }
-    .user-title h4 { font-size: 12px; font-weight: 700; }
-    .user-title p { font-size: 10px; color: var(--text-muted); }
-    .info-row { font-size: 11px; margin-bottom: 4px; display: flex; justify-content: space-between; }
-    .earning-edit-box { margin-top: 10px; padding-top: 8px; border-top: 1px dashed var(--border-color); display: flex; gap: 6px; align-items: center; }
-    .earning-input { width: 100px; padding: 5px; border: 1px solid var(--border-color); border-radius: 4px; font-size: 11px; font-weight: 700; }
-    .save-btn { background: var(--accent-green); color: #fff; border: none; padding: 5px 10px; border-radius: 4px; font-size: 10px; font-weight: 700; cursor: pointer; }
-    .status-msg { padding: 12px; border-radius: 6px; font-size: 13px; font-weight: 600; background: #fff; border: 1px solid var(--border-color); }
-    .error-msg { color: var(--accent-red); background: #fef2f2; border-color: #fca5a5; }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+    }
+
+    body {
+      background-color: var(--bg-body);
+      color: var(--text-main);
+      min-height: 100vh;
+      padding-bottom: 30px;
+    }
+
+    /* HEADER */
+    .admin-header {
+      background: #1e293b;
+      border-bottom: 1px solid var(--border-color);
+      padding: 12px 16px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-weight: 800;
+      font-size: 16px;
+      color: var(--primary);
+    }
+
+    .brand-badge {
+      background: rgba(59, 130, 246, 0.2);
+      color: var(--primary);
+      padding: 2px 8px;
+      border-radius: 12px;
+      font-size: 10px;
+      font-weight: 700;
+    }
+
+    /* STATS SUMMARY BAR */
+    .stats-container {
+      max-width: 1100px;
+      margin: 12px auto;
+      padding: 0 12px;
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+    }
+
+    .stat-card {
+      background: var(--card-bg);
+      border: 1px solid var(--border-color);
+      border-radius: 10px;
+      padding: 10px;
+      text-align: center;
+    }
+
+    .stat-number {
+      font-size: 18px;
+      font-weight: 800;
+      color: var(--primary);
+    }
+
+    .stat-label {
+      font-size: 10px;
+      color: var(--text-muted);
+      font-weight: 600;
+      text-transform: uppercase;
+    }
+
+    /* NAVIGATION TABS */
+    .tabs-wrapper {
+      max-width: 1100px;
+      margin: 0 auto 12px auto;
+      padding: 0 12px;
+      display: flex;
+      gap: 6px;
+    }
+
+    .tab-btn {
+      flex: 1;
+      background: var(--card-bg);
+      border: 1px solid var(--border-color);
+      color: var(--text-muted);
+      padding: 10px 4px;
+      border-radius: 8px;
+      font-weight: 700;
+      font-size: 11px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      transition: all 0.2s;
+    }
+
+    .tab-btn.active {
+      background: var(--primary);
+      color: #ffffff;
+      border-color: var(--primary);
+    }
+
+    /* MAIN CONTAINER */
+    .main-content {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 0 12px;
+    }
+
+    .tab-content {
+      display: none;
+    }
+    .tab-content.active {
+      display: block;
+    }
+
+    /* SEARCH & FILTER BAR */
+    .search-filter-bar {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 12px;
+      flex-wrap: wrap;
+    }
+
+    .search-input {
+      flex: 1;
+      min-width: 200px;
+      background: var(--card-bg);
+      border: 1px solid var(--border-color);
+      color: var(--text-main);
+      padding: 8px 12px;
+      border-radius: 8px;
+      font-size: 12px;
+      outline: none;
+    }
+
+    .filter-select {
+      background: var(--card-bg);
+      border: 1px solid var(--border-color);
+      color: var(--text-main);
+      padding: 8px 10px;
+      border-radius: 8px;
+      font-size: 12px;
+      outline: none;
+    }
+
+    /* USER MANAGEMENT GRID / TABLE */
+    .users-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 10px;
+    }
+
+    .user-card {
+      background: var(--card-bg);
+      border: 1px solid var(--border-color);
+      border-radius: 10px;
+      padding: 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .user-card-header {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .user-avatar {
+      width: 36px; height: 36px;
+      background: var(--primary);
+      color: #fff;
+      font-weight: 800;
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 14px;
+    }
+
+    .user-info-names h4 {
+      font-size: 13px;
+      font-weight: 800;
+    }
+
+    .user-info-names p {
+      font-size: 10px;
+      color: var(--text-muted);
+    }
+
+    .user-details-list {
+      background: var(--card-inner);
+      border-radius: 6px;
+      padding: 8px;
+      font-size: 10px;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .detail-row {
+      display: flex;
+      justify-content: space-between;
+    }
+
+    .detail-row span:first-child {
+      color: var(--text-muted);
+    }
+
+    .balance-badge {
+      font-size: 12px;
+      font-weight: 800;
+      color: var(--accent-green);
+    }
+
+    .action-btn {
+      background: var(--primary);
+      color: #ffffff;
+      border: none;
+      padding: 6px 10px;
+      border-radius: 6px;
+      font-size: 11px;
+      font-weight: 700;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 5px;
+    }
+
+    .action-btn:hover {
+      background: var(--primary-hover);
+    }
+
+    /* ORDERS GRID */
+    .orders-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+      gap: 10px;
+    }
+
+    .order-card {
+      background: var(--card-bg);
+      border: 1px solid var(--border-color);
+      border-radius: 10px;
+      padding: 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .order-title-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      border-bottom: 1px solid var(--border-color);
+      padding-bottom: 6px;
+    }
+
+    .order-pname {
+      font-size: 13px;
+      font-weight: 800;
+      color: var(--primary);
+    }
+
+    .order-time {
+      font-size: 9px;
+      color: var(--text-muted);
+    }
+
+    .badge-status {
+      font-size: 9px;
+      font-weight: 800;
+      padding: 2px 6px;
+      border-radius: 4px;
+      text-transform: uppercase;
+    }
+    .badge-pending { background: rgba(245, 158, 11, 0.2); color: var(--accent-orange); }
+    .badge-ok { background: rgba(16, 185, 129, 0.2); color: var(--accent-green); }
+    .badge-cancelled { background: rgba(239, 68, 68, 0.2); color: var(--accent-red); }
+
+    .whatsapp-btn {
+      background: #25d366;
+      color: #fff;
+      padding: 4px 8px;
+      border-radius: 5px;
+      font-size: 10px;
+      font-weight: 700;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .status-select {
+      background: var(--card-inner);
+      color: #fff;
+      border: 1px solid var(--border-color);
+      padding: 5px;
+      border-radius: 5px;
+      font-size: 10px;
+      font-weight: 700;
+      outline: none;
+      width: 100%;
+    }
+
+    /* MODAL */
+    .modal-overlay {
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0, 0, 0, 0.7);
+      display: none;
+      justify-content: center;
+      align-items: center;
+      z-index: 200;
+      padding: 12px;
+    }
+
+    .modal-box {
+      background: var(--card-bg);
+      width: 100%;
+      max-width: 340px;
+      border-radius: 12px;
+      padding: 16px;
+      border: 1px solid var(--border-color);
+    }
+
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+    }
+
+    .modal-header h3 {
+      font-size: 14px;
+      font-weight: 800;
+    }
+
+    .close-btn {
+      background: none;
+      border: none;
+      color: var(--text-muted);
+      font-size: 16px;
+      cursor: pointer;
+    }
+
+    .form-group {
+      margin-bottom: 10px;
+    }
+
+    .form-group label {
+      display: block;
+      font-size: 10px;
+      color: var(--text-muted);
+      margin-bottom: 4px;
+      font-weight: 700;
+    }
+
+    .form-group input, .form-group textarea, .form-group select {
+      width: 100%;
+      padding: 8px;
+      background: var(--card-inner);
+      border: 1px solid var(--border-color);
+      color: #fff;
+      border-radius: 6px;
+      font-size: 12px;
+      outline: none;
+    }
+
+    .quick-add-btns {
+      display: flex;
+      gap: 4px;
+      margin-bottom: 10px;
+    }
+
+    .quick-btn {
+      flex: 1;
+      background: var(--card-inner);
+      border: 1px solid var(--border-color);
+      color: var(--text-main);
+      padding: 4px;
+      font-size: 9px;
+      font-weight: 700;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+
+    .quick-btn:hover {
+      background: var(--primary);
+    }
+
+    .save-btn {
+      width: 100%;
+      padding: 8px;
+      background: var(--accent-green);
+      color: #fff;
+      border: none;
+      border-radius: 6px;
+      font-weight: 800;
+      font-size: 12px;
+      cursor: pointer;
+    }
+
+    .no-data {
+      text-align: center;
+      padding: 30px;
+      color: var(--text-muted);
+      font-size: 12px;
+    }
   </style>
 </head>
 <body>
 
-  <div class="header">
-    <h2><i class="fa-solid fa-users-gear"></i> User Management Admin</h2>
-    <input type="text" id="userSearch" class="search-input" placeholder="Search user by name or mobile..." onkeyup="filterUsers()" />
+  <!-- ADMIN HEADER -->
+  <header class="admin-header">
+    <div class="brand">
+      <i class="fa-solid fa-shield-halved"></i> SEW Admin <span class="brand-badge">Control Panel</span>
+    </div>
+  </header>
+
+  <!-- STATS BAR -->
+  <div class="stats-container">
+    <div class="stat-card">
+      <div class="stat-number" id="statTotalUsers">0</div>
+      <div class="stat-label">Total Users</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-number" id="statTotalOrders">0</div>
+      <div class="stat-label">Total Orders</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-number" id="statPendingOrders" style="color:var(--accent-orange)">0</div>
+      <div class="stat-label">Pending Orders</div>
+    </div>
   </div>
 
-  <div id="statusBox" class="status-msg"><i class="fa-solid fa-spinner fa-spin"></i> Connecting to Firebase Realtime Database...</div>
-  <div class="user-grid" id="userContainer" style="margin-top: 10px;"></div>
+  <!-- NAVIGATION TABS -->
+  <div class="tabs-wrapper">
+    <button class="tab-btn active" onclick="switchTab('usersTab', this)">
+      <i class="fa-solid fa-users"></i> Users & Earnings
+    </button>
+    <button class="tab-btn" onclick="switchTab('ordersTab', this)">
+      <i class="fa-solid fa-cart-shopping"></i> Market Orders
+    </button>
+    <button class="tab-btn" onclick="switchTab('productsTab', this)">
+      <i class="fa-solid fa-box-open"></i> Add Product
+    </button>
+  </div>
 
+  <!-- MAIN CONTENT CONTAINER -->
+  <div class="main-content">
+
+    <!-- TAB 1: USER & EARNING MANAGEMENT -->
+    <div id="usersTab" class="tab-content active">
+      <div class="search-filter-bar">
+        <input type="text" id="userSearchInput" class="search-input" placeholder="Search by name, username, email, mobile..." oninput="renderUsers()" />
+      </div>
+
+      <div class="users-grid" id="usersGrid">
+        <div class="no-data">Loading registered users...</div>
+      </div>
+    </div>
+
+    <!-- TAB 2: MARKET ORDERS MANAGEMENT -->
+    <div id="ordersTab" class="tab-content">
+      <div class="search-filter-bar">
+        <input type="text" id="orderSearchInput" class="search-input" placeholder="Search by product, customer name, mobile..." oninput="renderOrders()" />
+        <select id="orderStatusFilter" class="filter-select" onchange="renderOrders()">
+          <option value="all">All Orders</option>
+          <option value="Pending">Pending</option>
+          <option value="OK">OK / Confirmed</option>
+          <option value="Delivered">Delivered</option>
+          <option value="Cancelled">Cancelled</option>
+        </select>
+      </div>
+
+      <div class="orders-grid" id="ordersGrid">
+        <div class="no-data">Loading market orders...</div>
+      </div>
+    </div>
+
+    <!-- TAB 3: ADD NEW MARKET PRODUCT -->
+    <div id="productsTab" class="tab-content">
+      <div style="background: var(--card-bg); padding:16px; border-radius:10px; border:1px solid var(--border-color); max-width: 500px; margin: 0 auto;">
+        <h3 style="font-size:14px; font-weight:800; margin-bottom:12px; color:var(--primary)">
+          <i class="fa-solid fa-plus-circle"></i> Add New Product to Market
+        </h3>
+        <form id="addProductForm" onsubmit="handleAddProduct(event)">
+          <div class="form-group">
+            <label>Product Name</label>
+            <input type="text" id="pName" placeholder="e.g. Smart Watch V8" required />
+          </div>
+          <div class="form-group">
+            <label>Category</label>
+            <select id="pCategory">
+              <option value="tools">Tools / Electronics</option>
+              <option value="clothes">Clothes</option>
+              <option value="mobiles">Mobiles</option>
+              <option value="motors">Motors</option>
+              <option value="jewelry">Jewelry</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Price (PKR)</label>
+            <input type="number" id="pPrice" placeholder="e.g. 1500" required />
+          </div>
+          <div class="form-group">
+            <label>Image URL</label>
+            <input type="url" id="pImage" placeholder="https://example.com/image.jpg" required />
+          </div>
+          <div class="form-group">
+            <label>Product Details / Description</label>
+            <textarea id="pDetails" rows="3" placeholder="Enter feature details..." required></textarea>
+          </div>
+          <button type="submit" class="save-btn" id="saveProductBtn">Publish Product</button>
+        </form>
+
+        <h4 style="font-size:12px; font-weight:800; margin:16px 0 8px 0;">Existing Products</h4>
+        <div id="existingProductsList" style="display:flex; flex-direction:column; gap:6px;">
+          <!-- Loaded realtime -->
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- EDIT USER BALANCE MODAL -->
+  <div class="modal-overlay" id="editBalanceModal">
+    <div class="modal-box">
+      <div class="modal-header">
+        <h3>Edit User Earning / Balance</h3>
+        <button class="close-btn" onclick="closeBalanceModal()">✕</button>
+      </div>
+
+      <div style="font-size:11px; margin-bottom:10px;">
+        Editing balance for: <strong id="modalTargetUser" style="color:var(--primary)">-</strong>
+      </div>
+
+      <div class="form-group">
+        <label>Current Balance (PKR)</label>
+        <input type="number" step="0.01" id="newBalanceInput" placeholder="0.00" />
+      </div>
+
+      <div class="quick-add-btns">
+        <button class="quick-btn" onclick="adjustBalance(100)">+100</button>
+        <button class="quick-btn" onclick="adjustBalance(500)">+500</button>
+        <button class="quick-btn" onclick="adjustBalance(1000)">+1000</button>
+        <button class="quick-btn" onclick="adjustBalance(-100)">-100</button>
+      </div>
+
+      <button class="save-btn" onclick="saveUserBalance()">Update Balance</button>
+    </div>
+  </div>
+
+  <!-- FIREBASE MODULE SCRIPT -->
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-    import { getDatabase, ref, onValue, update } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+    import { getDatabase, ref, onValue, update, push, remove } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
 
+    // Firebase Config
     const firebaseConfig = {
       apiKey: "AIzaSyAsnATksiqZzMHOPO64i_bKqLJW6yjq9lw",
       authDomain: "newweb-d50af.firebaseapp.com",
@@ -63,95 +603,319 @@
 
     const app = initializeApp(firebaseConfig);
     const db = getDatabase(app);
+
     let allUsersData = {};
+    let allOrdersData = {};
+    let allProductsData = {};
+    let activeEditingUsername = null;
 
-    const statusBox = document.getElementById('statusBox');
-    const container = document.getElementById('userContainer');
+    // TAB SWITCHER
+    window.switchTab = function(tabId, el) {
+      document.querySelectorAll('.tab-content').forEach(tc => tc.classList.remove('active'));
+      document.querySelectorAll('.tab-btn').forEach(tb => tb.classList.remove('active'));
+      
+      document.getElementById(tabId).classList.add('active');
+      if(el) el.classList.add('active');
+    };
 
-    // Realtime Listener with Error Handling
+    // 1. LISTEN TO REALTIME USERS
     onValue(ref(db, 'users'), (snapshot) => {
-      if (!snapshot.exists()) {
-        statusBox.style.display = "block";
-        statusBox.className = "status-msg";
-        statusBox.innerHTML = "<i class='fa-solid fa-circle-info'></i> 'users' node exists nahi karta ya koi user register nahi hua.";
-        container.innerHTML = "";
+      allUsersData = snapshot.exists() ? snapshot.val() : {};
+      const totalUsers = Object.keys(allUsersData).length;
+      document.getElementById('statTotalUsers').innerText = totalUsers;
+      renderUsers();
+    });
+
+    // 2. LISTEN TO REALTIME ORDERS
+    onValue(ref(db, 'orders'), (snapshot) => {
+      allOrdersData = snapshot.exists() ? snapshot.val() : {};
+      const orderKeys = Object.keys(allOrdersData);
+      document.getElementById('statTotalOrders').innerText = orderKeys.length;
+
+      let pendingCount = 0;
+      orderKeys.forEach(k => {
+        if ((allOrdersData[k].status || '').toLowerCase() === 'pending') pendingCount++;
+      });
+      document.getElementById('statPendingOrders').innerText = pendingCount;
+
+      renderOrders();
+    });
+
+    // 3. LISTEN TO REALTIME PRODUCTS
+    onValue(ref(db, 'products'), (snapshot) => {
+      allProductsData = snapshot.exists() ? snapshot.val() : {};
+      renderExistingProducts();
+    });
+
+    // RENDER USERS FUNCTION
+    window.renderUsers = function() {
+      const container = document.getElementById('usersGrid');
+      container.innerHTML = "";
+
+      const query = (document.getElementById('userSearchInput').value || '').toLowerCase();
+      const userKeys = Object.keys(allUsersData);
+
+      if (userKeys.length === 0) {
+        container.innerHTML = `<div class="no-data">No registered users found.</div>`;
         return;
       }
 
-      statusBox.style.display = "none";
-      allUsersData = snapshot.val();
-      renderUsers(allUsersData);
-    }, (error) => {
-      statusBox.style.display = "block";
-      statusBox.className = "status-msg error-msg";
-      statusBox.innerHTML = `<i class="fa-solid fa-triangle-exclamation"></i> <strong>Firebase Error:</strong> ${error.message}<br><small>Aap apne Firebase Rules me read permission allow karein.</small>`;
-    });
+      let count = 0;
+      userKeys.forEach(usernameKey => {
+        const u = allUsersData[usernameKey];
+        const fullName = u.fullName || u.username || usernameKey;
+        const email = u.email || 'N/A';
+        const mobile = u.mobile || 'N/A';
+        const city = u.city || 'N/A';
+        const country = u.country || 'N/A';
+        const balance = u.balance || "0.00";
 
-    function renderUsers(usersMap) {
+        const textMatch = fullName.toLowerCase().includes(query) ||
+                          usernameKey.toLowerCase().includes(query) ||
+                          email.toLowerCase().includes(query) ||
+                          mobile.toLowerCase().includes(query);
+
+        if (textMatch) {
+          count++;
+          const initial = fullName.charAt(0).toUpperCase();
+
+          container.innerHTML += `
+            <div class="user-card">
+              <div class="user-card-header">
+                <div class="user-avatar">${initial}</div>
+                <div class="user-info-names">
+                  <h4>${fullName}</h4>
+                  <p>@${usernameKey}</p>
+                </div>
+              </div>
+
+              <div class="user-details-list">
+                <div class="detail-row"><span>Mobile:</span> <strong>${mobile}</strong></div>
+                <div class="detail-row"><span>Email:</span> <strong>${email}</strong></div>
+                <div class="detail-row"><span>Location:</span> <strong>${city}, ${country}</strong></div>
+                <div class="detail-row">
+                  <span>Balance / Earning:</span>
+                  <span class="balance-badge">Rs. ${balance}</span>
+                </div>
+              </div>
+
+              <button class="action-btn" onclick="openBalanceModal('${usernameKey}')">
+                <i class="fa-solid fa-pen-to-square"></i> Edit Balance
+              </button>
+            </div>
+          `;
+        }
+      });
+
+      if (count === 0) {
+        container.innerHTML = `<div class="no-data">No users match your search query.</div>`;
+      }
+    };
+
+    // EDIT USER BALANCE MODAL FUNCTIONS
+    window.openBalanceModal = function(usernameKey) {
+      activeEditingUsername = usernameKey;
+      const u = allUsersData[usernameKey] || {};
+      document.getElementById('modalTargetUser').innerText = `${u.fullName || usernameKey} (@${usernameKey})`;
+      document.getElementById('newBalanceInput').value = u.balance || "0.00";
+      document.getElementById('editBalanceModal').style.display = 'flex';
+    };
+
+    window.closeBalanceModal = function() {
+      document.getElementById('editBalanceModal').style.display = 'none';
+      activeEditingUsername = null;
+    };
+
+    window.adjustBalance = function(amount) {
+      const input = document.getElementById('newBalanceInput');
+      let curr = parseFloat(input.value) || 0;
+      curr += amount;
+      if (curr < 0) curr = 0;
+      input.value = curr.toFixed(2);
+    };
+
+    window.saveUserBalance = async function() {
+      if (!activeEditingUsername) return;
+      const newBal = document.getElementById('newBalanceInput').value || "0.00";
+
+      try {
+        await update(ref(db, 'users/' + activeEditingUsername), {
+          balance: newBal
+        });
+        alert(`Balance updated to Rs. ${newBal} for @${activeEditingUsername}`);
+        window.closeBalanceModal();
+      } catch (err) {
+        alert("Failed to update balance: " + err.message);
+      }
+    };
+
+    // RENDER ORDERS FUNCTION
+    window.renderOrders = function() {
+      const container = document.getElementById('ordersGrid');
       container.innerHTML = "";
-      const searchVal = document.getElementById('userSearch').value.toLowerCase();
+
+      const query = (document.getElementById('orderSearchInput').value || '').toLowerCase();
+      const statusFilter = document.getElementById('orderStatusFilter').value;
+      const orderKeys = Object.keys(allOrdersData).reverse();
+
+      if (orderKeys.length === 0) {
+        container.innerHTML = `<div class="no-data">No market orders placed yet.</div>`;
+        return;
+      }
 
       let count = 0;
-      Object.keys(usersMap).forEach(userKey => {
-        const u = usersMap[userKey] || {};
-        
-        // Flexible field extraction
-        const name = u.fullName || u.name || u.username || userKey;
-        const mobile = u.mobile || u.phone || u.number || "N/A";
-        const email = u.email || "N/A";
-        const city = u.city || u.location || "";
-        const country = u.country || "";
-        const balance = u.balance !== undefined ? u.balance : (u.earning || 0);
+      orderKeys.forEach(oKey => {
+        const ord = allOrdersData[oKey];
+        const productName = ord.productName || 'Product';
+        const customerName = ord.customerName || 'Customer';
+        const mobile = ord.customerMobile || '';
+        const whatsapp = ord.customerWhatsapp || mobile;
+        const city = ord.customerCity || '';
+        const location = ord.customerLocation || '';
+        const qty = ord.quantity || 1;
+        const total = ord.totalPrice || 0;
+        const status = ord.status || 'Pending';
+        const dateStr = ord.timestamp ? new Date(ord.timestamp).toLocaleString() : '';
 
-        if (searchVal && !name.toLowerCase().includes(searchVal) && !mobile.toString().includes(searchVal)) {
-          return;
-        }
+        const matchesStatus = statusFilter === 'all' || status.toLowerCase() === statusFilter.toLowerCase();
+        const matchesQuery = productName.toLowerCase().includes(query) ||
+                             customerName.toLowerCase().includes(query) ||
+                             mobile.toLowerCase().includes(query) ||
+                             city.toLowerCase().includes(query);
 
-        count++;
-        container.innerHTML += `
-          <div class="user-card">
-            <div class="user-card-header">
-              <div class="avatar">${name.charAt(0).toUpperCase()}</div>
-              <div class="user-title">
-                <h4>${name}</h4>
-                <p>Key/ID: ${userKey}</p>
+        if (matchesStatus && matchesQuery) {
+          count++;
+
+          let badgeClass = 'badge-pending';
+          if (status.toLowerCase() === 'ok' || status.toLowerCase() === 'delivered') badgeClass = 'badge-ok';
+          if (status.toLowerCase() === 'cancelled') badgeClass = 'badge-cancelled';
+
+          // Clean phone number for WhatsApp URL
+          const cleanWa = whatsapp.replace(/[^0-9]/g, '');
+          const formattedWa = cleanWa.startsWith('0') ? '92' + cleanWa.substring(1) : cleanWa;
+
+          container.innerHTML += `
+            <div class="order-card">
+              <div class="order-title-bar">
+                <div>
+                  <div class="order-pname">${productName}</div>
+                  <div class="order-time">${dateStr}</div>
+                </div>
+                <span class="badge-status ${badgeClass}">${status}</span>
+              </div>
+
+              <div class="user-details-list">
+                <div class="detail-row"><span>Customer:</span> <strong>${customerName} (@${ord.username || 'user'})</strong></div>
+                <div class="detail-row"><span>Mobile:</span> <strong>${mobile}</strong></div>
+                <div class="detail-row"><span>City & Address:</span> <strong>${city} - ${location}</strong></div>
+                <div class="detail-row"><span>Qty x Price:</span> <strong>${qty} x Rs.${ord.pricePerItem || 0}</strong></div>
+                <div class="detail-row">
+                  <span>Total Amount:</span>
+                  <strong style="color:var(--accent-green); font-size:12px;">Rs. ${total}</strong>
+                </div>
+              </div>
+
+              <div style="display:flex; gap:6px; align-items:center;">
+                <a href="https://wa.me/${formattedWa}?text=Hi%20${encodeURIComponent(customerName)},%20regarding%20your%20order%20for%20${encodeURIComponent(productName)}" 
+                   target="_blank" class="whatsapp-btn">
+                  <i class="fa-brands fa-whatsapp"></i> Chat WhatsApp
+                </a>
+
+                <select class="status-select" onchange="updateOrderStatus('${oKey}', this.value)">
+                  <option value="" disabled selected>Change Status...</option>
+                  <option value="Pending">Pending</option>
+                  <option value="OK">OK / Confirmed</option>
+                  <option value="Delivered">Delivered</option>
+                  <option value="Cancelled">Cancelled</option>
+                </select>
               </div>
             </div>
-            <div class="info-row"><span>Mobile:</span> <strong>${mobile}</strong></div>
-            <div class="info-row"><span>Email:</span> <strong>${email}</strong></div>
-            <div class="info-row"><span>City/Country:</span> <strong>${city} ${country}</strong></div>
-            <div class="info-row"><span>Current Balance:</span> <strong style="color:var(--accent-green)">Rs. ${parseFloat(balance).toFixed(2)}</strong></div>
+          `;
+        }
+      });
 
-            <div class="earning-edit-box">
-              <span style="font-size:10px; font-weight:700;">Edit Balance:</span>
-              <input type="number" id="bal_${userKey}" class="earning-input" value="${balance}" step="any" />
-              <button class="save-btn" onclick="updateUserBalance('${userKey}')">Save</button>
+      if (count === 0) {
+        container.innerHTML = `<div class="no-data">No orders found matching filter criteria.</div>`;
+      }
+    };
+
+    // UPDATE ORDER STATUS IN FIREBASE
+    window.updateOrderStatus = async function(orderId, newStatus) {
+      if (!orderId || !newStatus) return;
+      try {
+        await update(ref(db, 'orders/' + orderId), { status: newStatus });
+        alert(`Order status updated to "${newStatus}"!`);
+      } catch (err) {
+        alert("Failed to update status: " + err.message);
+      }
+    };
+
+    // ADD NEW PRODUCT TO MARKET
+    window.handleAddProduct = async function(e) {
+      e.preventDefault();
+      const saveBtn = document.getElementById('saveProductBtn');
+      saveBtn.disabled = true;
+      saveBtn.innerText = "Publishing...";
+
+      const newProduct = {
+        name: document.getElementById('pName').value,
+        category: document.getElementById('pCategory').value,
+        price: parseFloat(document.getElementById('pPrice').value) || 0,
+        image: document.getElementById('pImage').value,
+        details: document.getElementById('pDetails').value,
+        createdAt: Date.now()
+      };
+
+      try {
+        await push(ref(db, 'products'), newProduct);
+        alert("Product added to market successfully!");
+        document.getElementById('addProductForm').reset();
+      } catch (err) {
+        alert("Failed to add product: " + err.message);
+      } finally {
+        saveBtn.disabled = false;
+        saveBtn.innerText = "Publish Product";
+      }
+    };
+
+    // RENDER EXISTING PRODUCTS
+    function renderExistingProducts() {
+      const container = document.getElementById('existingProductsList');
+      container.innerHTML = "";
+      const pKeys = Object.keys(allProductsData);
+
+      if (pKeys.length === 0) {
+        container.innerHTML = `<div class="no-data">No products in market database.</div>`;
+        return;
+      }
+
+      pKeys.forEach(pId => {
+        const p = allProductsData[pId];
+        container.innerHTML += `
+          <div style="background:var(--card-inner); padding:6px 10px; border-radius:6px; display:flex; justify-content:space-between; align-items:center; font-size:11px;">
+            <div>
+              <strong>${p.name}</strong> (Rs. ${p.price})
             </div>
+            <button onclick="deleteProduct('${pId}')" style="background:#ef4444; color:#fff; border:none; padding:3px 6px; border-radius:4px; font-size:9px; cursor:pointer;">
+              Delete
+            </button>
           </div>
         `;
       });
-
-      if (count === 0 && searchVal) {
-        container.innerHTML = "<div class='status-msg'>No users match your search.</div>";
-      }
     }
 
-    window.filterUsers = function() {
-      renderUsers(allUsersData);
+    // DELETE PRODUCT
+    window.deleteProduct = async function(pId) {
+      if (confirm("Are you sure you want to delete this product?")) {
+        try {
+          await remove(ref(db, 'products/' + pId));
+          alert("Product deleted.");
+        } catch (err) {
+          alert("Delete failed: " + err.message);
+        }
+      }
     };
 
-    window.updateUserBalance = function(userKey) {
-      const newBal = document.getElementById(`bal_${userKey}`).value;
-      if (newBal === "") return alert("Please enter a balance value.");
-
-      update(ref(db, 'users/' + userKey), {
-        balance: parseFloat(newBal)
-      }).then(() => {
-        alert(`Balance updated for ${userKey} successfully!`);
-      }).catch((err) => {
-        alert("Error updating balance: " + err.message);
-      });
-    };
   </script>
 </body>
 </html>

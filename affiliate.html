@@ -1,0 +1,491 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Affiliate Store - Admin Panel</title>
+  
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Poppins', sans-serif; }
+    body { background-color: #0f172a; color: #f8fafc; padding: 15px; min-height: 100vh; }
+
+    .admin-header {
+      max-width: 1000px;
+      margin: 0 auto 15px auto;
+      background: #1e293b;
+      padding: 16px 20px;
+      border-radius: 14px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .admin-header h2 { font-size: 18px; color: #3b82f6; display: flex; align-items: center; gap: 8px; }
+
+    /* TABS */
+    .tabs-bar {
+      max-width: 1000px;
+      margin: 0 auto 20px auto;
+      display: flex;
+      gap: 10px;
+      overflow-x: auto;
+    }
+
+    .tab-btn {
+      background: #1e293b;
+      color: #94a3b8;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      padding: 10px 18px;
+      border-radius: 10px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      white-space: nowrap;
+      transition: all 0.2s;
+    }
+
+    .tab-btn.active {
+      background: #2563eb;
+      color: #ffffff;
+      border-color: #2563eb;
+    }
+
+    .tab-content { max-width: 1000px; margin: 0 auto; display: none; }
+    .tab-content.active { display: block; }
+
+    /* CARDS & CONTAINERS */
+    .card-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 14px; }
+
+    .item-card {
+      background: #1e293b;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 12px;
+      padding: 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .item-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+      padding-bottom: 8px;
+    }
+
+    .badge { font-size: 10px; font-weight: 700; padding: 4px 10px; border-radius: 20px; text-transform: uppercase; }
+    .badge-pending { background: rgba(245, 158, 11, 0.2); color: #fbbf24; border: 1px solid rgba(245, 158, 11, 0.3); }
+    .badge-done { background: rgba(16, 185, 129, 0.2); color: #34d399; border: 1px solid rgba(16, 185, 129, 0.3); }
+
+    .info-box {
+      background: rgba(0, 0, 0, 0.2);
+      border-radius: 8px;
+      padding: 10px;
+      font-size: 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .info-box span { color: #94a3b8; }
+    .info-box strong { color: #ffffff; }
+
+    .btn-action {
+      padding: 8px 12px;
+      border-radius: 8px;
+      border: none;
+      font-size: 11px;
+      font-weight: 700;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+    }
+    .btn-green { background: #10b981; color: #fff; }
+    .btn-red { background: #ef4444; color: #fff; }
+    .btn-blue { background: #2563eb; color: #fff; }
+
+    /* FORM STYLES */
+    .form-container {
+      background: #1e293b;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 14px;
+      padding: 20px;
+      margin-bottom: 20px;
+    }
+
+    .form-group { margin-bottom: 12px; }
+    .form-group label { display: block; font-size: 12px; font-weight: 600; color: #94a3b8; margin-bottom: 4px; }
+    .form-group input, .form-group select, .form-group textarea {
+      width: 100%;
+      padding: 10px;
+      background: #0f172a;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 8px;
+      color: #ffffff;
+      font-size: 12px;
+      outline: none;
+    }
+
+    .prod-img-preview {
+      width: 60px;
+      height: 60px;
+      object-fit: cover;
+      border-radius: 6px;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- HEADER -->
+  <div class="admin-header">
+    <h2><i class="fa-solid fa-user-shield"></i> Affiliate Store Admin Panel</h2>
+    <span style="font-size:11px; color:#94a3b8;" id="statusIndicator">Live Connected</span>
+  </div>
+
+  <!-- NAVIGATION TABS -->
+  <div class="tabs-bar">
+    <button class="tab-btn active" onclick="switchTab('ordersTab', this)"><i class="fa-solid fa-cart-flatbed"></i> Affiliate Orders</button>
+    <button class="tab-btn" onclick="switchTab('accountsTab', this)"><i class="fa-solid fa-wallet"></i> Reseller Accounts & Payouts</button>
+    <button class="tab-btn" onclick="switchTab('productsTab', this)"><i class="fa-solid fa-boxes-packing"></i> Manage Products</button>
+  </div>
+
+  <!-- TAB 1: ORDERS -->
+  <div class="tab-content active" id="ordersTab">
+    <div class="card-grid" id="ordersContainer">
+      <div style="text-align:center; color:#94a3b8; padding:30px;">Orders Loading...</div>
+    </div>
+  </div>
+
+  <!-- TAB 2: RESELLER ACCOUNTS & PAYOUTS -->
+  <div class="tab-content" id="accountsTab">
+    <div class="card-grid" id="accountsContainer">
+      <div style="text-align:center; color:#94a3b8; padding:30px;">Reseller Accounts Loading...</div>
+    </div>
+  </div>
+
+  <!-- TAB 3: PRODUCTS MANAGEMENT -->
+  <div class="tab-content" id="productsTab">
+    <!-- ADD PRODUCT FORM -->
+    <div class="form-container">
+      <h3 style="font-size:15px; margin-bottom:14px; color:#38bdf8;"><i class="fa-solid fa-plus-circle"></i> Add New Product</h3>
+      <form id="addProductForm" onsubmit="handleProductAdd(event)">
+        <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap:10px;">
+          <div class="form-group">
+            <label>Product Name</label>
+            <input type="text" id="pName" placeholder="e.g. Gold Necklace Set" required />
+          </div>
+          <div class="form-group">
+            <label>Category</label>
+            <select id="pCategory">
+              <option value="jewelry">Jewelry</option>
+              <option value="clothes">Clothes</option>
+              <option value="mobiles">Mobiles</option>
+              <option value="tools">Tools</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Wholesale Price (Rs.)</label>
+            <input type="number" id="pPrice" placeholder="1200" required />
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>Image URLs (Comma-separated for multiple images)</label>
+          <input type="text" id="pImages" placeholder="https://image1.jpg, https://image2.jpg" required />
+        </div>
+
+        <div class="form-group">
+          <label>Product Details / Description</label>
+          <textarea id="pDetails" rows="2" placeholder="Fabric details, size, specifications..."></textarea>
+        </div>
+
+        <button type="submit" class="btn-action btn-blue" style="width:100%; padding:11px;">
+          <i class="fa-solid fa-cloud-arrow-up"></i> Upload Product to Store
+        </button>
+      </form>
+    </div>
+
+    <!-- EXISTING PRODUCTS LIST -->
+    <h3 style="font-size:14px; margin-bottom:10px;"><i class="fa-solid fa-list"></i> Store Products</h3>
+    <div class="card-grid" id="productsContainer">
+      <div style="text-align:center; color:#94a3b8; padding:30px;">Products Loading...</div>
+    </div>
+  </div>
+
+  <!-- FIREBASE SCRIPTS -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+    import { getDatabase, ref, onValue, push, set, remove, update, get } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyAsnATksiqZzMHOPO64i_bKqLJW6yjq9lw",
+      authDomain: "newweb-d50af.firebaseapp.com",
+      databaseURL: "https://newweb-d50af-default-rtdb.firebaseio.com",
+      projectId: "newweb-d50af",
+      storageBucket: "newweb-d50af.firebasestorage.app",
+      messagingSenderId: "358603295768",
+      appId: "1:358603295768:web:82a9666514a7cb468c476d"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getDatabase(app);
+
+    // TAB SWITCHING
+    window.switchTab = function(tabId, btn) {
+      document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+      document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+      document.getElementById(tabId).classList.add('active');
+      btn.classList.add('active');
+    };
+
+    // -------------------------------------------------------------
+    // 1. ORDERS REALTIME LISTENER & ACTIONS
+    // -------------------------------------------------------------
+    onValue(ref(db, 'affiliate_orders'), (snapshot) => {
+      const container = document.getElementById('ordersContainer');
+      container.innerHTML = "";
+
+      if(!snapshot.exists()) {
+        container.innerHTML = `<div style="text-align:center; color:#94a3b8; padding:30px;">Abhi koi order nahi hai.</div>`;
+        return;
+      }
+
+      const orders = snapshot.val();
+      const keys = Object.keys(orders).reverse();
+
+      keys.forEach(id => {
+        const o = orders[id];
+        const isDone = o.status === 'done' || o.status === 'completed';
+
+        const card = document.createElement('div');
+        card.className = 'item-card';
+        card.innerHTML = `
+          <div class="item-header">
+            <span style="font-size:12px; font-weight:700; color:#60a5fa;"><i class="fa-solid fa-user"></i> ${o.resellerUsername}</span>
+            <span class="badge ${isDone ? 'badge-done' : 'badge-pending'}">${isDone ? 'COMPLETED' : 'PENDING'}</span>
+          </div>
+
+          <div class="info-box">
+            <div><span>Product:</span> <strong>${o.productName} (Qty: ${o.quantity})</strong></div>
+            <div><span>Client Name:</span> <strong>${o.clientName}</strong></div>
+            <div><span>Client Phone:</span> <strong><a href="tel:${o.clientPhone}" style="color:#fbbf24;">${o.clientPhone}</a></strong></div>
+            <div><span>Client Address:</span> <strong>${o.clientAddress}</strong></div>
+          </div>
+
+          <div class="info-box" style="background: rgba(37, 99, 235, 0.1); border:1px solid rgba(37, 99, 235, 0.2);">
+            <div><span>Wholesale Price:</span> <strong>Rs. ${o.basePrice}</strong></div>
+            <div><span>Reseller Profit:</span> <strong style="color:#34d399;">+ Rs. ${o.totalProfit}</strong></div>
+            <div><span>Client Total Collect:</span> <strong style="color:#60a5fa; font-size:14px;">Rs. ${o.clientTotalPrice}</strong></div>
+          </div>
+
+          <div style="display:flex; gap:8px; margin-top:4px;">
+            ${!isDone ? `
+              <button class="btn-action btn-green" style="flex:1;" onclick="markOrderCompleted('${id}', '${o.resellerUsername}', ${o.totalProfit})">
+                <i class="fa-solid fa-check"></i> Complete & Pay Profit
+              </button>
+            ` : ''}
+            <button class="btn-action btn-red" onclick="deleteOrder('${id}')">
+              <i class="fa-solid fa-trash"></i>
+            </button>
+          </div>
+        `;
+        container.appendChild(card);
+      });
+    });
+
+    // MARK ORDER AS COMPLETED AND AUTO CREDIT PROFIT TO RESELLER WALLET
+    window.markOrderCompleted = async function(orderId, username, profit) {
+      if(!confirm(`Kya order delivered ho gaya hai? Isse Rs. ${profit} Reseller (${username}) ke wallet me auto credit ho jayein ge.`)) return;
+
+      try {
+        // Update Order Status
+        await update(ref(db, `affiliate_orders/${orderId}`), { status: 'done' });
+
+        // Get Current Wallet Balance
+        const walletRef = ref(db, `user_wallets/${username}`);
+        const snap = await get(walletRef);
+        let currentBalance = 0;
+        if(snap.exists()) {
+          currentBalance = parseFloat(snap.val().balance || 0);
+        }
+
+        const newBalance = currentBalance + parseFloat(profit);
+
+        // Update Wallet Balance & History
+        await update(walletRef, { balance: newBalance });
+        await push(ref(db, `user_wallets/${username}/history`), {
+          amount: profit,
+          type: 'Commission Earned',
+          timestamp: Date.now()
+        });
+
+        alert("Order Status Updated & Profit Credited to Reseller!");
+      } catch(err) {
+        alert("Error: " + err.message);
+      }
+    };
+
+    window.deleteOrder = function(orderId) {
+      if(confirm("Kya aap is order ko delete karna chahte hain?")) {
+        remove(ref(db, `affiliate_orders/${orderId}`));
+      }
+    };
+
+    // -------------------------------------------------------------
+    // 2. RESELLER ACCOUNTS & WALLET MANUAL PAYOUTS
+    // -------------------------------------------------------------
+    onValue(ref(db, 'user_payout_accounts'), (snapshot) => {
+      const container = document.getElementById('accountsContainer');
+      container.innerHTML = "";
+
+      if(!snapshot.exists()) {
+        container.innerHTML = `<div style="text-align:center; color:#94a3b8; padding:30px;">Koi Reseller Account Submitted nahi hai.</div>`;
+        return;
+      }
+
+      const accounts = snapshot.val();
+      Object.keys(accounts).forEach(uname => {
+        const acc = accounts[uname];
+
+        const card = document.createElement('div');
+        card.className = 'item-card';
+        card.innerHTML = `
+          <div class="item-header">
+            <span style="font-size:13px; font-weight:700; color:#38bdf8;"><i class="fa-solid fa-user-circle"></i> ${acc.username}</span>
+          </div>
+
+          <div class="info-box">
+            <div><span>Account Title:</span> <strong>${acc.accountTitle}</strong></div>
+            <div><span>Account / Mobile Number:</span> <strong style="color:#fbbf24; font-size:14px;">${acc.accountNumber}</strong></div>
+          </div>
+
+          <div style="margin-top:4px;">
+            <label style="font-size:10px; color:#94a3b8; display:block; margin-bottom:4px;">Manual Payment / Extra Balance Add Karein (Rs.):</label>
+            <div style="display:flex; gap:6px;">
+              <input type="number" id="payoutInput_${acc.username}" placeholder="Amount" style="padding:6px; font-size:11px; border-radius:6px; border:1px solid #334155; background:#0f172a; color:#fff; flex:1;" />
+              <button class="btn-action btn-green" onclick="sendManualPayout('${acc.username}')">Send</button>
+            </div>
+          </div>
+        `;
+        container.appendChild(card);
+      });
+    });
+
+    window.sendManualPayout = async function(username) {
+      const input = document.getElementById(`payoutInput_${username}`);
+      const amt = parseFloat(input.value);
+
+      if(!amt || amt <= 0) {
+        alert("Sahi amount likhein!");
+        return;
+      }
+
+      try {
+        const walletRef = ref(db, `user_wallets/${username}`);
+        const snap = await get(walletRef);
+        let currentBalance = 0;
+        if(snap.exists()) {
+          currentBalance = parseFloat(snap.val().balance || 0);
+        }
+
+        const newBalance = currentBalance + amt;
+
+        await update(walletRef, { balance: newBalance });
+        await push(ref(db, `user_wallets/${username}/history`), {
+          amount: amt,
+          type: 'Payout / Bonus Added',
+          timestamp: Date.now()
+        });
+
+        alert(`Rs. ${amt} successfully added to ${username}'s Wallet!`);
+        input.value = "";
+      } catch (err) {
+        alert("Error: " + err.message);
+      }
+    };
+
+    // -------------------------------------------------------------
+    // 3. PRODUCTS MANAGEMENT (ADD / DELETE)
+    // -------------------------------------------------------------
+    window.handleProductAdd = function(e) {
+      e.preventDefault();
+
+      const name = document.getElementById('pName').value;
+      const category = document.getElementById('pCategory').value;
+      const price = parseInt(document.getElementById('pPrice').value);
+      const rawImgs = document.getElementById('pImages').value;
+      const details = document.getElementById('pDetails').value;
+
+      const imagesArray = rawImgs.split(',').map(url => url.trim()).filter(url => url.length > 0);
+
+      const newProduct = {
+        name: name,
+        category: category,
+        price: price,
+        images: imagesArray,
+        details: details,
+        createdAt: Date.now()
+      };
+
+      push(ref(db, 'products'), newProduct)
+        .then(() => {
+          alert("Product store me Add ho gaya!");
+          document.getElementById('addProductForm').reset();
+        })
+        .catch(err => alert("Error: " + err.message));
+    };
+
+    onValue(ref(db, 'products'), (snapshot) => {
+      const container = document.getElementById('productsContainer');
+      container.innerHTML = "";
+
+      if(!snapshot.exists()) {
+        container.innerHTML = `<div style="text-align:center; color:#94a3b8; padding:30px;">Store me abhi koi product nahi hai.</div>`;
+        return;
+      }
+
+      const products = snapshot.val();
+      Object.keys(products).forEach(id => {
+        const p = products[id];
+        const mainImg = (p.images && p.images.length > 0) ? p.images[0] : (p.image || 'https://via.placeholder.com/150');
+
+        const card = document.createElement('div');
+        card.className = 'item-card';
+        card.innerHTML = `
+          <div style="display:flex; gap:10px; align-items:center;">
+            <img src="${mainImg}" class="prod-img-preview" alt="product" />
+            <div>
+              <div style="font-size:13px; font-weight:700;">${p.name}</div>
+              <div style="font-size:10px; color:#38bdf8; text-transform:uppercase;">Category: ${p.category}</div>
+              <div style="font-size:14px; font-weight:700; color:#34d399;">Wholesale: Rs. ${p.price}</div>
+            </div>
+          </div>
+          <div style="font-size:11px; color:#94a3b8;">${p.details || 'No description'}</div>
+          <button class="btn-action btn-red" onclick="deleteProduct('${id}')">
+            <i class="fa-solid fa-trash"></i> Delete Product
+          </button>
+        `;
+        container.appendChild(card);
+      });
+    });
+
+    window.deleteProduct = function(id) {
+      if(confirm("Kya aap is product ko store se DELETE karna chahte hain?")) {
+        remove(ref(db, `products/${id}`));
+      }
+    };
+  </script>
+</body>
+</html>

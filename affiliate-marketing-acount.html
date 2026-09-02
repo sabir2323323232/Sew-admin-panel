@@ -1,0 +1,715 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>SEW - Admin Task Review Panel</title>
+  
+  <!-- Google Fonts & Font Awesome Icons -->
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+  
+  <style>
+    :root {
+      --bg-body: #0f172a;
+      --card-bg: #1e293b;
+      --input-bg: #334155;
+      --primary: #2563eb;
+      --primary-hover: #1d4ed8;
+      --success: #10b981;
+      --danger: #ef4444;
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+      --border-color: #334155;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    body {
+      min-height: 100vh;
+      background-color: var(--bg-body);
+      color: var(--text-main);
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .admin-container {
+      width: 100%;
+      max-width: 600px;
+      margin: 0 auto;
+    }
+
+    .admin-header {
+      text-align: center;
+      margin-bottom: 20px;
+      padding: 16px;
+      background: var(--card-bg);
+      border-radius: 16px;
+      border: 1px solid var(--border-color);
+    }
+
+    .admin-title {
+      font-size: 24px;
+      font-weight: 800;
+      color: var(--primary);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+    }
+
+    .admin-subtitle {
+      font-size: 13px;
+      color: var(--text-muted);
+      margin-top: 4px;
+    }
+
+    /* Main Tab Navigation Buttons */
+    .tab-container {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+
+    .tab-btn {
+      flex: 1;
+      padding: 14px 10px;
+      border: none;
+      background: var(--card-bg);
+      color: var(--text-muted);
+      font-weight: 700;
+      font-size: 14px;
+      border-radius: 12px;
+      cursor: pointer;
+      border: 1px solid var(--border-color);
+      transition: all 0.25s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+
+    .tab-btn.active {
+      background: var(--primary);
+      color: #ffffff;
+      border-color: var(--primary);
+      box-shadow: 0 4px 14px rgba(37, 99, 235, 0.4);
+    }
+
+    .badge {
+      background: rgba(255, 255, 255, 0.2);
+      padding: 2px 8px;
+      border-radius: 10px;
+      font-size: 12px;
+    }
+
+    /* Filter Bar (Pending / Approved / Rejected) */
+    .filter-bar {
+      display: flex;
+      justify-content: center;
+      gap: 8px;
+      margin-bottom: 16px;
+    }
+
+    .filter-btn {
+      padding: 6px 14px;
+      border-radius: 20px;
+      border: 1px solid var(--border-color);
+      background: transparent;
+      color: var(--text-muted);
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    .filter-btn.active {
+      background: var(--input-bg);
+      color: var(--text-main);
+      border-color: var(--text-muted);
+    }
+
+    /* Single Task Card Container (1-by-1 view to prevent lag) */
+    .task-card {
+      background: var(--card-bg);
+      border-radius: 20px;
+      padding: 20px;
+      border: 1px solid var(--border-color);
+      box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+      position: relative;
+    }
+
+    .card-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 16px;
+      padding-bottom: 12px;
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    .user-info {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .user-avatar {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: var(--primary);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      color: white;
+    }
+
+    .user-details h4 {
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--text-main);
+    }
+
+    .user-details span {
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+
+    .reward-tag {
+      background: rgba(16, 185, 129, 0.15);
+      color: var(--success);
+      padding: 6px 12px;
+      border-radius: 10px;
+      font-weight: 800;
+      font-size: 14px;
+    }
+
+    .task-details-box {
+      background: var(--bg-body);
+      padding: 12px;
+      border-radius: 12px;
+      margin-bottom: 16px;
+      font-size: 13px;
+    }
+
+    .task-details-box p {
+      margin-bottom: 4px;
+      color: var(--text-muted);
+    }
+
+    .task-details-box strong {
+      color: var(--text-main);
+    }
+
+    /* Proof Image Box */
+    .proof-image-container {
+      width: 100%;
+      max-height: 380px;
+      background: #000;
+      border-radius: 14px;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 20px;
+      border: 1px solid var(--border-color);
+      position: relative;
+    }
+
+    .proof-image-container img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      max-height: 380px;
+    }
+
+    .no-image {
+      padding: 40px;
+      color: var(--text-muted);
+      text-align: center;
+    }
+
+    /* Action Buttons (Approve / Reject) */
+    .action-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+
+    .btn-action {
+      padding: 14px;
+      border: none;
+      border-radius: 12px;
+      font-size: 14px;
+      font-weight: 700;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      transition: all 0.2s ease;
+    }
+
+    .btn-approve {
+      background: var(--success);
+      color: #ffffff;
+    }
+
+    .btn-approve:hover {
+      background: #059669;
+    }
+
+    .btn-reject {
+      background: var(--danger);
+      color: #ffffff;
+    }
+
+    .btn-reject:hover {
+      background: #dc2626;
+    }
+
+    /* Card Navigation Controls (Next / Prev) */
+    .nav-controls {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding-top: 12px;
+      border-top: 1px solid var(--border-color);
+    }
+
+    .nav-btn {
+      background: var(--input-bg);
+      border: 1px solid var(--border-color);
+      color: var(--text-main);
+      padding: 8px 16px;
+      border-radius: 10px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .nav-btn:disabled {
+      opacity: 0.4;
+      cursor: not-allowed;
+    }
+
+    .counter-text {
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--text-muted);
+    }
+
+    /* Empty & Loading States */
+    .empty-state {
+      text-align: center;
+      padding: 50px 20px;
+      background: var(--card-bg);
+      border-radius: 20px;
+      border: 1px solid var(--border-color);
+    }
+
+    .empty-state i {
+      font-size: 48px;
+      color: var(--text-muted);
+      margin-bottom: 12px;
+    }
+
+    .status-pill {
+      display: inline-block;
+      padding: 4px 10px;
+      border-radius: 20px;
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+    }
+
+    .status-pending { background: #f59e0b22; color: #f59e0b; }
+    .status-approved { background: #10b98122; color: #10b981; }
+    .status-rejected { background: #ef444422; color: #ef4444; }
+
+    /* Zoom Modal */
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0,0,0,0.9);
+      z-index: 999;
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+    }
+
+    .modal-overlay img {
+      max-width: 100%;
+      max-height: 90vh;
+      border-radius: 12px;
+    }
+
+    .modal-close {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      color: #fff;
+      font-size: 28px;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="admin-container">
+    
+    <!-- Admin Header -->
+    <div class="admin-header">
+      <div class="admin-title">
+        <i class="fa-solid fa-user-shield"></i>
+        <span>SEW Admin Panel</span>
+      </div>
+      <p class="admin-subtitle">Real-time Proof Review & Manual Approval System</p>
+    </div>
+
+    <!-- Main Navigation Tabs -->
+    <div class="tab-container">
+      <button class="tab-btn active" id="videoTaskBtn">
+        <i class="fa-solid fa-play-circle"></i>
+        <span>Video Tasks</span>
+        <span class="badge" id="videoBadge">0</span>
+      </button>
+      <button class="tab-btn" id="appTaskBtn">
+        <i class="fa-solid fa-download"></i>
+        <span>App Tasks</span>
+        <span class="badge" id="appBadge">0</span>
+      </button>
+    </div>
+
+    <!-- Status Filter -->
+    <div class="filter-bar">
+      <button class="filter-btn active" id="filterPending">Pending</button>
+      <button class="filter-btn" id="filterApproved">Approved</button>
+      <button class="filter-btn" id="filterRejected">Rejected</button>
+      <button class="filter-btn" id="filterAll">All</button>
+    </div>
+
+    <!-- Dynamic Content Area -->
+    <div id="contentArea">
+      <!-- Loading State -->
+      <div class="empty-state">
+        <i class="fa-solid fa-spinner fa-spin"></i>
+        <h3>Loading Tasks...</h3>
+        <p>Connecting to Realtime Firebase</p>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Image Zoom Modal -->
+  <div class="modal-overlay" id="imageModal">
+    <span class="modal-close" id="modalClose">&times;</span>
+    <img id="modalImg" src="" alt="Proof Full Size" />
+  </div>
+
+  <!-- Firebase Modular SDK -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+    import { getDatabase, ref, onValue, update, get } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyAsnATksiqZzMHOPO64i_bKqLJW6yjq9lw",
+      authDomain: "newweb-d50af.firebaseapp.com",
+      databaseURL: "https://newweb-d50af-default-rtdb.firebaseio.com",
+      projectId: "newweb-d50af",
+      storageBucket: "newweb-d50af.firebasestorage.app",
+      messagingSenderId: "358603295768",
+      appId: "1:358603295768:web:82a9666514a7cb468c476d"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getDatabase(app);
+
+    // Global State
+    let currentTab = 'video'; // 'video' or 'app'
+    let currentFilter = 'pending'; // 'pending', 'approved', 'rejected', 'all'
+    let videoTasks = [];
+    let appTasks = [];
+    let currentIndex = 0;
+
+    // Elements
+    const videoTaskBtn = document.getElementById('videoTaskBtn');
+    const appTaskBtn = document.getElementById('appTaskBtn');
+    const videoBadge = document.getElementById('videoBadge');
+    const appBadge = document.getElementById('appBadge');
+    const contentArea = document.getElementById('contentArea');
+
+    // Filter Buttons
+    const filterPending = document.getElementById('filterPending');
+    const filterApproved = document.getElementById('filterApproved');
+    const filterRejected = document.getElementById('filterRejected');
+    const filterAll = document.getElementById('filterAll');
+
+    // Modal Elements
+    const imageModal = document.getElementById('imageModal');
+    const modalImg = document.getElementById('modalImg');
+    const modalClose = document.getElementById('modalClose');
+
+    modalClose.addEventListener('click', () => imageModal.style.display = 'none');
+    imageModal.addEventListener('click', (e) => { if(e.target === imageModal) imageModal.style.display = 'none'; });
+
+    // Tab Switchers
+    videoTaskBtn.addEventListener('click', () => {
+      currentTab = 'video';
+      videoTaskBtn.classList.add('active');
+      appTaskBtn.classList.remove('active');
+      currentIndex = 0;
+      renderCurrentTask();
+    });
+
+    appTaskBtn.addEventListener('click', () => {
+      currentTab = 'app';
+      appTaskBtn.classList.add('active');
+      videoTaskBtn.classList.remove('active');
+      currentIndex = 0;
+      renderCurrentTask();
+    });
+
+    // Filter Switchers
+    [filterPending, filterApproved, filterRejected, filterAll].forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+        e.target.classList.add('active');
+        
+        if (e.target.id === 'filterPending') currentFilter = 'pending';
+        else if (e.target.id === 'filterApproved') currentFilter = 'approved';
+        else if (e.target.id === 'filterRejected') currentFilter = 'rejected';
+        else currentFilter = 'all';
+
+        currentIndex = 0;
+        renderCurrentTask();
+      });
+    });
+
+    // REALTIME DATABASE LISTENERS
+    
+    // 1. Listen for Video Tasks Proofs
+    const videoRef = ref(db, 'task_submissions/video');
+    onValue(videoRef, (snapshot) => {
+      videoTasks = [];
+      if (snapshot.exists()) {
+        const data = snapshot.val();
+        Object.keys(data).forEach(key => {
+          videoTasks.push({ id: key, ...data[key] });
+        });
+        // Sort newest first
+        videoTasks.sort((a, b) => new Date(b.createdAt || 0) - new Date(a.createdAt || 0));
+      }
+      
+      // Update badge counter for pending items
+      const pendingCount = videoTasks.filter(t => t.status === 'pending').length;
+      videoBadge.innerText = pendingCount;
+
+      if (currentTab === 'video') renderCurrentTask();
+    });
+
+    // 2. Listen for App Tasks Proofs
+    const appRef = ref(db, 'task_submissions/app');
+    onValue(appRef, (snapshot) => {
+      appTasks = [];
+      if (snapshot.exists()) {
+        const data = snapshot.val();
+        Object.keys(data).forEach(key => {
+          appTasks.push({ id: key, ...data[key] });
+        });
+        // Sort newest first
+        appTasks.sort((a, b) => new Date(b.createdAt || 0) - new Date(a.createdAt || 0));
+      }
+
+      // Update badge counter for pending items
+      const pendingCount = appTasks.filter(t => t.status === 'pending').length;
+      appBadge.innerText = pendingCount;
+
+      if (currentTab === 'app') renderCurrentTask();
+    });
+
+    // Get Active Filtered List
+    function getActiveList() {
+      const rawList = currentTab === 'video' ? videoTasks : appTasks;
+      if (currentFilter === 'all') return rawList;
+      return rawList.filter(item => item.status === currentFilter);
+    }
+
+    // RENDER SINGLE TASK CARD (Prevents Lag / Hanging)
+    function renderCurrentTask() {
+      const activeList = getActiveList();
+
+      if (activeList.length === 0) {
+        contentArea.innerHTML = `
+          <div class="empty-state">
+            <i class="fa-solid fa-clipboard-check"></i>
+            <h3>No Tasks Found!</h3>
+            <p>No ${currentFilter} ${currentTab === 'video' ? 'Video' : 'App Download'} tasks right now.</p>
+          </div>
+        `;
+        return;
+      }
+
+      if (currentIndex >= activeList.length) {
+        currentIndex = activeList.length - 1;
+      }
+      if (currentIndex < 0) {
+        currentIndex = 0;
+      }
+
+      const item = activeList[currentIndex];
+      const isVideo = currentTab === 'video';
+
+      const initial = item.username ? item.username.charAt(0).toUpperCase() : "U";
+      const proofImg = item.proofImage || item.proofImg || item.screenshot || "";
+      const statusClass = `status-${item.status || 'pending'}`;
+
+      contentArea.innerHTML = `
+        <div class="task-card">
+          <div class="card-top">
+            <div class="user-info">
+              <div class="user-avatar">${initial}</div>
+              <div class="user-details">
+                <h4>@${item.username || 'unknown_user'}</h4>
+                <span>${item.createdAt ? new Date(item.createdAt).toLocaleString() : 'Date N/A'}</span>
+              </div>
+            </div>
+            <div>
+              <span class="status-pill ${statusClass}">${item.status || 'pending'}</span>
+              <div class="reward-tag" style="margin-top: 4px;">+ Rs. ${item.reward || item.amount || 0}</div>
+            </div>
+          </div>
+
+          <div class="task-details-box">
+            <p><strong>Task Type:</strong> ${isVideo ? 'Video Watching / Like Task' : 'App Download & Install Task'}</p>
+            <p><strong>Title / App Name:</strong> ${item.taskTitle || item.appName || 'N/A'}</p>
+            ${item.videoLink ? `<p><strong>Video Link:</strong> <a href="${item.videoLink}" target="_blank" style="color:var(--primary)">Open Video</a></p>` : ''}
+            ${item.appLink ? `<p><strong>App Link:</strong> <a href="${item.appLink}" target="_blank" style="color:var(--primary)">Open App Store</a></p>` : ''}
+          </div>
+
+          <!-- Proof Image -->
+          <div class="proof-image-container">
+            ${proofImg ? `
+              <img src="${proofImg}" id="currentProofImg" alt="Proof Screenshot" title="Click to Zoom" />
+            ` : `
+              <div class="no-image">
+                <i class="fa-solid fa-image-slash fa-2x"></i>
+                <p>No Screenshot Provided</p>
+              </div>
+            `}
+          </div>
+
+          <!-- Approve / Reject Actions -->
+          <div class="action-grid">
+            <button class="btn-action btn-approve" id="approveBtn" ${item.status === 'approved' ? 'disabled style="opacity:0.5"' : ''}>
+              <i class="fa-solid fa-circle-check"></i>
+              <span>Approve (+Rs. ${item.reward || 0})</span>
+            </button>
+
+            <button class="btn-action btn-reject" id="rejectBtn" ${item.status === 'rejected' ? 'disabled style="opacity:0.5"' : ''}>
+              <i class="fa-solid fa-circle-xmark"></i>
+              <span>Reject</span>
+            </button>
+          </div>
+
+          <!-- Card Navigation (Prev / Next) -->
+          <div class="nav-controls">
+            <button class="nav-btn" id="prevBtn" ${currentIndex === 0 ? 'disabled' : ''}>
+              <i class="fa-solid fa-chevron-left"></i> Previous
+            </button>
+            <span class="counter-text">${currentIndex + 1} of ${activeList.length}</span>
+            <button class="nav-btn" id="nextBtn" ${currentIndex === activeList.length - 1 ? 'disabled' : ''}>
+              Next <i class="fa-solid fa-chevron-right"></i>
+            </button>
+          </div>
+        </div>
+      `;
+
+      // Event Listeners for Dynamic Buttons
+      const approveBtn = document.getElementById('approveBtn');
+      const rejectBtn = document.getElementById('rejectBtn');
+      const prevBtn = document.getElementById('prevBtn');
+      const nextBtn = document.getElementById('nextBtn');
+      const currentProofImg = document.getElementById('currentProofImg');
+
+      if (currentProofImg) {
+        currentProofImg.addEventListener('click', () => {
+          modalImg.src = proofImg;
+          imageModal.style.display = 'flex';
+        });
+      }
+
+      approveBtn.addEventListener('click', () => handleTaskAction(item, 'approved'));
+      rejectBtn.addEventListener('click', () => handleTaskAction(item, 'rejected'));
+
+      prevBtn.addEventListener('click', () => {
+        if (currentIndex > 0) {
+          currentIndex--;
+          renderCurrentTask();
+        }
+      });
+
+      nextBtn.addEventListener('click', () => {
+        if (currentIndex < activeList.length - 1) {
+          currentIndex++;
+          renderCurrentTask();
+        }
+      });
+    }
+
+    // APPROVE OR REJECT TASK LOGIC
+    async function handleTaskAction(item, newStatus) {
+      const dbPath = currentTab === 'video' ? `task_submissions/video/${item.id}` : `task_submissions/app/${item.id}`;
+      
+      const approveBtn = document.getElementById('approveBtn');
+      const rejectBtn = document.getElementById('rejectBtn');
+      if (approveBtn) approveBtn.disabled = true;
+      if (rejectBtn) rejectBtn.disabled = true;
+
+      try {
+        // 1. Update task submission status
+        await update(ref(db, dbPath), {
+          status: newStatus,
+          reviewedAt: new Date().toISOString()
+        });
+
+        // 2. If approved, add reward balance to the user's account
+        if (newStatus === 'approved' && item.username) {
+          const userRef = ref(db, `users/${item.username}`);
+          const userSnap = await get(userRef);
+
+          if (userSnap.exists()) {
+            const userData = userSnap.val();
+            const currentBal = parseFloat(userData.balance || 0);
+            const rewardAmt = parseFloat(item.reward || item.amount || 0);
+            const newBal = (currentBal + rewardAmt).toFixed(2);
+
+            await update(userRef, { balance: newBal });
+          }
+        }
+
+        alert(`Task successfully ${newStatus.toUpperCase()}!`);
+        
+      } catch (err) {
+        console.error("Action Error:", err);
+        alert("Error updating task: " + err.message);
+      }
+    }
+
+  </script>
+</body>
+</html>

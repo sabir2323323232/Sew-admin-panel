@@ -1,26 +1,28 @@
+
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ur">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-  <title>SEW - Admin Task Review Panel</title>
+  <title>SEW - Control & Admin Panel</title>
   
-  <!-- Google Fonts & Font Awesome Icons -->
+  <!-- Fonts & Icons -->
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
-  
+
   <style>
     :root {
-      --bg-body: #0f172a;
-      --card-bg: #1e293b;
-      --input-bg: #334155;
+      --bg-body: #f1f5f9;
+      --card-bg: #ffffff;
       --primary: #2563eb;
-      --primary-hover: #1d4ed8;
-      --success: #10b981;
+      --primary-dark: #1d4ed8;
       --danger: #ef4444;
-      --text-main: #f8fafc;
-      --text-muted: #94a3b8;
-      --border-color: #334155;
+      --success: #10b981;
+      --warning: #f59e0b;
+      --text-main: #0f172a;
+      --text-muted: #64748b;
+      --border-color: #cbd5e1;
+      --shadow: 0 4px 14px rgba(15, 23, 42, 0.08);
     }
 
     * {
@@ -32,399 +34,391 @@
     }
 
     body {
-      min-height: 100vh;
       background-color: var(--bg-body);
       color: var(--text-main);
-      padding: 16px;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
+      padding-bottom: 50px;
     }
 
-    .admin-container {
-      width: 100%;
-      max-width: 600px;
-      margin: 0 auto;
-    }
-
+    /* HEADER */
     .admin-header {
-      text-align: center;
-      margin-bottom: 20px;
-      padding: 16px;
-      background: var(--card-bg);
-      border-radius: 16px;
-      border: 1px solid var(--border-color);
+      background: #0f172a;
+      color: #ffffff;
+      padding: 14px 16px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      box-shadow: var(--shadow);
     }
 
     .admin-title {
-      font-size: 24px;
+      font-size: 16px;
       font-weight: 800;
-      color: var(--primary);
       display: flex;
       align-items: center;
-      justify-content: center;
-      gap: 10px;
+      gap: 8px;
     }
 
-    .admin-subtitle {
+    .status-badge {
+      font-size: 10px;
+      font-weight: 800;
+      padding: 4px 10px;
+      border-radius: 20px;
+      text-transform: uppercase;
+    }
+
+    .status-active { background: #dcfce7; color: #15803d; }
+    .status-inactive { background: #fee2e2; color: #b91c1c; }
+
+    /* CONTAINER */
+    .container {
+      max-width: 600px;
+      margin: 0 auto;
+      padding: 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    /* CARD BOX */
+    .card {
+      background: #ffffff;
+      border-radius: 14px;
+      padding: 14px;
+      border: 1px solid #e2e8f0;
+      box-shadow: var(--shadow);
+    }
+
+    .card-title {
       font-size: 13px;
-      color: var(--text-muted);
-      margin-top: 4px;
-    }
-
-    /* Main Tab Navigation Buttons */
-    .tab-container {
-      display: flex;
-      gap: 10px;
-      margin-bottom: 20px;
-    }
-
-    .tab-btn {
-      flex: 1;
-      padding: 14px 10px;
-      border: none;
-      background: var(--card-bg);
-      color: var(--text-muted);
-      font-weight: 700;
-      font-size: 14px;
-      border-radius: 12px;
-      cursor: pointer;
-      border: 1px solid var(--border-color);
-      transition: all 0.25s ease;
+      font-weight: 800;
+      margin-bottom: 12px;
       display: flex;
       align-items: center;
-      justify-content: center;
       gap: 8px;
-    }
-
-    .tab-btn.active {
-      background: var(--primary);
-      color: #ffffff;
-      border-color: var(--primary);
-      box-shadow: 0 4px 14px rgba(37, 99, 235, 0.4);
-    }
-
-    .badge {
-      background: rgba(255, 255, 255, 0.2);
-      padding: 2px 8px;
-      border-radius: 10px;
-      font-size: 12px;
-    }
-
-    /* Filter Bar (Pending / Approved / Rejected) */
-    .filter-bar {
-      display: flex;
-      justify-content: center;
-      gap: 8px;
-      margin-bottom: 16px;
-    }
-
-    .filter-btn {
-      padding: 6px 14px;
-      border-radius: 20px;
-      border: 1px solid var(--border-color);
-      background: transparent;
-      color: var(--text-muted);
-      font-size: 12px;
-      font-weight: 600;
-      cursor: pointer;
-    }
-
-    .filter-btn.active {
-      background: var(--input-bg);
       color: var(--text-main);
-      border-color: var(--text-muted);
+      border-bottom: 1px dashed var(--border-color);
+      padding-bottom: 8px;
     }
 
-    /* Single Task Card Container (1-by-1 view to prevent lag) */
-    .task-card {
-      background: var(--card-bg);
-      border-radius: 20px;
-      padding: 20px;
-      border: 1px solid var(--border-color);
-      box-shadow: 0 10px 30px rgba(0,0,0,0.3);
-      position: relative;
+    /* MASTER SWITCH AREA */
+    .master-switch-box {
+      background: linear-gradient(135deg, #1e293b, #334155);
+      color: #ffffff;
+      border-radius: 14px;
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
     }
 
-    .card-top {
+    .switch-row {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin-bottom: 16px;
-      padding-bottom: 12px;
-      border-bottom: 1px solid var(--border-color);
     }
 
-    .user-info {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
-
-    .user-avatar {
-      width: 40px;
-      height: 40px;
-      border-radius: 50%;
-      background: var(--primary);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-weight: 700;
-      color: white;
-    }
-
-    .user-details h4 {
-      font-size: 15px;
-      font-weight: 700;
-      color: var(--text-main);
-    }
-
-    .user-details span {
-      font-size: 12px;
-      color: var(--text-muted);
-    }
-
-    .reward-tag {
-      background: rgba(16, 185, 129, 0.15);
-      color: var(--success);
-      padding: 6px 12px;
-      border-radius: 10px;
-      font-weight: 800;
-      font-size: 14px;
-    }
-
-    .task-details-box {
-      background: var(--bg-body);
-      padding: 12px;
-      border-radius: 12px;
-      margin-bottom: 16px;
-      font-size: 13px;
-    }
-
-    .task-details-box p {
-      margin-bottom: 4px;
-      color: var(--text-muted);
-    }
-
-    .task-details-box strong {
-      color: var(--text-main);
-    }
-
-    /* Proof Image Box */
-    .proof-image-container {
-      width: 100%;
-      max-height: 380px;
-      background: #000;
-      border-radius: 14px;
-      overflow: hidden;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      margin-bottom: 20px;
-      border: 1px solid var(--border-color);
-      position: relative;
-    }
-
-    .proof-image-container img {
-      width: 100%;
-      height: 100%;
-      object-fit: contain;
-      max-height: 380px;
-    }
-
-    .no-image {
-      padding: 40px;
-      color: var(--text-muted);
-      text-align: center;
-    }
-
-    /* Action Buttons (Approve / Reject) */
-    .action-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 12px;
-      margin-bottom: 16px;
-    }
-
-    .btn-action {
-      padding: 14px;
-      border: none;
-      border-radius: 12px;
-      font-size: 14px;
-      font-weight: 700;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 8px;
-      transition: all 0.2s ease;
-    }
-
-    .btn-approve {
-      background: var(--success);
-      color: #ffffff;
-    }
-
-    .btn-approve:hover {
-      background: #059669;
-    }
-
-    .btn-reject {
+    .btn-toggle-boli {
       background: var(--danger);
       color: #ffffff;
-    }
-
-    .btn-reject:hover {
-      background: #dc2626;
-    }
-
-    /* Card Navigation Controls (Next / Prev) */
-    .nav-controls {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding-top: 12px;
-      border-top: 1px solid var(--border-color);
-    }
-
-    .nav-btn {
-      background: var(--input-bg);
-      border: 1px solid var(--border-color);
-      color: var(--text-main);
-      padding: 8px 16px;
+      border: none;
+      padding: 10px 16px;
       border-radius: 10px;
-      font-size: 13px;
-      font-weight: 600;
+      font-weight: 800;
+      font-size: 11px;
       cursor: pointer;
       display: flex;
       align-items: center;
       gap: 6px;
+      transition: all 0.2s;
     }
 
-    .nav-btn:disabled {
-      opacity: 0.4;
-      cursor: not-allowed;
+    .btn-toggle-boli.active-mode {
+      background: var(--success);
     }
 
-    .counter-text {
-      font-size: 13px;
+    /* FORM STYLES */
+    .form-group {
+      margin-bottom: 10px;
+    }
+
+    .form-group label {
+      font-size: 11px;
       font-weight: 700;
-      color: var(--text-muted);
+      display: block;
+      margin-bottom: 4px;
+      color: var(--text-main);
     }
 
-    /* Empty & Loading States */
-    .empty-state {
-      text-align: center;
-      padding: 50px 20px;
-      background: var(--card-bg);
-      border-radius: 20px;
+    .form-control {
+      width: 100%;
+      padding: 9px 12px;
+      font-size: 11px;
+      border-radius: 8px;
+      border: 1px solid var(--border-color);
+      outline: none;
+      background: #f8fafc;
+    }
+
+    .form-control:focus {
+      border-color: var(--primary);
+      background: #ffffff;
+    }
+
+    .btn-primary {
+      width: 100%;
+      background: var(--primary);
+      color: #ffffff;
+      border: none;
+      padding: 10px;
+      border-radius: 8px;
+      font-size: 11px;
+      font-weight: 800;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+    }
+
+    .btn-primary:active {
+      background: var(--primary-dark);
+    }
+
+    /* SUBMISSION ITEM CARDS */
+    .submission-card {
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      border-radius: 10px;
+      padding: 12px;
+      margin-bottom: 10px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .submission-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .user-info {
+      font-size: 11px;
+      font-weight: 800;
+      color: var(--primary);
+    }
+
+    .sub-img {
+      width: 100%;
+      max-height: 180px;
+      object-fit: cover;
+      border-radius: 8px;
       border: 1px solid var(--border-color);
     }
 
-    .empty-state i {
-      font-size: 48px;
-      color: var(--text-muted);
-      margin-bottom: 12px;
+    .action-row {
+      display: flex;
+      gap: 8px;
+      margin-top: 4px;
     }
 
-    .status-pill {
-      display: inline-block;
-      padding: 4px 10px;
-      border-radius: 20px;
-      font-size: 11px;
+    .btn-sm {
+      flex: 1;
+      padding: 7px;
+      font-size: 10px;
       font-weight: 700;
-      text-transform: uppercase;
-    }
-
-    .status-pending { background: #f59e0b22; color: #f59e0b; }
-    .status-approved { background: #10b98122; color: #10b981; }
-    .status-rejected { background: #ef444422; color: #ef4444; }
-
-    /* Zoom Modal */
-    .modal-overlay {
-      display: none;
-      position: fixed;
-      top: 0; left: 0; right: 0; bottom: 0;
-      background: rgba(0,0,0,0.9);
-      z-index: 999;
-      justify-content: center;
-      align-items: center;
-      padding: 20px;
-    }
-
-    .modal-overlay img {
-      max-width: 100%;
-      max-height: 90vh;
-      border-radius: 12px;
-    }
-
-    .modal-close {
-      position: absolute;
-      top: 20px;
-      right: 20px;
-      color: #fff;
-      font-size: 28px;
+      border-radius: 6px;
+      border: none;
       cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 4px;
+    }
+
+    .btn-success { background: var(--success); color: #fff; }
+    .btn-danger { background: var(--danger); color: #fff; }
+
+    /* BOLI ITEMS LIST */
+    .boli-item {
+      background: #ffffff;
+      border: 1.5px solid var(--primary);
+      border-radius: 10px;
+      padding: 10px;
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .boli-thumb {
+      width: 55px;
+      height: 55px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 2px solid var(--primary);
+    }
+
+    .boli-details {
+      flex: 1;
+    }
+
+    .highest-bid-box {
+      background: #f0fdf4;
+      border: 1px solid #bbf7d0;
+      padding: 4px 8px;
+      border-radius: 6px;
+      font-size: 10px;
+      color: #166534;
+      margin-top: 4px;
+    }
+
+    /* PAYMENT CLAIM ITEM */
+    .payment-card {
+      background: #fffbe3;
+      border: 1px solid #fde68a;
+      border-radius: 10px;
+      padding: 10px;
+      margin-bottom: 8px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      font-size: 11px;
     }
   </style>
 </head>
 <body>
 
-  <div class="admin-container">
-    
-    <!-- Admin Header -->
-    <div class="admin-header">
-      <div class="admin-title">
-        <i class="fa-solid fa-user-shield"></i>
-        <span>SEW Admin Panel</span>
+  <!-- HEADER -->
+  <header class="admin-header">
+    <div class="admin-title">
+      <i class="fa-solid fa-user-shield" style="color:var(--primary);"></i>
+      SEW Admin Control
+    </div>
+    <div id="globalBoliStatus" class="status-badge status-inactive">
+      Boli Off
+    </div>
+  </header>
+
+  <div class="container">
+
+    <!-- 1. MASTER BOLI SWITCH & NOTICE CONTROL -->
+    <section class="master-switch-box">
+      <div class="switch-row">
+        <div>
+          <h3 style="font-size: 13px; font-weight: 800;">Live Boli Mode Control</h3>
+          <p style="font-size: 10px; opacity: 0.8;">Boli start karne par dashboard ke baqi items ghaib ho jayenge.</p>
+        </div>
+        <button id="toggleBoliBtn" class="btn-toggle-boli" onclick="toggleBoliMode()">
+          <i class="fa-solid fa-power-off"></i> Start Boli
+        </button>
       </div>
-      <p class="admin-subtitle">Real-time Proof Review & Manual Approval System</p>
-    </div>
 
-    <!-- Main Navigation Tabs -->
-    <div class="tab-container">
-      <button class="tab-btn active" id="videoTaskBtn">
-        <i class="fa-solid fa-play-circle"></i>
-        <span>Video Tasks</span>
-        <span class="badge" id="videoBadge">0</span>
-      </button>
-      <button class="tab-btn" id="appTaskBtn">
-        <i class="fa-solid fa-download"></i>
-        <span>App Tasks</span>
-        <span class="badge" id="appBadge">0</span>
-      </button>
-    </div>
+      <hr style="border-color: rgba(255,255,255,0.1);" />
 
-    <!-- Status Filter -->
-    <div class="filter-bar">
-      <button class="filter-btn active" id="filterPending">Pending</button>
-      <button class="filter-btn" id="filterApproved">Approved</button>
-      <button class="filter-btn" id="filterRejected">Rejected</button>
-      <button class="filter-btn" id="filterAll">All</button>
-    </div>
-
-    <!-- Dynamic Content Area -->
-    <div id="contentArea">
-      <!-- Loading State -->
-      <div class="empty-state">
-        <i class="fa-solid fa-spinner fa-spin"></i>
-        <h3>Loading Tasks...</h3>
-        <p>Connecting to Realtime Firebase</p>
+      <div class="form-group" style="margin-bottom: 0;">
+        <label style="color:#fff;">Dashboard Dynamic Notice Text</label>
+        <div style="display:flex; gap:6px;">
+          <input type="text" id="adminNoticeInput" class="form-control" placeholder="Notice text likhen..." />
+          <button class="btn-primary" style="width:auto; padding:0 14px;" onclick="updateDashboardNotice()">
+            Update Notice
+          </button>
+        </div>
       </div>
-    </div>
+    </section>
+
+    <!-- 2. POST DESIGN TASK FOR USERS ("Ye Wala Design Banayein") -->
+    <section class="card">
+      <h3 class="card-title">
+        <i class="fa-solid fa-pen-ruler" style="color:var(--primary)"></i>
+        Post New Design Task (Users Ke Liye Requirements)
+      </h3>
+
+      <div class="form-group">
+        <label>Design Title / Type</label>
+        <input type="text" id="taskTitle" class="form-control" placeholder="Maslan: Modern Gaming Logo Requirement" />
+      </div>
+
+      <div class="form-group">
+        <label>Details & Instructions (Aapko kaisa design chahiye?)</label>
+        <textarea id="taskDesc" class="form-control" rows="2" placeholder="Rules aur details likhen..."></textarea>
+      </div>
+
+      <div class="form-group">
+        <label>Sample / Reference Image URL</label>
+        <input type="url" id="taskImgUrl" class="form-control" placeholder="https://..." />
+      </div>
+
+      <button class="btn-primary" onclick="postDesignTask()">
+        <i class="fa-solid fa-paper-plane"></i> Publish Design Task
+      </button>
+    </section>
+
+    <!-- 3. USER SUBMITTED DESIGNS (Users Ke Bheje Hue Designs) -->
+    <section class="card">
+      <h3 class="card-title">
+        <i class="fa-solid fa-inbox" style="color:var(--primary)"></i>
+        User Submitted Designs (Full Details)
+      </h3>
+
+      <div id="userSubmissionsContainer">
+        <p style="font-size:10px; color:var(--text-muted); text-align:center;">Submissions load ho rahi hain...</p>
+      </div>
+    </section>
+
+    <!-- 4. LIVE BOLI PRODUCTS MANAGEMENT (Up to 10 Items & Live High Bids) -->
+    <section class="card">
+      <h3 class="card-title">
+        <i class="fa-solid fa-gavel" style="color:var(--warning)"></i>
+        Add Boli Product & Live Highest Bidder
+      </h3>
+
+      <div class="form-group">
+        <label>Boli Design Title</label>
+        <input type="text" id="boliTitle" class="form-control" placeholder="Top 10 Winner Design" />
+      </div>
+
+      <div class="form-group">
+        <label>Design Image URL</label>
+        <input type="url" id="boliImgUrl" class="form-control" placeholder="https://..." />
+      </div>
+
+      <div class="form-group">
+        <label>Starting Price (Rs.)</label>
+        <input type="number" id="boliPrice" class="form-control" placeholder="100" />
+      </div>
+
+      <button class="btn-primary" style="background:var(--warning); color:#000; margin-bottom:12px;" onclick="addBoliItem()">
+        <i class="fa-solid fa-plus"></i> Add To Boli List
+      </button>
+
+      <h4 style="font-size:11px; font-weight:800; margin-bottom:8px;">Active Boli Products & Live Bids:</h4>
+      <div id="boliProductsContainer">
+        <p style="font-size:10px; color:var(--text-muted); text-align:center;">Boli items load ho rahe hain...</p>
+      </div>
+    </section>
+
+    <!-- 5. EASYPAISA PAYMENT CONFIRMATION & UNLOCK DESIGN -->
+    <section class="card">
+      <h3 class="card-title">
+        <i class="fa-solid fa-money-bill-check" style="color:var(--success)"></i>
+        EasyPaisa Payment Claims & Unlock Design
+      </h3>
+
+      <div id="paymentClaimsContainer">
+        <p style="font-size:10px; color:var(--text-muted); text-align:center;">Koi pending payment request nahi hai.</p>
+      </div>
+    </section>
 
   </div>
 
-  <!-- Image Zoom Modal -->
-  <div class="modal-overlay" id="imageModal">
-    <span class="modal-close" id="modalClose">&times;</span>
-    <img id="modalImg" src="" alt="Proof Full Size" />
-  </div>
-
-  <!-- Firebase Modular SDK -->
+  <!-- FIREBASE INTEGRATION & REALTIME LOGIC SCRIPT -->
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-    import { getDatabase, ref, onValue, update, get } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+    import { getDatabase, ref, onValue, set, push, remove, update } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
 
     const firebaseConfig = {
       apiKey: "AIzaSyAsnATksiqZzMHOPO64i_bKqLJW6yjq9lw",
@@ -439,277 +433,240 @@
     const app = initializeApp(firebaseConfig);
     const db = getDatabase(app);
 
-    // Global State
-    let currentTab = 'video'; // 'video' or 'app'
-    let currentFilter = 'pending'; // 'pending', 'approved', 'rejected', 'all'
-    let videoTasks = [];
-    let appTasks = [];
-    let currentIndex = 0;
+    let currentBoliState = false;
 
-    // Elements
-    const videoTaskBtn = document.getElementById('videoTaskBtn');
-    const appTaskBtn = document.getElementById('appTaskBtn');
-    const videoBadge = document.getElementById('videoBadge');
-    const appBadge = document.getElementById('appBadge');
-    const contentArea = document.getElementById('contentArea');
+    // 1. LISTEN TO MASTER BOLI MODE STATE
+    const boliStateRef = ref(db, 'boliState/active');
+    onValue(boliStateRef, (snapshot) => {
+      currentBoliState = snapshot.val() || false;
+      const statusBadge = document.getElementById('globalBoliStatus');
+      const toggleBtn = document.getElementById('toggleBoliBtn');
 
-    // Filter Buttons
-    const filterPending = document.getElementById('filterPending');
-    const filterApproved = document.getElementById('filterApproved');
-    const filterRejected = document.getElementById('filterRejected');
-    const filterAll = document.getElementById('filterAll');
-
-    // Modal Elements
-    const imageModal = document.getElementById('imageModal');
-    const modalImg = document.getElementById('modalImg');
-    const modalClose = document.getElementById('modalClose');
-
-    modalClose.addEventListener('click', () => imageModal.style.display = 'none');
-    imageModal.addEventListener('click', (e) => { if(e.target === imageModal) imageModal.style.display = 'none'; });
-
-    // Tab Switchers
-    videoTaskBtn.addEventListener('click', () => {
-      currentTab = 'video';
-      videoTaskBtn.classList.add('active');
-      appTaskBtn.classList.remove('active');
-      currentIndex = 0;
-      renderCurrentTask();
+      if (currentBoliState) {
+        statusBadge.className = "status-badge status-active";
+        statusBadge.innerText = "Boli Active";
+        toggleBtn.className = "btn-toggle-boli active-mode";
+        toggleBtn.innerHTML = `<i class="fa-solid fa-stop"></i> Stop Boli Mode`;
+      } else {
+        statusBadge.className = "status-badge status-inactive";
+        statusBadge.innerText = "Boli Off";
+        toggleBtn.className = "btn-toggle-boli";
+        toggleBtn.innerHTML = `<i class="fa-solid fa-play"></i> Start Boli Mode`;
+      }
     });
 
-    appTaskBtn.addEventListener('click', () => {
-      currentTab = 'app';
-      appTaskBtn.classList.add('active');
-      videoTaskBtn.classList.remove('active');
-      currentIndex = 0;
-      renderCurrentTask();
-    });
-
-    // Filter Switchers
-    [filterPending, filterApproved, filterRejected, filterAll].forEach(btn => {
-      btn.addEventListener('click', (e) => {
-        document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
-        e.target.classList.add('active');
-        
-        if (e.target.id === 'filterPending') currentFilter = 'pending';
-        else if (e.target.id === 'filterApproved') currentFilter = 'approved';
-        else if (e.target.id === 'filterRejected') currentFilter = 'rejected';
-        else currentFilter = 'all';
-
-        currentIndex = 0;
-        renderCurrentTask();
+    window.toggleBoliMode = function() {
+      const newState = !currentBoliState;
+      set(ref(db, 'boliState/active'), newState).then(() => {
+        alert(newState ? "Live Boli Mode Start ho gaya hai! User Dashboard par baqi items hide ho gaye hain." : "Boli Mode Off ho gaya hai!");
       });
-    });
+    };
 
-    // REALTIME DATABASE LISTENERS
-    
-    // 1. Listen for Video Tasks Proofs
-    const videoRef = ref(db, 'task_submissions/video');
-    onValue(videoRef, (snapshot) => {
-      videoTasks = [];
-      if (snapshot.exists()) {
-        const data = snapshot.val();
-        Object.keys(data).forEach(key => {
-          videoTasks.push({ id: key, ...data[key] });
-        });
-        // Sort newest first
-        videoTasks.sort((a, b) => new Date(b.createdAt || 0) - new Date(a.createdAt || 0));
+    // 2. UPDATE DYNAMIC NOTICE TEXT
+    window.updateDashboardNotice = function() {
+      const text = document.getElementById('adminNoticeInput').value;
+      if (!text) {
+        alert('Notice text enter karen');
+        return;
       }
-      
-      // Update badge counter for pending items
-      const pendingCount = videoTasks.filter(t => t.status === 'pending').length;
-      videoBadge.innerText = pendingCount;
+      set(ref(db, 'notice/daysText'), text).then(() => {
+        alert('Dashboard Notice update ho gaya hai!');
+        document.getElementById('adminNoticeInput').value = '';
+      });
+    };
 
-      if (currentTab === 'video') renderCurrentTask();
-    });
+    // 3. POST DESIGN TASK FOR USERS
+    window.postDesignTask = function() {
+      const title = document.getElementById('taskTitle').value;
+      const desc = document.getElementById('taskDesc').value;
+      const imgUrl = document.getElementById('taskImgUrl').value;
 
-    // 2. Listen for App Tasks Proofs
-    const appRef = ref(db, 'task_submissions/app');
-    onValue(appRef, (snapshot) => {
-      appTasks = [];
-      if (snapshot.exists()) {
-        const data = snapshot.val();
-        Object.keys(data).forEach(key => {
-          appTasks.push({ id: key, ...data[key] });
-        });
-        // Sort newest first
-        appTasks.sort((a, b) => new Date(b.createdAt || 0) - new Date(a.createdAt || 0));
-      }
-
-      // Update badge counter for pending items
-      const pendingCount = appTasks.filter(t => t.status === 'pending').length;
-      appBadge.innerText = pendingCount;
-
-      if (currentTab === 'app') renderCurrentTask();
-    });
-
-    // Get Active Filtered List
-    function getActiveList() {
-      const rawList = currentTab === 'video' ? videoTasks : appTasks;
-      if (currentFilter === 'all') return rawList;
-      return rawList.filter(item => item.status === currentFilter);
-    }
-
-    // RENDER SINGLE TASK CARD (Prevents Lag / Hanging)
-    function renderCurrentTask() {
-      const activeList = getActiveList();
-
-      if (activeList.length === 0) {
-        contentArea.innerHTML = `
-          <div class="empty-state">
-            <i class="fa-solid fa-clipboard-check"></i>
-            <h3>No Tasks Found!</h3>
-            <p>No ${currentFilter} ${currentTab === 'video' ? 'Video' : 'App Download'} tasks right now.</p>
-          </div>
-        `;
+      if (!title || !desc) {
+        alert('Task title aur details dono bharein');
         return;
       }
 
-      if (currentIndex >= activeList.length) {
-        currentIndex = activeList.length - 1;
-      }
-      if (currentIndex < 0) {
-        currentIndex = 0;
-      }
-
-      const item = activeList[currentIndex];
-      const isVideo = currentTab === 'video';
-
-      const initial = item.username ? item.username.charAt(0).toUpperCase() : "U";
-      const proofImg = item.proofImage || item.proofImg || item.screenshot || "";
-      const statusClass = `status-${item.status || 'pending'}`;
-
-      contentArea.innerHTML = `
-        <div class="task-card">
-          <div class="card-top">
-            <div class="user-info">
-              <div class="user-avatar">${initial}</div>
-              <div class="user-details">
-                <h4>@${item.username || 'unknown_user'}</h4>
-                <span>${item.createdAt ? new Date(item.createdAt).toLocaleString() : 'Date N/A'}</span>
-              </div>
-            </div>
-            <div>
-              <span class="status-pill ${statusClass}">${item.status || 'pending'}</span>
-              <div class="reward-tag" style="margin-top: 4px;">+ Rs. ${item.reward || item.amount || 0}</div>
-            </div>
-          </div>
-
-          <div class="task-details-box">
-            <p><strong>Task Type:</strong> ${isVideo ? 'Video Watching / Like Task' : 'App Download & Install Task'}</p>
-            <p><strong>Title / App Name:</strong> ${item.taskTitle || item.appName || 'N/A'}</p>
-            ${item.videoLink ? `<p><strong>Video Link:</strong> <a href="${item.videoLink}" target="_blank" style="color:var(--primary)">Open Video</a></p>` : ''}
-            ${item.appLink ? `<p><strong>App Link:</strong> <a href="${item.appLink}" target="_blank" style="color:var(--primary)">Open App Store</a></p>` : ''}
-          </div>
-
-          <!-- Proof Image -->
-          <div class="proof-image-container">
-            ${proofImg ? `
-              <img src="${proofImg}" id="currentProofImg" alt="Proof Screenshot" title="Click to Zoom" />
-            ` : `
-              <div class="no-image">
-                <i class="fa-solid fa-image-slash fa-2x"></i>
-                <p>No Screenshot Provided</p>
-              </div>
-            `}
-          </div>
-
-          <!-- Approve / Reject Actions -->
-          <div class="action-grid">
-            <button class="btn-action btn-approve" id="approveBtn" ${item.status === 'approved' ? 'disabled style="opacity:0.5"' : ''}>
-              <i class="fa-solid fa-circle-check"></i>
-              <span>Approve (+Rs. ${item.reward || 0})</span>
-            </button>
-
-            <button class="btn-action btn-reject" id="rejectBtn" ${item.status === 'rejected' ? 'disabled style="opacity:0.5"' : ''}>
-              <i class="fa-solid fa-circle-xmark"></i>
-              <span>Reject</span>
-            </button>
-          </div>
-
-          <!-- Card Navigation (Prev / Next) -->
-          <div class="nav-controls">
-            <button class="nav-btn" id="prevBtn" ${currentIndex === 0 ? 'disabled' : ''}>
-              <i class="fa-solid fa-chevron-left"></i> Previous
-            </button>
-            <span class="counter-text">${currentIndex + 1} of ${activeList.length}</span>
-            <button class="nav-btn" id="nextBtn" ${currentIndex === activeList.length - 1 ? 'disabled' : ''}>
-              Next <i class="fa-solid fa-chevron-right"></i>
-            </button>
-          </div>
-        </div>
-      `;
-
-      // Event Listeners for Dynamic Buttons
-      const approveBtn = document.getElementById('approveBtn');
-      const rejectBtn = document.getElementById('rejectBtn');
-      const prevBtn = document.getElementById('prevBtn');
-      const nextBtn = document.getElementById('nextBtn');
-      const currentProofImg = document.getElementById('currentProofImg');
-
-      if (currentProofImg) {
-        currentProofImg.addEventListener('click', () => {
-          modalImg.src = proofImg;
-          imageModal.style.display = 'flex';
-        });
-      }
-
-      approveBtn.addEventListener('click', () => handleTaskAction(item, 'approved'));
-      rejectBtn.addEventListener('click', () => handleTaskAction(item, 'rejected'));
-
-      prevBtn.addEventListener('click', () => {
-        if (currentIndex > 0) {
-          currentIndex--;
-          renderCurrentTask();
-        }
+      const newTaskRef = push(ref(db, 'designTasks'));
+      set(newTaskRef, {
+        title: title,
+        description: desc,
+        imageUrl: imgUrl || 'https://via.placeholder.com/150',
+        timestamp: Date.now()
+      }).then(() => {
+        alert('Design task successfully publish ho gaya!');
+        document.getElementById('taskTitle').value = '';
+        document.getElementById('taskDesc').value = '';
+        document.getElementById('taskImgUrl').value = '';
       });
+    };
 
-      nextBtn.addEventListener('click', () => {
-        if (currentIndex < activeList.length - 1) {
-          currentIndex++;
-          renderCurrentTask();
-        }
-      });
-    }
+    // 4. LISTEN TO USER SUBMITTED DESIGNS
+    const subRef = ref(db, 'submissions');
+    onValue(subRef, (snapshot) => {
+      const container = document.getElementById('userSubmissionsContainer');
+      container.innerHTML = '';
 
-    // APPROVE OR REJECT TASK LOGIC
-    async function handleTaskAction(item, newStatus) {
-      const dbPath = currentTab === 'video' ? `task_submissions/video/${item.id}` : `task_submissions/app/${item.id}`;
-      
-      const approveBtn = document.getElementById('approveBtn');
-      const rejectBtn = document.getElementById('rejectBtn');
-      if (approveBtn) approveBtn.disabled = true;
-      if (rejectBtn) rejectBtn.disabled = true;
-
-      try {
-        // 1. Update task submission status
-        await update(ref(db, dbPath), {
-          status: newStatus,
-          reviewedAt: new Date().toISOString()
-        });
-
-        // 2. If approved, add reward balance to the user's account
-        if (newStatus === 'approved' && item.username) {
-          const userRef = ref(db, `users/${item.username}`);
-          const userSnap = await get(userRef);
-
-          if (userSnap.exists()) {
-            const userData = userSnap.val();
-            const currentBal = parseFloat(userData.balance || 0);
-            const rewardAmt = parseFloat(item.reward || item.amount || 0);
-            const newBal = (currentBal + rewardAmt).toFixed(2);
-
-            await update(userRef, { balance: newBal });
-          }
-        }
-
-        alert(`Task successfully ${newStatus.toUpperCase()}!`);
-        
-      } catch (err) {
-        console.error("Action Error:", err);
-        alert("Error updating task: " + err.message);
+      if (!snapshot.exists()) {
+        container.innerHTML = '<p style="font-size:10px; color:var(--text-muted); text-align:center;">Koi user submission nahi mila.</p>';
+        return;
       }
-    }
 
+      snapshot.forEach((child) => {
+        const key = child.key;
+        const item = child.val();
+
+        const subCard = document.createElement('div');
+        subCard.className = 'submission-card';
+        subCard.innerHTML = `
+          <div class="submission-header">
+            <span class="user-info"><i class="fa-solid fa-user"></i> ${item.userName || 'Unknown User'}</span>
+            <span style="font-size:9px; color:var(--text-muted);">${item.category || 'Design'}</span>
+          </div>
+          <strong style="font-size:12px;">${item.title || 'Untitled'}</strong>
+          <p style="font-size:10px; color:var(--text-muted);">${item.description || 'No description provided.'}</p>
+          <img src="${item.imageUrl || 'https://via.placeholder.com/200'}" class="sub-img" />
+          <div class="action-row">
+            <button class="btn-sm btn-success" onclick="approveToVoting('${key}', '${item.title}', '${item.imageUrl}')">
+              <i class="fa-solid fa-check"></i> Add To Voting
+            </button>
+            <button class="btn-sm btn-danger" onclick="deleteSubmission('${key}')">
+              <i class="fa-solid fa-trash"></i> Delete
+            </button>
+          </div>
+        `;
+        container.appendChild(subCard);
+      });
+    });
+
+    window.approveToVoting = function(key, title, imageUrl) {
+      const newVoteRef = push(ref(db, 'voting'));
+      set(newVoteRef, {
+        title: title,
+        imageUrl: imageUrl,
+        votes: 0
+      }).then(() => {
+        remove(ref(db, `submissions/${key}`));
+        alert('Design Live Voting Contest me bhej diya gaya hai!');
+      });
+    };
+
+    window.deleteSubmission = function(key) {
+      if (confirm('Kya aap is submission ko delete karna chahte hain?')) {
+        remove(ref(db, `submissions/${key}`));
+      }
+    };
+
+    // 5. BOLI PRODUCTS REALTIME LISTENER
+    window.addBoliItem = function() {
+      const title = document.getElementById('boliTitle').value;
+      const imgUrl = document.getElementById('boliImgUrl').value;
+      const price = document.getElementById('boliPrice').value;
+
+      if (!title || !price) {
+        alert('Title aur Starting Price zaroori hain');
+        return;
+      }
+
+      const newBoliRef = push(ref(db, 'boli'));
+      set(newBoliRef, {
+        title: title,
+        imageUrl: imgUrl || 'https://via.placeholder.com/100',
+        price: parseFloat(price),
+        highestBidder: 'None',
+        highestBidderId: '',
+        timestamp: Date.now()
+      }).then(() => {
+        alert('Boli item add ho gaya!');
+        document.getElementById('boliTitle').value = '';
+        document.getElementById('boliImgUrl').value = '';
+        document.getElementById('boliPrice').value = '';
+      });
+    };
+
+    const boliListRef = ref(db, 'boli');
+    onValue(boliListRef, (snapshot) => {
+      const container = document.getElementById('boliProductsContainer');
+      container.innerHTML = '';
+
+      if (!snapshot.exists()) {
+        container.innerHTML = '<p style="font-size:10px; color:var(--text-muted); text-align:center;">Koi boli product active nahi hai.</p>';
+        return;
+      }
+
+      snapshot.forEach((child) => {
+        const key = child.key;
+        const item = child.val();
+
+        const boliDiv = document.createElement('div');
+        boliDiv.className = 'boli-item';
+        boliDiv.innerHTML = `
+          <img src="${item.imageUrl || 'https://via.placeholder.com/100'}" class="boli-thumb" />
+          <div class="boli-details">
+            <strong style="font-size:11px;">${item.title || 'Boli Product'}</strong>
+            <div class="highest-bid-box">
+              <i class="fa-solid fa-trophy"></i> Highest Bid: <strong>Rs. ${item.price || 0}</strong><br>
+              Winner: <strong>${item.highestBidder || 'Koi Bid Nahi'}</strong>
+            </div>
+          </div>
+          <button class="btn-sm btn-danger" style="flex:none; width:32px; height:32px;" onclick="deleteBoliItem('${key}')">
+            <i class="fa-solid fa-trash"></i>
+          </button>
+        `;
+        container.appendChild(boliDiv);
+      });
+    });
+
+    window.deleteBoliItem = function(key) {
+      if (confirm('Delete this boli item?')) {
+        remove(ref(db, `boli/${key}`));
+      }
+    };
+
+    // 6. PAYMENT CLAIMS REALTIME LISTENER
+    const paymentRef = ref(db, 'payments');
+    onValue(paymentRef, (snapshot) => {
+      const container = document.getElementById('paymentClaimsContainer');
+      container.innerHTML = '';
+
+      if (!snapshot.exists()) {
+        container.innerHTML = '<p style="font-size:10px; color:var(--text-muted); text-align:center;">Koi pending payment request nahi hai.</p>';
+        return;
+      }
+
+      snapshot.forEach((child) => {
+        const key = child.key;
+        const item = child.val();
+
+        const payCard = document.createElement('div');
+        payCard.className = 'payment-card';
+        payCard.innerHTML = `
+          <div style="display:flex; justify-space-between; font-weight:800;">
+            <span>User: ${item.userName || 'Unknown'}</span>
+            <span style="color:var(--success);">Rs. ${item.amount || 0}</span>
+          </div>
+          <div>Trx ID (EasyPaisa): <strong>${item.trxId || 'N/A'}</strong></div>
+          <div>Design Title: <strong>${item.designTitle || 'Boli Design'}</strong></div>
+          <button class="btn-sm btn-success" style="margin-top:4px;" onclick="confirmPaymentAndUnlock('${key}', '${item.userId}', '${item.designId}')">
+            <i class="fa-solid fa-lock-open"></i> Confirm Payment & Unlock Design
+          </button>
+        `;
+        container.appendChild(payCard);
+      });
+    });
+
+    window.confirmPaymentAndUnlock = function(payKey, userId, designId) {
+      if (!userId || !designId) {
+        alert('Invalid data');
+        return;
+      }
+
+      // Unlock design for user in Database
+      set(ref(db, `unlockedDesigns/${userId}/${designId}`), true).then(() => {
+        // Remove payment claim after approval
+        remove(ref(db, `payments/${payKey}`));
+        alert('Payment successful! Design user ke paas unlock ho gaya hai.');
+      });
+    };
   </script>
 </body>
 </html>

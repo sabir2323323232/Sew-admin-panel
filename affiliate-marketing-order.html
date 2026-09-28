@@ -46,11 +46,10 @@
     .btn-approve { background: var(--success); }
     .btn-reject { background: var(--danger); }
 
-    /* Modal for Large Image Preview */
     .img-modal { display: none; position: fixed; top:0; left:0; right:0; bottom:0; background: rgba(0,0,0,0.85); z-index: 9999; justify-content: center; align-items: center; padding: 20px; }
     .img-modal img { max-width: 90%; max-height: 90vh; border-radius: 12px; }
 
-    .no-data { text-align: center; color: var(--text-muted); padding: 40px; font-weight: 600; background: #ffffff; border-radius: 16px; border: 1px dashed var(--border-color); }
+    .no-data { text-align: center; color: var(--text-muted); padding: 40px; font-weight: 600; background: #ffffff; border-radius: 16px; border: 1px dashed var(--border-color); grid-column: 1/-1; }
   </style>
 </head>
 <body>
@@ -66,7 +65,6 @@
     </div>
   </div>
 
-  <!-- Fullscreen Image Modal -->
   <div class="img-modal" id="imageModal" onclick="this.style.display='none'">
     <img id="fullImg" src="" alt="Full Screenshot" />
   </div>
@@ -88,13 +86,13 @@
     const app = initializeApp(firebaseConfig);
     const db = getDatabase(app);
 
-    // Fetch All Pending Submissions
+    // Fetch Submissions Realtime
     onValue(ref(db, 'ad_submissions'), (snapshot) => {
       const container = document.getElementById('submissionsContainer');
       const pendingCount = document.getElementById('pendingCount');
       
       if (!snapshot.exists()) {
-        container.innerHTML = `<div class="no-data" style="grid-column: 1/-1;">Koi pending screenshot nahi hai.</div>`;
+        container.innerHTML = `<div class="no-data">Koi pending screenshot nahi hai.</div>`;
         pendingCount.innerText = "Pending: 0";
         return;
       }
@@ -112,7 +110,7 @@
           <div class="user-info">
             User: @${item.username}
             <span>Ad #${item.adIndex} | Reward: Rs. ${item.rewardAmount || 1.00}</span>
-            <span style="font-size:10px; color:#94a3b8;">${new Date(item.timestamp).toLocaleString()}</span>
+            <span style="font-size:10px; color:#94a3b8;">${new Date(item.timestamp || Date.now()).toLocaleString()}</span>
           </div>
           <div class="img-box">
             <img src="${item.screenshot}" alt="Screenshot" onclick="openFullImage('${item.screenshot}')" />
@@ -128,64 +126,60 @@
         `;
         container.appendChild(card);
       });
+    }, (error) => {
+      console.error(error);
+      document.getElementById('submissionsContainer').innerHTML = `<div class="no-data">Database Connection Error! Check Rules.</div>`;
     });
 
-    // Approve Task
+    // Approve Task & Credit Wallet
     window.approveSubmission = async function(key, username, rewardAmount) {
       const appBtn = document.getElementById(`btn-app-${key}`);
       const rejBtn = document.getElementById(`btn-rej-${key}`);
-      appBtn.disabled = true;
-      rejBtn.disabled = true;
+      if(appBtn) appBtn.disabled = true;
+      if(rejBtn) rejBtn.disabled = true;
 
       try {
         const userRef = ref(db, 'users/' + username);
         const userSnap = await get(userRef);
 
+        let currentBalance = 0;
+        let currentCount = 0;
+
         if (userSnap.exists()) {
           const userData = userSnap.val();
-          const currentBalance = parseFloat(userData.balance || 0);
-          const currentCount = parseInt(userData.completedAdsCount || 0);
-
-          // 1. User ka balance aur ads count update karein
-          await update(userRef, {
-            balance: currentBalance + parseFloat(rewardAmount),
-            completedAdsCount: currentCount + 1
-          });
-
-          // 2. Request ko pending list se remove karein
-          await remove(ref(db, 'ad_submissions/' + key));
-
-          alert(`✅ @${username} ko Rs. ${rewardAmount} add ho chuke hain!`);
-        } else {
-          alert("❌ User record nahi mila!");
+          currentBalance = parseFloat(userData.balance || 0);
+          currentCount = parseInt(userData.completedAdsCount || 0);
         }
+
+        // 1. Balance update
+        await update(userRef, {
+          balance: currentBalance + parseFloat(rewardAmount),
+          completedAdsCount: currentCount + 1
+        });
+
+        // 2. Pending request remove
+        await remove(ref(db, 'ad_submissions/' + key));
+
+        alert(`✅ @${username} ke wallet me Rs. ${rewardAmount} add ho gaye!`);
       } catch (e) {
         alert("Error: " + e.message);
-        appBtn.disabled = false;
-        rejBtn.disabled = false;
+        if(appBtn) appBtn.disabled = false;
+        if(rejBtn) rejBtn.disabled = false;
       }
     };
 
     // Reject Task
     window.rejectSubmission = async function(key) {
-      if(!confirm("Kya aap sach me is screenshot ko reject karna chahte hain?")) return;
-
-      const appBtn = document.getElementById(`btn-app-${key}`);
-      const rejBtn = document.getElementById(`btn-rej-${key}`);
-      appBtn.disabled = true;
-      rejBtn.disabled = true;
+      if(!confirm("Kya aap is task ko reject karna chahte hain?")) return;
 
       try {
         await remove(ref(db, 'ad_submissions/' + key));
-        alert("❌ Task reject aur remove kar diya gaya.");
+        alert("❌ Task reject aur remove ho gaya.");
       } catch (e) {
         alert("Error: " + e.message);
-        appBtn.disabled = false;
-        rejBtn.disabled = false;
       }
     };
 
-    // Open Image Modal
     window.openFullImage = function(src) {
       document.getElementById('fullImg').src = src;
       document.getElementById('imageModal').style.display = 'flex';

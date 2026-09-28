@@ -3,133 +3,77 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>SEW - Admin Panel</title>
   
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
 
-  <!-- Firebase Compat SDK (Works everywhere without module errors) -->
-  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-database-compat.js"></script>
-
   <style>
     :root {
       --bg-body: #f8fafc;
       --card-bg: #ffffff;
-      --input-bg: #f1f5f9;
       --primary: #2563eb;
       --text-main: #0f172a;
       --text-muted: #64748b;
       --border-color: #e2e8f0;
-      --shadow-soft: 0 20px 40px -15px rgba(0, 0, 0, 0.07);
       --success: #10b981;
       --danger: #ef4444;
-      --warning: #f59e0b;
+      --shadow-soft: 0 20px 40px -15px rgba(0, 0, 0, 0.05);
     }
 
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Plus Jakarta Sans', sans-serif; }
-    body { min-height: 100vh; background-color: var(--bg-body); color: var(--text-main); display: flex; justify-content: center; padding: 20px 16px; }
-    .container { width: 100%; max-width: 550px; display: flex; flex-direction: column; gap: 16px; }
+    body { min-height: 100vh; background-color: var(--bg-body); padding: 20px; color: var(--text-main); }
+    
+    .container { max-width: 1000px; margin: 0 auto; display: flex; flex-direction: column; gap: 20px; }
+    
+    .header { background: var(--card-bg); padding: 20px; border-radius: 16px; border: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center; box-shadow: var(--shadow-soft); }
+    .header h1 { font-size: 20px; font-weight: 800; color: var(--primary); }
+    
+    .submissions-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 16px; }
+    
+    .sub-card { background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 16px; padding: 16px; display: flex; flex-direction: column; gap: 12px; box-shadow: var(--shadow-soft); position: relative; }
+    .user-info { font-weight: 700; font-size: 14px; }
+    .user-info span { color: var(--text-muted); font-weight: 500; font-size: 12px; display: block; }
+    
+    .img-box { width: 100%; height: 200px; background: #f1f5f9; border-radius: 12px; overflow: hidden; border: 1px solid var(--border-color); display: flex; align-items: center; justify-content: center; }
+    .img-box img { width: 100%; height: 100%; object-fit: cover; cursor: pointer; transition: transform 0.2s; }
+    .img-box img:hover { transform: scale(1.03); }
 
-    .header-card {
-      background: var(--card-bg); border-radius: 20px; padding: 18px 20px;
-      box-shadow: var(--shadow-soft); display: flex; justify-content: space-between; align-items: center;
-    }
-    .header-title { font-size: 18px; font-weight: 800; display: flex; align-items: center; gap: 8px; }
+    .action-btns { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 5px; }
+    .btn { padding: 10px; border: none; border-radius: 10px; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px; font-size: 13px; color: #ffffff; transition: opacity 0.2s; }
+    .btn:disabled { opacity: 0.5; cursor: not-allowed; }
+    .btn-approve { background: var(--success); }
+    .btn-reject { background: var(--danger); }
 
-    .stats-card {
-      background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
-      color: #ffffff; border-radius: 20px; padding: 16px 20px;
-      display: flex; justify-content: space-between; align-items: center;
-    }
-    .stats-count { font-size: 26px; font-weight: 800; color: var(--warning); }
+    /* Modal for Large Image Preview */
+    .img-modal { display: none; position: fixed; top:0; left:0; right:0; bottom:0; background: rgba(0,0,0,0.85); z-index: 9999; justify-content: center; align-items: center; padding: 20px; }
+    .img-modal img { max-width: 90%; max-height: 90vh; border-radius: 12px; }
 
-    .review-card {
-      background: var(--card-bg); border-radius: 20px; padding: 20px;
-      box-shadow: var(--shadow-soft); display: flex; flex-direction: column; gap: 16px;
-    }
-
-    .user-info-box {
-      background: var(--input-bg); border-radius: 14px; padding: 14px;
-      display: flex; flex-direction: column; gap: 6px; font-size: 13px;
-    }
-    .info-row { display: flex; justify-content: space-between; align-items: center; }
-    .info-label { color: var(--text-muted); font-weight: 600; }
-    .info-value { font-weight: 700; color: var(--text-main); }
-
-    .screenshot-container {
-      width: 100%; height: 320px; background: #0f172a; border-radius: 14px;
-      overflow: hidden; display: flex; justify-content: center; align-items: center;
-      position: relative; border: 1px solid var(--border-color); cursor: pointer;
-    }
-    .screenshot-img { max-width: 100%; max-height: 100%; object-fit: contain; }
-
-    .actions-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-    .btn {
-      padding: 14px; border-radius: 14px; border: none; font-size: 14px;
-      font-weight: 800; cursor: pointer; display: flex; align-items: center;
-      justify-content: center; gap: 8px; transition: 0.2s ease;
-    }
-    .btn-approve { background: var(--success); color: #ffffff; }
-    .btn-reject { background: var(--danger); color: #ffffff; }
-    .btn-nav { background: var(--input-bg); color: var(--text-main); font-size: 13px; padding: 10px; }
-
-    .empty-state {
-      text-align: center; padding: 30px 20px; background: var(--card-bg);
-      border-radius: 20px; color: var(--text-muted); font-weight: 700; box-shadow: var(--shadow-soft);
-    }
-
-    /* On-screen Console Log */
-    .debug-box {
-      background: #000000; color: #00ff66; padding: 12px; border-radius: 12px;
-      font-family: monospace; font-size: 11px; max-height: 120px; overflow-y: auto;
-      word-break: break-all; margin-top: 10px;
-    }
+    .no-data { text-align: center; color: var(--text-muted); padding: 40px; font-weight: 600; background: #ffffff; border-radius: 16px; border: 1px dashed var(--border-color); }
   </style>
 </head>
 <body>
 
   <div class="container">
-    <div class="header-card">
-      <div class="header-title">
-        <i class="fa-solid fa-user-shield" style="color: var(--primary);"></i> Admin Panel
-      </div>
-      <button class="btn btn-nav" onclick="location.reload()">
-        <i class="fa-solid fa-rotate"></i> Reload
-      </button>
+    <div class="header">
+      <h1><i class="fa-solid fa-user-shield"></i> SEW Admin - Ad Approvals</h1>
+      <span id="pendingCount" style="background: var(--primary); color: #fff; padding: 6px 12px; border-radius: 20px; font-weight: 700; font-size: 12px;">Pending: 0</span>
     </div>
 
-    <div class="stats-card">
-      <div>
-        <div style="font-size: 12px; opacity: 0.8; font-weight: 600;">Pending Submissions</div>
-        <div style="font-size: 14px; font-weight: 700;" id="queuePosText">Showing 0 of 0</div>
-      </div>
-      <div class="stats-count" id="totalPending">0</div>
-    </div>
-
-    <div id="mainContent">
-      <div class="empty-state">
-        <i class="fa-solid fa-spinner fa-spin" style="font-size: 26px; margin-bottom: 10px; color: var(--primary);"></i>
-        <p>Connecting to Firebase...</p>
-      </div>
-    </div>
-
-    <!-- On-screen Status Log -->
-    <div class="debug-box" id="debugLog">
-      > Status Log Initialized...<br>
+    <div class="submissions-grid" id="submissionsContainer">
+      <div class="no-data">Loading pending submissions...</div>
     </div>
   </div>
 
-  <script>
-    function logMessage(msg) {
-      const log = document.getElementById('debugLog');
-      if (log) {
-        log.innerHTML += `> ${msg}<br>`;
-        log.scrollTop = log.scrollHeight;
-      }
-      console.log(msg);
-    }
+  <!-- Fullscreen Image Modal -->
+  <div class="img-modal" id="imageModal" onclick="this.style.display='none'">
+    <img id="fullImg" src="" alt="Full Screenshot" />
+  </div>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+    import { getDatabase, ref, onValue, get, update, remove } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
 
     const firebaseConfig = {
       apiKey: "AIzaSyAsnATksiqZzMHOPO64i_bKqLJW6yjq9lw",
@@ -141,173 +85,112 @@
       appId: "1:358603295768:web:82a9666514a7cb468c476d"
     };
 
-    let db;
-    let requestsList = [];
-    let currentIndex = 0;
+    const app = initializeApp(firebaseConfig);
+    const db = getDatabase(app);
 
-    try {
-      firebase.initializeApp(firebaseConfig);
-      db = firebase.database();
-      logMessage("Firebase Connected Successfully.");
-      initListener();
-    } catch (err) {
-      logMessage("Firebase Config Error: " + err.message);
-    }
-
-    function initListener() {
-      db.ref('ad_submissions').on('value', (snapshot) => {
-        if (snapshot.exists()) {
-          const data = snapshot.val();
-          logMessage("Data fetched: " + Object.keys(data).length + " submissions found.");
-          
-          requestsList = Object.keys(data).map(key => ({
-            id: key,
-            ...data[key]
-          }));
-
-          requestsList.sort((a, b) => (b.timestamp || 0) - (a.timestamp || 0));
-
-          if (currentIndex >= requestsList.length) {
-            currentIndex = Math.max(0, requestsList.length - 1);
-          }
-
-          renderCurrentRequest();
-        } else {
-          logMessage("No submissions exist in 'ad_submissions' path.");
-          requestsList = [];
-          renderEmptyState();
-        }
-      }, (error) => {
-        logMessage("Database Access Error: " + error.message);
-        document.getElementById('mainContent').innerHTML = `
-          <div class="empty-state" style="color: var(--danger);">
-            <i class="fa-solid fa-triangle-exclamation" style="font-size: 32px; margin-bottom: 10px;"></i>
-            <p><strong>Permission Denied!</strong></p>
-            <p style="font-size: 12px; margin-top: 6px;">Firebase Rules check karein.</p>
-          </div>`;
-      });
-    }
-
-    function renderEmptyState() {
-      document.getElementById('totalPending').innerText = "0";
-      document.getElementById('queuePosText').innerText = "Showing 0 of 0";
-      document.getElementById('mainContent').innerHTML = `
-        <div class="empty-state">
-          <i class="fa-solid fa-circle-check" style="font-size: 36px; color: var(--success); margin-bottom: 12px;"></i>
-          <p style="font-size: 16px;">Koi Pending Task Nahi Hai!</p>
-          <p style="font-size: 12px; font-weight: 500; margin-top: 4px;">Jab user ad screenshot submit kare ga, yahan show hoga.</p>
-        </div>`;
-    }
-
-    function renderCurrentRequest() {
-      if (requestsList.length === 0) {
-        renderEmptyState();
+    // Fetch All Pending Submissions
+    onValue(ref(db, 'ad_submissions'), (snapshot) => {
+      const container = document.getElementById('submissionsContainer');
+      const pendingCount = document.getElementById('pendingCount');
+      
+      if (!snapshot.exists()) {
+        container.innerHTML = `<div class="no-data" style="grid-column: 1/-1;">Koi pending screenshot nahi hai.</div>`;
+        pendingCount.innerText = "Pending: 0";
         return;
       }
 
-      const item = requestsList[currentIndex];
-      const total = requestsList.length;
+      const submissions = snapshot.val();
+      const keys = Object.keys(submissions);
+      pendingCount.innerText = `Pending: ${keys.length}`;
+      container.innerHTML = '';
 
-      document.getElementById('totalPending').innerText = total;
-      document.getElementById('queuePosText').innerText = `Request ${currentIndex + 1} of ${total}`;
-
-      const dateStr = item.timestamp ? new Date(item.timestamp).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}) : 'N/A';
-      
-      // Image source resolution
-      let imgSrc = 'https://via.placeholder.com/400x300?text=No+Image+Found';
-      if (item.screenshot && item.screenshot.length > 50) {
-        imgSrc = item.screenshot;
-      }
-
-      const html = `
-        <div class="review-card">
-          <div class="user-info-box">
-            <div class="info-row">
-              <span class="info-label"><i class="fa-solid fa-user"></i> Username:</span>
-              <span class="info-value">${item.username || 'Unknown'}</span>
-            </div>
-            <div class="info-row" style="margin-top: 4px;">
-              <span class="info-label"><i class="fa-solid fa-envelope"></i> Email:</span>
-              <span class="info-value">${item.email || 'No Email'}</span>
-            </div>
-            <div class="info-row" style="margin-top: 4px;">
-              <span class="info-label"><i class="fa-solid fa-rectangle-ad"></i> Task Details:</span>
-              <span class="info-value">Ad #${item.adIndex || 1} (Rs. ${parseFloat(item.rewardAmount || 1).toFixed(2)})</span>
-            </div>
-            <div class="info-row" style="margin-top: 4px;">
-              <span class="info-label"><i class="fa-solid fa-clock"></i> Time:</span>
-              <span class="info-value">${dateStr}</span>
-            </div>
+      keys.forEach((key) => {
+        const item = submissions[key];
+        const card = document.createElement('div');
+        card.className = 'sub-card';
+        card.innerHTML = `
+          <div class="user-info">
+            User: @${item.username}
+            <span>Ad #${item.adIndex} | Reward: Rs. ${item.rewardAmount || 1.00}</span>
+            <span style="font-size:10px; color:#94a3b8;">${new Date(item.timestamp).toLocaleString()}</span>
           </div>
-
-          <div class="screenshot-container" onclick="window.open('${imgSrc}')">
-            <img class="screenshot-img" src="${imgSrc}" alt="Proof" onerror="this.src='https://via.placeholder.com/400x300?text=Image+Load+Failed';" />
+          <div class="img-box">
+            <img src="${item.screenshot}" alt="Screenshot" onclick="openFullImage('${item.screenshot}')" />
           </div>
-
-          <div class="actions-grid">
-            <button class="btn btn-approve" onclick="approveCurrent('${item.id}', '${item.username}', ${item.rewardAmount || 1})">
-              <i class="fa-solid fa-check-circle"></i> Approve (+Rs. 1)
+          <div class="action-btns">
+            <button class="btn btn-approve" id="btn-app-${key}" onclick="approveSubmission('${key}', '${item.username}', ${item.rewardAmount || 1.00})">
+              <i class="fa-solid fa-check"></i> Approve
             </button>
-            <button class="btn btn-reject" onclick="rejectCurrent('${item.id}')">
-              <i class="fa-solid fa-xmark-circle"></i> Reject
+            <button class="btn btn-reject" id="btn-rej-${key}" onclick="rejectSubmission('${key}')">
+              <i class="fa-solid fa-xmark"></i> Reject
             </button>
           </div>
+        `;
+        container.appendChild(card);
+      });
+    });
 
-          <div style="display: flex; gap: 10px; margin-top: 4px;">
-            <button class="btn btn-nav" style="flex: 1;" ${currentIndex === 0 ? 'disabled style="opacity:0.5;"' : ''} onclick="navRequest(-1)">
-              <i class="fa-solid fa-arrow-left"></i> Previous
-            </button>
-            <button class="btn btn-nav" style="flex: 1;" ${currentIndex === total - 1 ? 'disabled style="opacity:0.5;"' : ''} onclick="navRequest(1)">
-              Next <i class="fa-solid fa-arrow-right"></i>
-            </button>
-          </div>
-        </div>
-      `;
+    // Approve Task
+    window.approveSubmission = async function(key, username, rewardAmount) {
+      const appBtn = document.getElementById(`btn-app-${key}`);
+      const rejBtn = document.getElementById(`btn-rej-${key}`);
+      appBtn.disabled = true;
+      rejBtn.disabled = true;
 
-      document.getElementById('mainContent').innerHTML = html;
-    }
+      try {
+        const userRef = ref(db, 'users/' + username);
+        const userSnap = await get(userRef);
 
-    function navRequest(direction) {
-      currentIndex += direction;
-      renderCurrentRequest();
-    }
-
-    function approveCurrent(submissionId, username, reward) {
-      if (!confirm(`Approve kar ke ${username} ko Rs. ${reward} add kar dein?`)) return;
-
-      db.ref(`users/${username}`).once('value').then(userSnap => {
         if (userSnap.exists()) {
           const userData = userSnap.val();
-          const currentBal = parseFloat(userData.balance || 0);
-          const newBal = (currentBal + parseFloat(reward)).toFixed(2);
-          const completedAds = (userData.completedAdsCount || 0) + 1;
+          const currentBalance = parseFloat(userData.balance || 0);
+          const currentCount = parseInt(userData.completedAdsCount || 0);
 
-          return db.ref(`users/${username}`).update({
-            balance: newBal,
-            completedAdsCount: completedAds
+          // 1. User ka balance aur ads count update karein
+          await update(userRef, {
+            balance: currentBalance + parseFloat(rewardAmount),
+            completedAdsCount: currentCount + 1
           });
+
+          // 2. Request ko pending list se remove karein
+          await remove(ref(db, 'ad_submissions/' + key));
+
+          alert(`✅ @${username} ko Rs. ${rewardAmount} add ho chuke hain!`);
         } else {
-          throw new Error("User username database mein nahi mila!");
+          alert("❌ User record nahi mila!");
         }
-      }).then(() => {
-        return db.ref(`ad_submissions/${submissionId}`).remove();
-      }).then(() => {
-        logMessage("Approved submission ID: " + submissionId);
-      }).catch(err => {
-        alert("Action failed: " + err.message);
-        logMessage("Approve error: " + err.message);
-      });
-    }
+      } catch (e) {
+        alert("Error: " + e.message);
+        appBtn.disabled = false;
+        rejBtn.disabled = false;
+      }
+    };
 
-    function rejectCurrent(submissionId) {
-      if (!confirm("Is submission ko reject/delete kar dein?")) return;
+    // Reject Task
+    window.rejectSubmission = async function(key) {
+      if(!confirm("Kya aap sach me is screenshot ko reject karna chahte hain?")) return;
 
-      db.ref(`ad_submissions/${submissionId}`).remove().then(() => {
-        logMessage("Rejected submission ID: " + submissionId);
-      }).catch(err => {
-        alert("Reject failed: " + err.message);
-      });
-    }
+      const appBtn = document.getElementById(`btn-app-${key}`);
+      const rejBtn = document.getElementById(`btn-rej-${key}`);
+      appBtn.disabled = true;
+      rejBtn.disabled = true;
+
+      try {
+        await remove(ref(db, 'ad_submissions/' + key));
+        alert("❌ Task reject aur remove kar diya gaya.");
+      } catch (e) {
+        alert("Error: " + e.message);
+        appBtn.disabled = false;
+        rejBtn.disabled = false;
+      }
+    };
+
+    // Open Image Modal
+    window.openFullImage = function(src) {
+      document.getElementById('fullImg').src = src;
+      document.getElementById('imageModal').style.display = 'flex';
+    };
   </script>
+
 </body>
 </html>

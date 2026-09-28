@@ -1,10 +1,10 @@
 
 <!DOCTYPE html>
-<html lang="ur">
+<html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-  <title>SEW - Control & Admin Panel</title>
+  <title>SEW - Admin Management Panel</title>
   
   <!-- Fonts & Icons -->
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
@@ -12,17 +12,16 @@
 
   <style>
     :root {
-      --bg-body: #f1f5f9;
-      --card-bg: #ffffff;
-      --primary: #2563eb;
-      --primary-dark: #1d4ed8;
-      --danger: #ef4444;
+      --bg-body: #0f172a;
+      --card-bg: #1e293b;
+      --card-border: #334155;
+      --primary: #3b82f6;
+      --primary-dark: #2563eb;
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
       --success: #10b981;
+      --danger: #ef4444;
       --warning: #f59e0b;
-      --text-main: #0f172a;
-      --text-muted: #64748b;
-      --border-color: #cbd5e1;
-      --shadow: 0 4px 14px rgba(15, 23, 42, 0.08);
     }
 
     * {
@@ -30,104 +29,183 @@
       margin: 0;
       padding: 0;
       font-family: 'Plus Jakarta Sans', sans-serif;
-      -webkit-tap-highlight-color: transparent;
     }
 
     body {
       background-color: var(--bg-body);
       color: var(--text-main);
-      padding-bottom: 50px;
+      min-height: 100vh;
+      padding: 16px;
+    }
+
+    .admin-container {
+      max-width: 1100px;
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
     }
 
     /* HEADER */
     .admin-header {
-      background: #0f172a;
-      color: #ffffff;
-      padding: 14px 16px;
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 14px;
+      padding: 16px 20px;
       display: flex;
       justify-content: space-between;
       align-items: center;
-      position: sticky;
-      top: 0;
-      z-index: 100;
-      box-shadow: var(--shadow);
+      flex-wrap: wrap;
+      gap: 10px;
     }
 
     .admin-title {
-      font-size: 16px;
+      font-size: 20px;
       font-weight: 800;
+      color: #ffffff;
       display: flex;
       align-items: center;
-      gap: 8px;
+      gap: 10px;
     }
 
-    .status-badge {
-      font-size: 10px;
-      font-weight: 800;
+    .admin-title i {
+      color: var(--primary);
+    }
+
+    .admin-badge {
+      background: rgba(59, 130, 246, 0.15);
+      color: var(--primary);
+      border: 1px solid rgba(59, 130, 246, 0.3);
       padding: 4px 10px;
       border-radius: 20px;
-      text-transform: uppercase;
+      font-size: 11px;
+      font-weight: 700;
     }
 
-    .status-active { background: #dcfce7; color: #15803d; }
-    .status-inactive { background: #fee2e2; color: #b91c1c; }
-
-    /* CONTAINER */
-    .container {
-      max-width: 600px;
-      margin: 0 auto;
-      padding: 14px;
-      display: flex;
-      flex-direction: column;
-      gap: 16px;
-    }
-
-    /* CARD BOX */
-    .card {
-      background: #ffffff;
-      border-radius: 14px;
-      padding: 14px;
-      border: 1px solid #e2e8f0;
-      box-shadow: var(--shadow);
-    }
-
-    .card-title {
-      font-size: 13px;
-      font-weight: 800;
-      margin-bottom: 12px;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      color: var(--text-main);
-      border-bottom: 1px dashed var(--border-color);
-      padding-bottom: 8px;
-    }
-
-    /* MASTER SWITCH AREA */
-    .master-switch-box {
-      background: linear-gradient(135deg, #1e293b, #334155);
-      color: #ffffff;
-      border-radius: 14px;
-      padding: 16px;
-      display: flex;
-      flex-direction: column;
+    /* STATS COUNTER GRID */
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
       gap: 12px;
     }
 
-    .switch-row {
+    .stat-card {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 12px;
+      padding: 16px;
       display: flex;
-      justify-content: space-between;
       align-items: center;
+      justify-content: space-between;
     }
 
-    .btn-toggle-boli {
-      background: var(--danger);
-      color: #ffffff;
-      border: none;
-      padding: 10px 16px;
-      border-radius: 10px;
-      font-weight: 800;
+    .stat-info p {
       font-size: 11px;
+      color: var(--text-muted);
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .stat-number {
+      font-size: 24px;
+      font-weight: 800;
+      margin-top: 4px;
+    }
+
+    .stat-icon {
+      width: 44px;
+      height: 44px;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+    }
+
+    /* SECTIONS */
+    .section-card {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 14px;
+      padding: 18px;
+    }
+
+    .section-header {
+      font-size: 15px;
+      font-weight: 800;
+      margin-bottom: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      color: #ffffff;
+      border-bottom: 1px solid var(--card-border);
+      padding-bottom: 10px;
+    }
+
+    /* WINNERS MANAGEMENT FORM */
+    .winners-form-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 12px;
+    }
+
+    .winner-input-box {
+      background: rgba(15, 23, 42, 0.6);
+      border: 1px solid var(--card-border);
+      border-radius: 10px;
+      padding: 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .winner-input-box h4 {
+      font-size: 12px;
+      font-weight: 800;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .input-group {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .input-group label {
+      font-size: 10px;
+      color: var(--text-muted);
+      font-weight: 700;
+    }
+
+    .admin-input {
+      background: #0f172a;
+      border: 1px solid var(--card-border);
+      color: #ffffff;
+      padding: 8px 10px;
+      border-radius: 6px;
+      font-size: 12px;
+      outline: none;
+    }
+
+    .admin-input:focus {
+      border-color: var(--primary);
+    }
+
+    .btn-group {
+      display: flex;
+      gap: 10px;
+      margin-top: 14px;
+    }
+
+    .btn {
+      padding: 10px 16px;
+      border-radius: 8px;
+      font-size: 12px;
+      font-weight: 800;
+      border: none;
       cursor: pointer;
       display: flex;
       align-items: center;
@@ -135,291 +213,261 @@
       transition: all 0.2s;
     }
 
-    .btn-toggle-boli.active-mode {
-      background: var(--success);
+    .btn-primary { background: var(--primary); color: #ffffff; }
+    .btn-primary:hover { background: var(--primary-dark); }
+    .btn-danger { background: rgba(239, 68, 68, 0.2); color: var(--danger); border: 1px solid rgba(239, 68, 68, 0.4); }
+    .btn-danger:hover { background: var(--danger); color: #ffffff; }
+
+    /* TASK SUBMISSIONS TABLE */
+    .table-wrapper {
+      overflow-x: auto;
     }
 
-    /* FORM STYLES */
-    .form-group {
-      margin-bottom: 10px;
-    }
-
-    .form-group label {
-      font-size: 11px;
-      font-weight: 700;
-      display: block;
-      margin-bottom: 4px;
-      color: var(--text-main);
-    }
-
-    .form-control {
+    table {
       width: 100%;
-      padding: 9px 12px;
-      font-size: 11px;
-      border-radius: 8px;
-      border: 1px solid var(--border-color);
-      outline: none;
-      background: #f8fafc;
+      border-collapse: collapse;
+      text-align: left;
+      font-size: 12px;
     }
 
-    .form-control:focus {
-      border-color: var(--primary);
-      background: #ffffff;
-    }
-
-    .btn-primary {
-      width: 100%;
-      background: var(--primary);
-      color: #ffffff;
-      border: none;
-      padding: 10px;
-      border-radius: 8px;
-      font-size: 11px;
+    th {
+      background: rgba(15, 23, 42, 0.8);
+      color: var(--text-muted);
+      padding: 10px 12px;
       font-weight: 800;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 6px;
+      text-transform: uppercase;
+      font-size: 10px;
+      border-bottom: 1px solid var(--card-border);
     }
 
-    .btn-primary:active {
-      background: var(--primary-dark);
-    }
-
-    /* SUBMISSION ITEM CARDS */
-    .submission-card {
-      background: #f8fafc;
-      border: 1px solid #e2e8f0;
-      border-radius: 10px;
+    td {
       padding: 12px;
-      margin-bottom: 10px;
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
+      border-bottom: 1px solid var(--card-border);
+      vertical-align: middle;
     }
 
-    .submission-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-
-    .user-info {
-      font-size: 11px;
-      font-weight: 800;
-      color: var(--primary);
-    }
-
-    .sub-img {
-      width: 100%;
-      max-height: 180px;
-      object-fit: cover;
-      border-radius: 8px;
-      border: 1px solid var(--border-color);
-    }
-
-    .action-row {
-      display: flex;
-      gap: 8px;
-      margin-top: 4px;
-    }
-
-    .btn-sm {
-      flex: 1;
-      padding: 7px;
+    .status-badge {
+      padding: 4px 8px;
+      border-radius: 20px;
       font-size: 10px;
-      font-weight: 700;
+      font-weight: 800;
+      display: inline-block;
+    }
+
+    .status-pending { background: rgba(245, 158, 11, 0.15); color: var(--warning); border: 1px solid rgba(245, 158, 11, 0.3); }
+    .status-approved { background: rgba(16, 185, 129, 0.15); color: var(--success); border: 1px solid rgba(16, 185, 129, 0.3); }
+    .status-rejected { background: rgba(239, 68, 68, 0.15); color: var(--danger); border: 1px solid rgba(239, 68, 68, 0.3); }
+
+    .action-btn {
+      padding: 5px 8px;
       border-radius: 6px;
+      font-size: 11px;
       border: none;
       cursor: pointer;
-      display: flex;
+      font-weight: 700;
+      margin-right: 4px;
+    }
+
+    .btn-approve { background: var(--success); color: #fff; }
+    .btn-reject { background: var(--warning); color: #fff; }
+    .btn-del { background: var(--danger); color: #fff; }
+
+    .screenshot-thumb {
+      width: 42px;
+      height: 42px;
+      object-fit: cover;
+      border-radius: 6px;
+      cursor: pointer;
+      border: 1px solid var(--card-border);
+    }
+
+    /* LIGHTBOX MODAL FOR SCREENSHOT PREVIEW */
+    .lightbox {
+      position: fixed;
+      top: 0; left: 0; width: 100%; height: 100%;
+      background: rgba(0,0,0,0.85);
+      display: none;
       align-items: center;
       justify-content: center;
-      gap: 4px;
+      z-index: 1000;
+      padding: 20px;
     }
 
-    .btn-success { background: var(--success); color: #fff; }
-    .btn-danger { background: var(--danger); color: #fff; }
-
-    /* BOLI ITEMS LIST */
-    .boli-item {
-      background: #ffffff;
-      border: 1.5px solid var(--primary);
-      border-radius: 10px;
-      padding: 10px;
-      margin-bottom: 10px;
-      display: flex;
-      align-items: center;
-      gap: 10px;
+    .lightbox img {
+      max-width: 90%;
+      max-height: 85vh;
+      border-radius: 8px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.5);
     }
 
-    .boli-thumb {
-      width: 55px;
-      height: 55px;
-      border-radius: 50%;
-      object-fit: cover;
-      border: 2px solid var(--primary);
-    }
-
-    .boli-details {
-      flex: 1;
-    }
-
-    .highest-bid-box {
-      background: #f0fdf4;
-      border: 1px solid #bbf7d0;
-      padding: 4px 8px;
-      border-radius: 6px;
-      font-size: 10px;
-      color: #166534;
-      margin-top: 4px;
-    }
-
-    /* PAYMENT CLAIM ITEM */
-    .payment-card {
-      background: #fffbe3;
-      border: 1px solid #fde68a;
-      border-radius: 10px;
-      padding: 10px;
-      margin-bottom: 8px;
-      display: flex;
-      flex-direction: column;
-      gap: 6px;
-      font-size: 11px;
+    .lightbox-close {
+      position: absolute;
+      top: 20px; right: 20px;
+      color: #ffffff;
+      font-size: 24px;
+      cursor: pointer;
     }
   </style>
 </head>
 <body>
 
-  <!-- HEADER -->
-  <header class="admin-header">
-    <div class="admin-title">
-      <i class="fa-solid fa-user-shield" style="color:var(--primary);"></i>
-      SEW Admin Control
-    </div>
-    <div id="globalBoliStatus" class="status-badge status-inactive">
-      Boli Off
-    </div>
-  </header>
+  <div class="admin-container">
 
-  <div class="container">
+    <!-- HEADER -->
+    <header class="admin-header">
+      <div class="admin-title">
+        <i class="fa-solid fa-user-shield"></i> SEW Control Center
+      </div>
+      <div class="admin-badge">
+        <i class="fa-solid fa-circle-dot" style="color:var(--success)"></i> System Live Sync
+      </div>
+    </header>
 
-    <!-- 1. MASTER BOLI SWITCH & NOTICE CONTROL -->
-    <section class="master-switch-box">
-      <div class="switch-row">
-        <div>
-          <h3 style="font-size: 13px; font-weight: 800;">Live Boli Mode Control</h3>
-          <p style="font-size: 10px; opacity: 0.8;">Boli start karne par dashboard ke baqi items ghaib ho jayenge.</p>
+    <!-- TASK COUNTER ANALYTICS GRID -->
+    <div class="stats-grid">
+      <div class="stat-card">
+        <div class="stat-info">
+          <p>Total Tasks Done</p>
+          <div class="stat-number" id="statTotal">0</div>
         </div>
-        <button id="toggleBoliBtn" class="btn-toggle-boli" onclick="toggleBoliMode()">
-          <i class="fa-solid fa-power-off"></i> Start Boli
+        <div class="stat-icon" style="background: rgba(59, 130, 246, 0.15); color: var(--primary);">
+          <i class="fa-solid fa-list-check"></i>
+        </div>
+      </div>
+
+      <div class="stat-card">
+        <div class="stat-info">
+          <p>Pending Approval</p>
+          <div class="stat-number" id="statPending" style="color: var(--warning)">0</div>
+        </div>
+        <div class="stat-icon" style="background: rgba(245, 158, 11, 0.15); color: var(--warning);">
+          <i class="fa-solid fa-hourglass-half"></i>
+        </div>
+      </div>
+
+      <div class="stat-card">
+        <div class="stat-info">
+          <p>Approved Tasks</p>
+          <div class="stat-number" id="statApproved" style="color: var(--success)">0</div>
+        </div>
+        <div class="stat-icon" style="background: rgba(16, 185, 129, 0.15); color: var(--success);">
+          <i class="fa-solid fa-circle-check"></i>
+        </div>
+      </div>
+
+      <div class="stat-card">
+        <div class="stat-info">
+          <p>Rejected Tasks</p>
+          <div class="stat-number" id="statRejected" style="color: var(--danger)">0</div>
+        </div>
+        <div class="stat-icon" style="background: rgba(239, 68, 68, 0.15); color: var(--danger);">
+          <i class="fa-solid fa-circle-xmark"></i>
+        </div>
+      </div>
+    </div>
+
+    <!-- WINNER MANAGEMENT PANEL -->
+    <section class="section-card">
+      <div class="section-header">
+        <span><i class="fa-solid fa-trophy" style="color:var(--warning)"></i> Manage Daily Top Winners</span>
+        <span style="font-size:10px; color:var(--text-muted);">Updates User Dashboard Live</span>
+      </div>
+
+      <div class="winners-form-grid">
+        <!-- Rank 1 -->
+        <div class="winner-input-box" style="border-top: 3px solid #f59e0b;">
+          <h4>🥇 1st Winner</h4>
+          <div class="input-group">
+            <label>Winner Name / Mobile</label>
+            <input type="text" id="w1NameInput" class="admin-input" placeholder="e.g. Ali Khan" />
+          </div>
+          <div class="input-group">
+            <label>Prize Amount</label>
+            <input type="text" id="w1PrizeInput" class="admin-input" value="Rs. 100" />
+          </div>
+        </div>
+
+        <!-- Rank 2 -->
+        <div class="winner-input-box" style="border-top: 3px solid #94a3b8;">
+          <h4>🥈 2nd Winner</h4>
+          <div class="input-group">
+            <label>Winner Name / Mobile</label>
+            <input type="text" id="w2NameInput" class="admin-input" placeholder="e.g. Usman Shah" />
+          </div>
+          <div class="input-group">
+            <label>Prize Amount</label>
+            <input type="text" id="w2PrizeInput" class="admin-input" value="Rs. 50" />
+          </div>
+        </div>
+
+        <!-- Rank 3 -->
+        <div class="winner-input-box" style="border-top: 3px solid #d97706;">
+          <h4>🥉 3rd Winner</h4>
+          <div class="input-group">
+            <label>Winner Name / Mobile</label>
+            <input type="text" id="w3NameInput" class="admin-input" placeholder="e.g. Sara Ahmed" />
+          </div>
+          <div class="input-group">
+            <label>Prize Amount</label>
+            <input type="text" id="w3PrizeInput" class="admin-input" value="Rs. 30" />
+          </div>
+        </div>
+      </div>
+
+      <div class="btn-group">
+        <button class="btn btn-primary" onclick="saveWinners()">
+          <i class="fa-solid fa-floppy-disk"></i> Update Winners Box
+        </button>
+        <button class="btn btn-danger" onclick="clearWinners()">
+          <i class="fa-solid fa-trash-can"></i> Reset All Winners
         </button>
       </div>
-
-      <hr style="border-color: rgba(255,255,255,0.1);" />
-
-      <div class="form-group" style="margin-bottom: 0;">
-        <label style="color:#fff;">Dashboard Dynamic Notice Text</label>
-        <div style="display:flex; gap:6px;">
-          <input type="text" id="adminNoticeInput" class="form-control" placeholder="Notice text likhen..." />
-          <button class="btn-primary" style="width:auto; padding:0 14px;" onclick="updateDashboardNotice()">
-            Update Notice
-          </button>
-        </div>
-      </div>
     </section>
 
-    <!-- 2. POST DESIGN TASK FOR USERS ("Ye Wala Design Banayein") -->
-    <section class="card">
-      <h3 class="card-title">
-        <i class="fa-solid fa-pen-ruler" style="color:var(--primary)"></i>
-        Post New Design Task (Users Ke Liye Requirements)
-      </h3>
-
-      <div class="form-group">
-        <label>Design Title / Type</label>
-        <input type="text" id="taskTitle" class="form-control" placeholder="Maslan: Modern Gaming Logo Requirement" />
+    <!-- PROOF SCREENSHOT APPROVAL TABLE -->
+    <section class="section-card">
+      <div class="section-header">
+        <span><i class="fa-solid fa-images"></i> User Submitted Proof Screenshots</span>
+        <span style="font-size:10px; color:var(--text-muted);">Review, Approve & Reject Submissions</span>
       </div>
 
-      <div class="form-group">
-        <label>Details & Instructions (Aapko kaisa design chahiye?)</label>
-        <textarea id="taskDesc" class="form-control" rows="2" placeholder="Rules aur details likhen..."></textarea>
-      </div>
-
-      <div class="form-group">
-        <label>Sample / Reference Image URL</label>
-        <input type="url" id="taskImgUrl" class="form-control" placeholder="https://..." />
-      </div>
-
-      <button class="btn-primary" onclick="postDesignTask()">
-        <i class="fa-solid fa-paper-plane"></i> Publish Design Task
-      </button>
-    </section>
-
-    <!-- 3. USER SUBMITTED DESIGNS (Users Ke Bheje Hue Designs) -->
-    <section class="card">
-      <h3 class="card-title">
-        <i class="fa-solid fa-inbox" style="color:var(--primary)"></i>
-        User Submitted Designs (Full Details)
-      </h3>
-
-      <div id="userSubmissionsContainer">
-        <p style="font-size:10px; color:var(--text-muted); text-align:center;">Submissions load ho rahi hain...</p>
-      </div>
-    </section>
-
-    <!-- 4. LIVE BOLI PRODUCTS MANAGEMENT (Up to 10 Items & Live High Bids) -->
-    <section class="card">
-      <h3 class="card-title">
-        <i class="fa-solid fa-gavel" style="color:var(--warning)"></i>
-        Add Boli Product & Live Highest Bidder
-      </h3>
-
-      <div class="form-group">
-        <label>Boli Design Title</label>
-        <input type="text" id="boliTitle" class="form-control" placeholder="Top 10 Winner Design" />
-      </div>
-
-      <div class="form-group">
-        <label>Design Image URL</label>
-        <input type="url" id="boliImgUrl" class="form-control" placeholder="https://..." />
-      </div>
-
-      <div class="form-group">
-        <label>Starting Price (Rs.)</label>
-        <input type="number" id="boliPrice" class="form-control" placeholder="100" />
-      </div>
-
-      <button class="btn-primary" style="background:var(--warning); color:#000; margin-bottom:12px;" onclick="addBoliItem()">
-        <i class="fa-solid fa-plus"></i> Add To Boli List
-      </button>
-
-      <h4 style="font-size:11px; font-weight:800; margin-bottom:8px;">Active Boli Products & Live Bids:</h4>
-      <div id="boliProductsContainer">
-        <p style="font-size:10px; color:var(--text-muted); text-align:center;">Boli items load ho rahe hain...</p>
-      </div>
-    </section>
-
-    <!-- 5. EASYPAISA PAYMENT CONFIRMATION & UNLOCK DESIGN -->
-    <section class="card">
-      <h3 class="card-title">
-        <i class="fa-solid fa-money-bill-check" style="color:var(--success)"></i>
-        EasyPaisa Payment Claims & Unlock Design
-      </h3>
-
-      <div id="paymentClaimsContainer">
-        <p style="font-size:10px; color:var(--text-muted); text-align:center;">Koi pending payment request nahi hai.</p>
+      <div class="table-wrapper">
+        <table>
+          <thead>
+            <tr>
+              <th>User Details</th>
+              <th>Mobile</th>
+              <th>Submitted At</th>
+              <th>Proof Screenshot</th>
+              <th>Status</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="submissionsTableBody">
+            <tr>
+              <td colspan="6" style="text-align: center; color: var(--text-muted); padding: 20px;">
+                Loading submitted tasks...
+              </td>
+            </tr>
+          </tbody>
+        </table>
       </div>
     </section>
 
   </div>
 
-  <!-- FIREBASE INTEGRATION & REALTIME LOGIC SCRIPT -->
+  <!-- LIGHTBOX FOR ENLARGED SCREENSHOT -->
+  <div class="lightbox" id="lightboxModal" onclick="closeLightbox()">
+    <span class="lightbox-close">&times;</span>
+    <img id="lightboxImg" src="" alt="Screenshot Full View" />
+  </div>
+
+  <!-- FIREBASE INTEGRATION SCRIPT -->
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-    import { getDatabase, ref, onValue, set, push, remove, update } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+    import { getDatabase, ref, onValue, set, update, remove } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
 
+    // EXACT FIREBASE CONFIGURATION
     const firebaseConfig = {
       apiKey: "AIzaSyAsnATksiqZzMHOPO64i_bKqLJW6yjq9lw",
       authDomain: "newweb-d50af.firebaseapp.com",
@@ -433,239 +481,162 @@
     const app = initializeApp(firebaseConfig);
     const db = getDatabase(app);
 
-    let currentBoliState = false;
-
-    // 1. LISTEN TO MASTER BOLI MODE STATE
-    const boliStateRef = ref(db, 'boliState/active');
-    onValue(boliStateRef, (snapshot) => {
-      currentBoliState = snapshot.val() || false;
-      const statusBadge = document.getElementById('globalBoliStatus');
-      const toggleBtn = document.getElementById('toggleBoliBtn');
-
-      if (currentBoliState) {
-        statusBadge.className = "status-badge status-active";
-        statusBadge.innerText = "Boli Active";
-        toggleBtn.className = "btn-toggle-boli active-mode";
-        toggleBtn.innerHTML = `<i class="fa-solid fa-stop"></i> Stop Boli Mode`;
-      } else {
-        statusBadge.className = "status-badge status-inactive";
-        statusBadge.innerText = "Boli Off";
-        toggleBtn.className = "btn-toggle-boli";
-        toggleBtn.innerHTML = `<i class="fa-solid fa-play"></i> Start Boli Mode`;
+    // 1. FETCH & DISPLAY WINNERS IN ADMIN FORM
+    const winnersRef = ref(db, 'winners');
+    onValue(winnersRef, (snapshot) => {
+      if (snapshot.exists()) {
+        const winners = snapshot.val();
+        if (winners.first) {
+          document.getElementById('w1NameInput').value = winners.first.name || '';
+          document.getElementById('w1PrizeInput').value = winners.first.prize || 'Rs. 100';
+        }
+        if (winners.second) {
+          document.getElementById('w2NameInput').value = winners.second.name || '';
+          document.getElementById('w2PrizeInput').value = winners.second.prize || 'Rs. 50';
+        }
+        if (winners.third) {
+          document.getElementById('w3NameInput').value = winners.third.name || '';
+          document.getElementById('w3PrizeInput').value = winners.third.prize || 'Rs. 30';
+        }
       }
     });
 
-    window.toggleBoliMode = function() {
-      const newState = !currentBoliState;
-      set(ref(db, 'boliState/active'), newState).then(() => {
-        alert(newState ? "Live Boli Mode Start ho gaya hai! User Dashboard par baqi items hide ho gaye hain." : "Boli Mode Off ho gaya hai!");
+    // SAVE WINNERS TO FIREBASE REALTIME DB
+    window.saveWinners = function() {
+      const first = {
+        name: document.getElementById('w1NameInput').value.trim() || 'Waiting...',
+        prize: document.getElementById('w1PrizeInput').value.trim() || 'Rs. 100'
+      };
+      const second = {
+        name: document.getElementById('w2NameInput').value.trim() || 'Waiting...',
+        prize: document.getElementById('w2PrizeInput').value.trim() || 'Rs. 50'
+      };
+      const third = {
+        name: document.getElementById('w3NameInput').value.trim() || 'Waiting...',
+        prize: document.getElementById('w3PrizeInput').value.trim() || 'Rs. 30'
+      };
+
+      set(winnersRef, { first, second, third }).then(() => {
+        alert("Top Winners successfully updated! User Dashboard will update immediately.");
+      }).catch(err => {
+        alert("Error saving winners: " + err.message);
       });
     };
 
-    // 2. UPDATE DYNAMIC NOTICE TEXT
-    window.updateDashboardNotice = function() {
-      const text = document.getElementById('adminNoticeInput').value;
-      if (!text) {
-        alert('Notice text enter karen');
-        return;
-      }
-      set(ref(db, 'notice/daysText'), text).then(() => {
-        alert('Dashboard Notice update ho gaya hai!');
-        document.getElementById('adminNoticeInput').value = '';
+    // CLEAR WINNERS
+    window.clearWinners = function() {
+      if (!confirm("Are you sure you want to reset all winners to 'Waiting...'?")) return;
+      const resetObj = {
+        first: { name: 'Waiting...', prize: 'Rs. 100' },
+        second: { name: 'Waiting...', prize: 'Rs. 50' },
+        third: { name: 'Waiting...', prize: 'Rs. 30' }
+      };
+      set(winnersRef, resetObj).then(() => {
+        alert("Winners box cleared.");
       });
     };
 
-    // 3. POST DESIGN TASK FOR USERS
-    window.postDesignTask = function() {
-      const title = document.getElementById('taskTitle').value;
-      const desc = document.getElementById('taskDesc').value;
-      const imgUrl = document.getElementById('taskImgUrl').value;
+    // 2. LISTEN & REALTIME RENDER SUBMITTED PROOF SCREENSHOTS
+    const submissionsRef = ref(db, 'task_submissions');
+    onValue(submissionsRef, (snapshot) => {
+      const tbody = document.getElementById('submissionsTableBody');
+      tbody.innerHTML = '';
 
-      if (!title || !desc) {
-        alert('Task title aur details dono bharein');
-        return;
-      }
-
-      const newTaskRef = push(ref(db, 'designTasks'));
-      set(newTaskRef, {
-        title: title,
-        description: desc,
-        imageUrl: imgUrl || 'https://via.placeholder.com/150',
-        timestamp: Date.now()
-      }).then(() => {
-        alert('Design task successfully publish ho gaya!');
-        document.getElementById('taskTitle').value = '';
-        document.getElementById('taskDesc').value = '';
-        document.getElementById('taskImgUrl').value = '';
-      });
-    };
-
-    // 4. LISTEN TO USER SUBMITTED DESIGNS
-    const subRef = ref(db, 'submissions');
-    onValue(subRef, (snapshot) => {
-      const container = document.getElementById('userSubmissionsContainer');
-      container.innerHTML = '';
+      let total = 0;
+      let pending = 0;
+      let approved = 0;
+      let rejected = 0;
 
       if (!snapshot.exists()) {
-        container.innerHTML = '<p style="font-size:10px; color:var(--text-muted); text-align:center;">Koi user submission nahi mila.</p>';
+        tbody.innerHTML = `
+          <tr>
+            <td colspan="6" style="text-align: center; color: var(--text-muted); padding: 20px;">
+              No task submissions found.
+            </td>
+          </tr>`;
+        updateStats(0, 0, 0, 0);
         return;
       }
 
-      snapshot.forEach((child) => {
-        const key = child.key;
-        const item = child.val();
+      const data = snapshot.val();
+      const keys = Object.keys(data);
 
-        const subCard = document.createElement('div');
-        subCard.className = 'submission-card';
-        subCard.innerHTML = `
-          <div class="submission-header">
-            <span class="user-info"><i class="fa-solid fa-user"></i> ${item.userName || 'Unknown User'}</span>
-            <span style="font-size:9px; color:var(--text-muted);">${item.category || 'Design'}</span>
-          </div>
-          <strong style="font-size:12px;">${item.title || 'Untitled'}</strong>
-          <p style="font-size:10px; color:var(--text-muted);">${item.description || 'No description provided.'}</p>
-          <img src="${item.imageUrl || 'https://via.placeholder.com/200'}" class="sub-img" />
-          <div class="action-row">
-            <button class="btn-sm btn-success" onclick="approveToVoting('${key}', '${item.title}', '${item.imageUrl}')">
-              <i class="fa-solid fa-check"></i> Add To Voting
+      keys.forEach(uid => {
+        const item = data[uid];
+        total++;
+
+        if (item.status === 'pending') pending++;
+        else if (item.status === 'approved') approved++;
+        else if (item.status === 'rejected') rejected++;
+
+        const tr = document.createElement('tr');
+        
+        const formattedDate = item.submittedAt ? new Date(item.submittedAt).toLocaleString('en-US', {
+          dateStyle: 'short', timeStyle: 'short'
+        }) : 'N/A';
+
+        const statusClass = item.status === 'approved' ? 'status-approved' : 
+                            item.status === 'rejected' ? 'status-rejected' : 'status-pending';
+
+        tr.innerHTML = `
+          <td><strong>${item.userName || 'User'}</strong><br><span style="font-size:10px; color:var(--text-muted)">ID: ${item.userId || uid}</span></td>
+          <td>${item.mobile || 'N/A'}</td>
+          <td><span style="font-size:11px; color:var(--text-muted)">${formattedDate}</span></td>
+          <td>
+            ${item.screenshot ? `<img src="${item.screenshot}" class="screenshot-thumb" onclick="openLightbox('${item.screenshot}')" title="Click to enlarge" />` : 'No Image'}
+          </td>
+          <td><span class="status-badge ${statusClass}">${(item.status || 'pending').toUpperCase()}</span></td>
+          <td>
+            <button class="action-btn btn-approve" onclick="updateStatus('${uid}', 'approved')" title="Approve Task">
+              <i class="fa-solid fa-check"></i>
             </button>
-            <button class="btn-sm btn-danger" onclick="deleteSubmission('${key}')">
-              <i class="fa-solid fa-trash"></i> Delete
+            <button class="action-btn btn-reject" onclick="updateStatus('${uid}', 'rejected')" title="Reject Task">
+              <i class="fa-solid fa-xmark"></i>
             </button>
-          </div>
+            <button class="action-btn btn-del" onclick="deleteSubmission('${uid}')" title="Delete Submission">
+              <i class="fa-solid fa-trash"></i>
+            </button>
+          </td>
         `;
-        container.appendChild(subCard);
+
+        tbody.appendChild(tr);
       });
+
+      updateStats(total, pending, approved, rejected);
     });
 
-    window.approveToVoting = function(key, title, imageUrl) {
-      const newVoteRef = push(ref(db, 'voting'));
-      set(newVoteRef, {
-        title: title,
-        imageUrl: imageUrl,
-        votes: 0
-      }).then(() => {
-        remove(ref(db, `submissions/${key}`));
-        alert('Design Live Voting Contest me bhej diya gaya hai!');
-      });
+    function updateStats(tot, pend, app, rej) {
+      document.getElementById('statTotal').innerText = tot;
+      document.getElementById('statPending').innerText = pend;
+      document.getElementById('statApproved').innerText = app;
+      document.getElementById('statRejected').innerText = rej;
+    }
+
+    // APPROVE OR REJECT TASK SUBMISSION
+    window.updateStatus = function(userId, newStatus) {
+      const subItemRef = ref(db, 'task_submissions/' + userId);
+      update(subItemRef, { status: newStatus }).then(() => {
+        alert(`Status updated to: ${newStatus.toUpperCase()}`);
+      }).catch(err => alert("Error: " + err.message));
     };
 
-    window.deleteSubmission = function(key) {
-      if (confirm('Kya aap is submission ko delete karna chahte hain?')) {
-        remove(ref(db, `submissions/${key}`));
-      }
+    // DELETE TASK SUBMISSION
+    window.deleteSubmission = function(userId) {
+      if (!confirm("Are you sure you want to delete this submission record?")) return;
+      const subItemRef = ref(db, 'task_submissions/' + userId);
+      remove(subItemRef).then(() => {
+        alert("Submission deleted.");
+      }).catch(err => alert("Error: " + err.message));
     };
 
-    // 5. BOLI PRODUCTS REALTIME LISTENER
-    window.addBoliItem = function() {
-      const title = document.getElementById('boliTitle').value;
-      const imgUrl = document.getElementById('boliImgUrl').value;
-      const price = document.getElementById('boliPrice').value;
-
-      if (!title || !price) {
-        alert('Title aur Starting Price zaroori hain');
-        return;
-      }
-
-      const newBoliRef = push(ref(db, 'boli'));
-      set(newBoliRef, {
-        title: title,
-        imageUrl: imgUrl || 'https://via.placeholder.com/100',
-        price: parseFloat(price),
-        highestBidder: 'None',
-        highestBidderId: '',
-        timestamp: Date.now()
-      }).then(() => {
-        alert('Boli item add ho gaya!');
-        document.getElementById('boliTitle').value = '';
-        document.getElementById('boliImgUrl').value = '';
-        document.getElementById('boliPrice').value = '';
-      });
+    // LIGHTBOX CONTROLS FOR ENLARGING SCREENSHOTS
+    window.openLightbox = function(imgSrc) {
+      document.getElementById('lightboxImg').src = imgSrc;
+      document.getElementById('lightboxModal').style.display = 'flex';
     };
 
-    const boliListRef = ref(db, 'boli');
-    onValue(boliListRef, (snapshot) => {
-      const container = document.getElementById('boliProductsContainer');
-      container.innerHTML = '';
-
-      if (!snapshot.exists()) {
-        container.innerHTML = '<p style="font-size:10px; color:var(--text-muted); text-align:center;">Koi boli product active nahi hai.</p>';
-        return;
-      }
-
-      snapshot.forEach((child) => {
-        const key = child.key;
-        const item = child.val();
-
-        const boliDiv = document.createElement('div');
-        boliDiv.className = 'boli-item';
-        boliDiv.innerHTML = `
-          <img src="${item.imageUrl || 'https://via.placeholder.com/100'}" class="boli-thumb" />
-          <div class="boli-details">
-            <strong style="font-size:11px;">${item.title || 'Boli Product'}</strong>
-            <div class="highest-bid-box">
-              <i class="fa-solid fa-trophy"></i> Highest Bid: <strong>Rs. ${item.price || 0}</strong><br>
-              Winner: <strong>${item.highestBidder || 'Koi Bid Nahi'}</strong>
-            </div>
-          </div>
-          <button class="btn-sm btn-danger" style="flex:none; width:32px; height:32px;" onclick="deleteBoliItem('${key}')">
-            <i class="fa-solid fa-trash"></i>
-          </button>
-        `;
-        container.appendChild(boliDiv);
-      });
-    });
-
-    window.deleteBoliItem = function(key) {
-      if (confirm('Delete this boli item?')) {
-        remove(ref(db, `boli/${key}`));
-      }
-    };
-
-    // 6. PAYMENT CLAIMS REALTIME LISTENER
-    const paymentRef = ref(db, 'payments');
-    onValue(paymentRef, (snapshot) => {
-      const container = document.getElementById('paymentClaimsContainer');
-      container.innerHTML = '';
-
-      if (!snapshot.exists()) {
-        container.innerHTML = '<p style="font-size:10px; color:var(--text-muted); text-align:center;">Koi pending payment request nahi hai.</p>';
-        return;
-      }
-
-      snapshot.forEach((child) => {
-        const key = child.key;
-        const item = child.val();
-
-        const payCard = document.createElement('div');
-        payCard.className = 'payment-card';
-        payCard.innerHTML = `
-          <div style="display:flex; justify-space-between; font-weight:800;">
-            <span>User: ${item.userName || 'Unknown'}</span>
-            <span style="color:var(--success);">Rs. ${item.amount || 0}</span>
-          </div>
-          <div>Trx ID (EasyPaisa): <strong>${item.trxId || 'N/A'}</strong></div>
-          <div>Design Title: <strong>${item.designTitle || 'Boli Design'}</strong></div>
-          <button class="btn-sm btn-success" style="margin-top:4px;" onclick="confirmPaymentAndUnlock('${key}', '${item.userId}', '${item.designId}')">
-            <i class="fa-solid fa-lock-open"></i> Confirm Payment & Unlock Design
-          </button>
-        `;
-        container.appendChild(payCard);
-      });
-    });
-
-    window.confirmPaymentAndUnlock = function(payKey, userId, designId) {
-      if (!userId || !designId) {
-        alert('Invalid data');
-        return;
-      }
-
-      // Unlock design for user in Database
-      set(ref(db, `unlockedDesigns/${userId}/${designId}`), true).then(() => {
-        // Remove payment claim after approval
-        remove(ref(db, `payments/${payKey}`));
-        alert('Payment successful! Design user ke paas unlock ho gaya hai.');
-      });
+    window.closeLightbox = function() {
+      document.getElementById('lightboxModal').style.display = 'none';
     };
   </script>
 </body>

@@ -4,7 +4,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-  <title>SEW - Admin Panel</title>
+  <title>SEW - Admin Panel (Ads Approval)</title>
   
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
@@ -13,98 +13,120 @@
     :root {
       --bg-body: #f8fafc;
       --card-bg: #ffffff;
+      --input-bg: #f1f5f9;
       --primary: #2563eb;
       --text-main: #0f172a;
       --text-muted: #64748b;
       --border-color: #e2e8f0;
-      --shadow-soft: 0 10px 25px -5px rgba(0, 0, 0, 0.05);
+      --shadow-soft: 0 20px 40px -15px rgba(0, 0, 0, 0.07);
       --success: #10b981;
       --danger: #ef4444;
       --warning: #f59e0b;
     }
 
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Plus Jakarta Sans', sans-serif; }
-    body { min-height: 100vh; background-color: var(--bg-body); color: var(--text-main); padding: 20px 16px; }
-    .container { max-width: 800px; margin: 0 auto; display: flex; flex-direction: column; gap: 20px; }
+    body { min-height: 100vh; background-color: var(--bg-body); color: var(--text-main); display: flex; justify-content: center; padding: 20px 16px; }
+    .container { width: 100%; max-width: 550px; display: flex; flex-direction: column; gap: 16px; }
 
     .header-card {
-      background: var(--card-bg); border-radius: 20px; padding: 20px;
+      background: var(--card-bg); border-radius: 20px; padding: 18px 20px;
       box-shadow: var(--shadow-soft); display: flex; justify-content: space-between;
-      align-items: center; border: 1px solid var(--border-color);
+      align-items: center; border: 1px solid #ffffff;
+    }
+    .header-title { font-size: 18px; font-weight: 800; display: flex; align-items: center; gap: 8px; }
+
+    .stats-card {
+      background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+      color: #ffffff; border-radius: 20px; padding: 16px 20px;
+      display: flex; justify-content: space-between; align-items: center;
+    }
+    .stats-count { font-size: 26px; font-weight: 800; color: var(--warning); }
+
+    /* Single Request Viewer Card */
+    .review-card {
+      background: var(--card-bg); border-radius: 20px; padding: 20px;
+      box-shadow: var(--shadow-soft); border: 1px solid #ffffff;
+      display: flex; flex-direction: column; gap: 16px;
     }
 
-    .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 14px; }
-    .stat-card { background: var(--card-bg); padding: 16px; border-radius: 16px; border: 1px solid var(--border-color); }
-    .stat-card label { font-size: 12px; color: var(--text-muted); font-weight: 600; }
-    .stat-card .value { font-size: 22px; font-weight: 800; margin-top: 4px; }
-
-    .requests-container { background: var(--card-bg); border-radius: 20px; padding: 20px; border: 1px solid var(--border-color); }
-    .requests-list { display: flex; flex-direction: column; gap: 12px; margin-top: 15px; }
-
-    .request-card {
-      border: 1px solid var(--border-color); border-radius: 14px; padding: 16px;
-      display: flex; flex-direction: column; gap: 12px; background: #fafafa;
+    .user-info-box {
+      background: var(--input-bg); border-radius: 14px; padding: 14px;
+      display: flex; flex-direction: column; gap: 6px; font-size: 13px;
     }
-    @media(min-width: 600px) {
-      .request-card { flex-direction: row; align-items: center; justify-content: space-between; }
+    .info-row { display: flex; justify-content: space-between; align-items: center; }
+    .info-label { color: var(--text-muted); font-weight: 600; }
+    .info-value { font-weight: 700; color: var(--text-main); }
+    .email-badge { background: #dbeafe; color: var(--primary); padding: 2px 8px; border-radius: 6px; font-size: 12px; font-weight: 700; }
+
+    .screenshot-container {
+      width: 100%; height: 320px; background: #000; border-radius: 14px;
+      overflow: hidden; display: flex; justify-content: center; align-items: center;
+      position: relative; border: 1px solid var(--border-color);
+    }
+    .screenshot-img { max-width: 100%; max-height: 100%; object-fit: contain; }
+
+    .actions-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+    .btn {
+      padding: 14px; border-radius: 14px; border: none; font-size: 14px;
+      font-weight: 800; cursor: pointer; display: flex; align-items: center;
+      justify-content: center; gap: 8px; transition: 0.2s ease;
+    }
+    .btn-approve { background: var(--success); color: #ffffff; }
+    .btn-reject { background: var(--danger); color: #ffffff; }
+    .btn-nav { background: var(--input-bg); color: var(--text-main); font-size: 13px; padding: 10px; }
+
+    .empty-state {
+      text-align: center; padding: 40px 20px; background: var(--card-bg);
+      border-radius: 20px; color: var(--text-muted); font-weight: 700;
+      box-shadow: var(--shadow-soft);
     }
 
-    .user-details h4 { font-size: 15px; font-weight: 800; color: var(--text-main); }
-    .user-details p { font-size: 13px; color: var(--text-muted); margin-top: 2px; }
-    .user-details .email-badge { background: #eff6ff; color: var(--primary); padding: 2px 8px; border-radius: 6px; font-size: 12px; font-weight: 600; }
-
-    .action-btns { display: flex; gap: 8px; flex-wrap: wrap; }
-    .btn { padding: 8px 14px; border-radius: 10px; border: none; font-weight: 700; font-size: 13px; cursor: pointer; color: #fff; }
-    .btn-view { background: var(--primary); }
-    .btn-approve { background: var(--success); }
-    .btn-reject { background: var(--danger); }
-
-    /* Modal for Image Preview */
-    .image-modal {
-      display: none; position: fixed; top:0; left:0; right:0; bottom:0;
-      background: rgba(0,0,0,0.85); z-index: 9999;
-      justify-content: center; align-items: center; flex-direction: column; padding: 20px;
+    /* Fullscreen View Modal */
+    .modal {
+      display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0,0,0,0.9); z-index: 1000; justify-content: center;
+      align-items: center; padding: 16px;
     }
-    .image-modal img { max-width: 90%; max-height: 75vh; border-radius: 12px; border: 2px solid #fff; }
-    .modal-close { margin-top: 15px; background: #ef4444; color: white; padding: 10px 20px; border-radius: 20px; font-weight: 700; border: none; cursor: pointer; }
+    .modal img { max-width: 100%; max-height: 90vh; border-radius: 8px; }
   </style>
 </head>
 <body>
 
   <div class="container">
     <div class="header-card">
-      <h2 style="font-size: 18px; font-weight: 800;"><i class="fa-solid fa-user-shield"></i> Admin Ad Task Approvals</h2>
-      <button class="btn btn-reject" onclick="location.reload()">Refresh Data</button>
+      <div class="header-title">
+        <i class="fa-solid fa-user-shield" style="color: var(--primary);"></i> Admin Approval
+      </div>
+      <button class="btn btn-nav" onclick="fetchRequests()">
+        <i class="fa-solid fa-rotate"></i> Refresh
+      </button>
     </div>
 
-    <div class="stats-grid">
-      <div class="stat-card">
-        <label>Pending Submissions</label>
-        <div class="value" id="statPending" style="color: var(--warning);">0</div>
+    <div class="stats-card">
+      <div>
+        <div style="font-size: 12px; opacity: 0.8; font-weight: 600;">Pending Verification Queue</div>
+        <div style="font-size: 14px; font-weight: 700;" id="queuePosText">Showing 0 of 0</div>
       </div>
-      <div class="stat-card">
-        <label>Total Registered Users</label>
-        <div class="value" id="statUsers" style="color: var(--primary);">0</div>
-      </div>
+      <div class="stats-count" id="totalPending">0</div>
     </div>
 
-    <div class="requests-container">
-      <h3 style="font-size: 16px; font-weight: 700;">Task Submissions List</h3>
-      <div class="requests-list" id="requestsList">
-        <div style="text-align: center; padding: 30px; color: #64748b;">Loading task submissions...</div>
+    <!-- Review Card Area -->
+    <div id="mainContent">
+      <div class="empty-state">
+        <i class="fa-solid fa-spinner fa-spin" style="font-size: 24px; margin-bottom: 10px; color: var(--primary);"></i>
+        <p>Submissions load ho rahi hain...</p>
       </div>
     </div>
   </div>
 
-  <!-- Image Viewer Modal -->
-  <div class="image-modal" id="imageModal">
-    <img id="fullImage" src="" alt="Screenshot Proof" />
-    <button class="modal-close" onclick="closeModal()">Close Screenshot</button>
+  <!-- Zoom Modal -->
+  <div class="modal" id="zoomModal" onclick="this.style.display='none'">
+    <img id="zoomedImg" src="" alt="Full Proof" />
   </div>
 
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-    import { getDatabase, ref, onValue, update, remove, get } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+    import { getDatabase, ref, onValue, get, update, remove } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
 
     const firebaseConfig = {
       apiKey: "AIzaSyAsnATksiqZzMHOPO64i_bKqLJW6yjq9lw",
@@ -119,77 +141,133 @@
     const app = initializeApp(firebaseConfig);
     const db = getDatabase(app);
 
-    const imageCache = {};
+    let requestsList = [];
+    let currentIndex = 0;
 
-    // Total Users Counter
-    onValue(ref(db, 'users'), (snap) => {
-      if (snap.exists()) {
-        document.getElementById('statUsers').innerText = Object.keys(snap.val()).length;
+    window.fetchRequests = async function() {
+      const mainContainer = document.getElementById('mainContent');
+      mainContainer.innerHTML = `
+        <div class="empty-state">
+          <i class="fa-solid fa-spinner fa-spin" style="font-size: 24px; margin-bottom: 10px; color: var(--primary);"></i>
+          <p>Data fetch ho raha hai...</p>
+        </div>`;
+
+      try {
+        const snap = await get(ref(db, 'ad_submissions'));
+        if (snap.exists()) {
+          const data = snap.val();
+          requestsList = Object.keys(data).map(key => ({
+            id: key,
+            ...data[key]
+          }));
+
+          // Naye submissions pehle dikhane ke liye reverse karein
+          requestsList.sort((a, b) => b.timestamp - a.timestamp);
+          
+          currentIndex = 0;
+          renderCurrentRequest();
+        } else {
+          requestsList = [];
+          renderEmptyState();
+        }
+      } catch (err) {
+        mainContainer.innerHTML = `<div class="empty-state" style="color: var(--danger);">Error: ${err.message}</div>`;
       }
-    });
+    };
 
-    // Realtime Submissions Reader
-    onValue(ref(db, 'ad_submissions'), (snapshot) => {
-      const container = document.getElementById('requestsList');
-      container.innerHTML = '';
+    function renderEmptyState() {
+      document.getElementById('totalPending').innerText = "0";
+      document.getElementById('queuePosText').innerText = "Showing 0 of 0";
+      document.getElementById('mainContent').innerHTML = `
+        <div class="empty-state">
+          <i class="fa-solid fa-circle-check" style="font-size: 36px; color: var(--success); margin-bottom: 12px;"></i>
+          <p style="font-size: 16px;">Sabhi tasks verify ho chuke hain!</p>
+          <p style="font-size: 12px; font-weight: 500; margin-top: 4px;">Koi bhi pending submission nahi hai.</p>
+        </div>`;
+    }
 
-      if (!snapshot.exists()) {
-        document.getElementById('statPending').innerText = '0';
-        container.innerHTML = `<div style="text-align: center; padding: 30px; color: #10b981; font-weight: 700;">Koi Pending Task Nahi Hai!</div>`;
+    function renderCurrentRequest() {
+      if (requestsList.length === 0) {
+        renderEmptyState();
         return;
       }
 
-      const submissions = snapshot.val();
-      const keys = Object.keys(submissions);
-      document.getElementById('statPending').innerText = keys.length;
+      // Range check
+      if (currentIndex >= requestsList.length) currentIndex = requestsList.length - 1;
+      if (currentIndex < 0) currentIndex = 0;
 
-      keys.reverse().forEach((key) => {
-        const sub = submissions[key];
-        imageCache[key] = sub.screenshot;
+      const item = requestsList[currentIndex];
+      const total = requestsList.length;
 
-        const card = document.createElement('div');
-        card.className = 'request-card';
-        const reward = parseFloat(sub.rewardAmount || 1.00).toFixed(2);
-        const userEmail = sub.email || 'No Email Provided';
+      document.getElementById('totalPending').innerText = total;
+      document.getElementById('queuePosText').innerText = `Request ${currentIndex + 1} of ${total}`;
 
-        card.innerHTML = `
-          <div class="user-details">
-            <h4>User: ${sub.username}</h4>
-            <p>Email: <span class="email-badge">${userEmail}</span></p>
-            <p style="margin-top: 4px;">Task: <strong>Ad #${sub.adIndex || 1}</strong> | Reward: <strong style="color: #10b981;">Rs. ${reward}</strong></p>
+      const dateStr = item.timestamp ? new Date(item.timestamp).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}) : 'N/A';
+
+      const html = `
+        <div class="review-card">
+          <div class="user-info-box">
+            <div class="info-row">
+              <span class="info-label"><i class="fa-solid fa-user"></i> Username:</span>
+              <span class="info-value">${item.username}</span>
+            </div>
+            <div class="info-row" style="margin-top: 4px;">
+              <span class="info-label"><i class="fa-solid fa-envelope"></i> Email:</span>
+              <span class="email-badge">${item.email || 'No Email'}</span>
+            </div>
+            <div class="info-row" style="margin-top: 4px;">
+              <span class="info-label"><i class="fa-solid fa-rectangle-ad"></i> Task Details:</span>
+              <span class="info-value">Ad #${item.adIndex} (Rs. ${parseFloat(item.rewardAmount || 1).toFixed(2)})</span>
+            </div>
+            <div class="info-row" style="margin-top: 4px;">
+              <span class="info-label"><i class="fa-solid fa-clock"></i> Time Submitted:</span>
+              <span class="info-value">${dateStr}</span>
+            </div>
           </div>
 
-          <div class="action-btns">
-            <button class="btn btn-view" onclick="window.viewImage('${key}')">View Screenshot</button>
-            <button class="btn btn-approve" onclick="window.approveTask('${key}', '${sub.username}', ${reward})">Approve (Rs. ${reward})</button>
-            <button class="btn btn-reject" onclick="window.rejectTask('${key}')">Reject</button>
+          <div class="screenshot-container" onclick="zoomImage('${item.screenshot}')">
+            <img class="screenshot-img" src="${item.screenshot}" alt="User Proof" />
+            <div style="position: absolute; bottom: 8px; right: 8px; background: rgba(0,0,0,0.6); color: #fff; padding: 4px 8px; border-radius: 6px; font-size: 10px;">
+              <i class="fa-solid fa-magnifying-glass-plus"></i> Tap to Zoom
+            </div>
           </div>
-        `;
-        container.appendChild(card);
-      });
-    }, (error) => {
-      document.getElementById('requestsList').innerHTML = `<div style="color:red; text-align:center;">Error: ${error.message}</div>`;
-    });
 
-    // View Screenshot Modal
-    window.viewImage = function(key) {
-      const imgData = imageCache[key];
-      if (!imgData) {
-        alert("Image data load nahi ho saki!");
-        return;
-      }
-      document.getElementById('fullImage').src = imgData;
-      document.getElementById('imageModal').style.display = 'flex';
+          <div class="actions-grid">
+            <button class="btn btn-approve" onclick="approveCurrent('${item.id}', '${item.username}', ${item.rewardAmount || 1})">
+              <i class="fa-solid fa-check-circle"></i> Approve (+Rs. 1)
+            </button>
+            <button class="btn btn-reject" onclick="rejectCurrent('${item.id}')">
+              <i class="fa-solid fa-xmark-circle"></i> Reject
+            </button>
+          </div>
+
+          <div style="display: flex; gap: 10px; margin-top: 4px;">
+            <button class="btn btn-nav" style="flex: 1;" ${currentIndex === 0 ? 'disabled style="opacity:0.5;"' : ''} onclick="navRequest(-1)">
+              <i class="fa-solid fa-arrow-left"></i> Previous
+            </button>
+            <button class="btn btn-nav" style="flex: 1;" ${currentIndex === total - 1 ? 'disabled style="opacity:0.5;"' : ''} onclick="navRequest(1)">
+              Next <i class="fa-solid fa-arrow-right"></i>
+            </button>
+          </div>
+        </div>
+      `;
+
+      document.getElementById('mainContent').innerHTML = html;
+    }
+
+    window.navRequest = function(direction) {
+      currentIndex += direction;
+      renderCurrentRequest();
     };
 
-    window.closeModal = function() {
-      document.getElementById('imageModal').style.display = 'none';
-      document.getElementById('fullImage').src = '';
+    window.zoomImage = function(src) {
+      document.getElementById('zoomedImg').src = src;
+      document.getElementById('zoomModal').style.display = 'flex';
     };
 
-    // Approve Task & Add Balance
-    window.approveTask = async function(id, username, reward) {
-      if (!confirm(`Kya aap ${username} ka task approve karke Rs. ${reward} unke account mein add karna chahte hain?`)) return;
+    // Approve Handler
+    window.approveCurrent = async function(submissionId, username, reward) {
+      if (!confirm(`Approve kar ke ${username} ko Rs. ${reward} add kar dein?`)) return;
 
       try {
         const userRef = ref(db, `users/${username}`);
@@ -198,37 +276,46 @@
         if (userSnap.exists()) {
           const userData = userSnap.val();
           const currentBal = parseFloat(userData.balance || 0);
-          const newBal = (currentBal + reward).toFixed(2);
+          const newBal = (currentBal + parseFloat(reward)).toFixed(2);
           const completedAds = (userData.completedAdsCount || 0) + 1;
 
-          // User Balance Update
+          // Update User Balance & Progress
           await update(userRef, {
             balance: newBal,
             completedAdsCount: completedAds
           });
 
-          // Submission Delete from DB
-          await remove(ref(db, `ad_submissions/${id}`));
-          alert(`Rs. ${reward} successfully user balance mein add ho gaye!`);
+          // Delete Submission Record
+          await remove(ref(db, `ad_submissions/${submissionId}`));
+
+          // Remove from local array and update UI
+          requestsList.splice(currentIndex, 1);
+          renderCurrentRequest();
         } else {
-          alert("User record nahi mila!");
+          alert("Error: User record nahi mila!");
         }
-      } catch (e) {
-        alert("Approve Error: " + e.message);
+      } catch (err) {
+        alert("Action failed: " + err.message);
       }
     };
 
-    // Reject Task
-    window.rejectTask = async function(id) {
-      if (!confirm(`Kya aap is submission ko reject karna chahte hain?`)) return;
+    // Reject Handler
+    window.rejectCurrent = async function(submissionId) {
+      if (!confirm("Kya aap is submission ko reject (delete) karna chahte hain?")) return;
 
       try {
-        await remove(ref(db, `ad_submissions/${id}`));
-        alert("Task reject kar diya gaya.");
-      } catch (e) {
-        alert("Reject Error: " + e.message);
+        await remove(ref(db, `ad_submissions/${submissionId}`));
+        
+        // Remove from local array and update UI
+        requestsList.splice(currentIndex, 1);
+        renderCurrentRequest();
+      } catch (err) {
+        alert("Reject failed: " + err.message);
       }
     };
+
+    // Initial Load
+    fetchRequests();
   </script>
 </body>
 </html>

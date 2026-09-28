@@ -4,7 +4,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-  <title>SEW - Admin Panel (Ads Verification)</title>
+  <title>SEW - Admin Verification Panel</title>
   
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
@@ -14,7 +14,6 @@
       --bg-body: #f8fafc;
       --card-bg: #ffffff;
       --primary: #2563eb;
-      --primary-hover: #1d4ed8;
       --text-main: #0f172a;
       --text-muted: #64748b;
       --border-color: #e2e8f0;
@@ -24,221 +23,54 @@
       --warning: #f59e0b;
     }
 
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-      font-family: 'Plus Jakarta Sans', sans-serif;
-    }
-
-    body {
-      min-height: 100vh;
-      background-color: var(--bg-body);
-      color: var(--text-main);
-      padding: 20px 16px;
-    }
-
-    .container {
-      max-width: 900px;
-      margin: 0 auto;
-      display: flex;
-      flex-direction: column;
-      gap: 20px;
-    }
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Plus Jakarta Sans', sans-serif; }
+    body { min-height: 100vh; background-color: var(--bg-body); color: var(--text-main); padding: 20px 16px; }
+    .container { max-width: 900px; margin: 0 auto; display: flex; flex-direction: column; gap: 20px; }
 
     .header-card {
-      background: var(--card-bg);
-      border-radius: 20px;
-      padding: 20px;
-      box-shadow: var(--shadow-soft);
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      border: 1px solid var(--border-color);
+      background: var(--card-bg); border-radius: 20px; padding: 20px;
+      box-shadow: var(--shadow-soft); display: flex; justify-content: space-between;
+      align-items: center; border: 1px solid var(--border-color);
     }
+    .header-title { font-size: 18px; font-weight: 800; display: flex; align-items: center; gap: 10px; }
 
-    .header-title {
-      font-size: 20px;
-      font-weight: 800;
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
+    .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 14px; }
+    .stat-card { background: var(--card-bg); padding: 16px; border-radius: 16px; border: 1px solid var(--border-color); box-shadow: var(--shadow-soft); }
+    .stat-card label { font-size: 12px; color: var(--text-muted); font-weight: 600; text-transform: uppercase; }
+    .stat-card .value { font-size: 24px; font-weight: 800; margin-top: 4px; }
 
-    .stats-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-      gap: 14px;
-    }
+    .requests-container { background: var(--card-bg); border-radius: 20px; padding: 20px; box-shadow: var(--shadow-soft); border: 1px solid var(--border-color); }
+    .section-title { font-size: 16px; font-weight: 800; margin-bottom: 16px; display: flex; align-items: center; justify-content: space-between; }
+    .badge { background: #eff6ff; color: var(--primary); padding: 4px 10px; border-radius: 20px; font-size: 12px; }
 
-    .stat-card {
-      background: var(--card-bg);
-      padding: 16px;
-      border-radius: 16px;
-      border: 1px solid var(--border-color);
-      box-shadow: var(--shadow-soft);
-    }
-
-    .stat-card label {
-      font-size: 12px;
-      color: var(--text-muted);
-      font-weight: 600;
-      text-transform: uppercase;
-    }
-
-    .stat-card .value {
-      font-size: 24px;
-      font-weight: 800;
-      margin-top: 4px;
-    }
-
-    .requests-container {
-      background: var(--card-bg);
-      border-radius: 20px;
-      padding: 20px;
-      box-shadow: var(--shadow-soft);
-      border: 1px solid var(--border-color);
-    }
-
-    .section-title {
-      font-size: 16px;
-      font-weight: 800;
-      margin-bottom: 16px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-    }
-
-    .badge {
-      background: #eff6ff;
-      color: var(--primary);
-      padding: 4px 10px;
-      border-radius: 20px;
-      font-size: 12px;
-    }
-
-    .requests-list {
-      display: flex;
-      flex-direction: column;
-      gap: 14px;
-    }
-
-    .request-card {
-      border: 1.5px solid var(--border-color);
-      border-radius: 16px;
-      padding: 16px;
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
-      background: #fafafa;
-    }
-
+    .requests-list { display: flex; flex-direction: column; gap: 14px; }
+    .request-card { border: 1.5px solid var(--border-color); border-radius: 16px; padding: 16px; display: flex; flex-direction: column; gap: 12px; background: #fafafa; }
+    
     @media (min-width: 640px) {
-      .request-card {
-        flex-direction: row;
-        align-items: center;
-        justify-content: space-between;
-      }
+      .request-card { flex-direction: row; align-items: center; justify-content: space-between; }
     }
 
-    .user-info {
-      display: flex;
-      flex-direction: column;
-      gap: 4px;
-    }
+    .user-info { display: flex; flex-direction: column; gap: 4px; }
+    .user-name { font-weight: 800; font-size: 15px; color: var(--text-main); }
+    .task-meta { font-size: 12px; color: var(--text-muted); font-weight: 600; }
 
-    .user-name {
-      font-weight: 800;
-      font-size: 15px;
-      color: var(--text-main);
-    }
+    .action-btns { display: flex; gap: 8px; flex-wrap: wrap; }
+    .btn { padding: 8px 14px; border-radius: 12px; border: none; font-weight: 700; font-size: 13px; cursor: pointer; display: flex; align-items: center; gap: 6px; transition: opacity 0.2s; }
+    .btn:hover { opacity: 0.85; }
+    .btn-view { background: #3b82f6; color: #fff; }
+    .btn-approve { background: var(--success); color: #fff; }
+    .btn-reject { background: var(--danger); color: #fff; }
 
-    .task-meta {
-      font-size: 12px;
-      color: var(--text-muted);
-      font-weight: 600;
-    }
+    .empty-state { text-align: center; padding: 40px 20px; color: var(--text-muted); font-weight: 600; }
 
-    .proof-thumbnail {
-      width: 100px;
-      height: 70px;
-      object-fit: cover;
-      border-radius: 10px;
-      border: 1px solid var(--border-color);
-      cursor: pointer;
-      transition: transform 0.2s ease;
-    }
-
-    .proof-thumbnail:hover {
-      transform: scale(1.05);
-    }
-
-    .action-btns {
-      display: flex;
-      gap: 8px;
-    }
-
-    .btn {
-      padding: 10px 16px;
-      border-radius: 12px;
-      border: none;
-      font-weight: 700;
-      font-size: 13px;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      transition: opacity 0.2s;
-    }
-
-    .btn:hover {
-      opacity: 0.85;
-    }
-
-    .btn-approve {
-      background: var(--success);
-      color: #fff;
-    }
-
-    .btn-reject {
-      background: var(--danger);
-      color: #fff;
-    }
-
-    .empty-state {
-      text-align: center;
-      padding: 40px 20px;
-      color: var(--text-muted);
-      font-weight: 600;
-    }
-
-    /* Modal for Full Screenshot View */
+    /* Fast Image Modal */
     .image-modal {
-      display: none;
-      position: fixed;
-      top:0; left:0; right:0; bottom:0;
-      background: rgba(0,0,0,0.8);
-      z-index: 9999;
-      justify-content: center;
-      align-items: center;
-      padding: 20px;
+      display: none; position: fixed; top:0; left:0; right:0; bottom:0;
+      background: rgba(0,0,0,0.85); z-index: 9999;
+      justify-content: center; align-items: center; flex-direction: column; padding: 20px;
     }
-
-    .image-modal img {
-      max-width: 90%;
-      max-height: 85vh;
-      border-radius: 12px;
-      box-shadow: 0 10px 30px rgba(0,0,0,0.5);
-    }
-
-    .modal-close {
-      position: absolute;
-      top: 20px;
-      right: 20px;
-      color: white;
-      font-size: 28px;
-      cursor: pointer;
-    }
+    .image-modal img { max-width: 95%; max-height: 80vh; border-radius: 12px; border: 2px solid #fff; }
+    .modal-close-btn { margin-top: 15px; background: #ef4444; color: white; padding: 10px 24px; border-radius: 30px; font-weight: 700; border: none; cursor: pointer; }
   </style>
 </head>
 <body>
@@ -246,17 +78,17 @@
   <div class="container">
     <div class="header-card">
       <div class="header-title">
-        <i class="fa-solid fa-user-shield" style="color: var(--primary);"></i> Admin Verification Dashboard
+        <i class="fa-solid fa-bolt" style="color: var(--primary);"></i> Admin Verification Panel
       </div>
       <button class="btn btn-reject" onclick="location.reload()">
         <i class="fa-solid fa-rotate-right"></i> Refresh
       </button>
     </div>
 
-    <!-- Stats Row -->
+    <!-- Stats Grid -->
     <div class="stats-grid">
       <div class="stat-card">
-        <label>Pending Submissions</label>
+        <label>Pending Tasks</label>
         <div class="value" id="statPending" style="color: var(--warning);">0</div>
       </div>
       <div class="stat-card">
@@ -264,34 +96,33 @@
         <div class="value" id="statApproved" style="color: var(--success);">0</div>
       </div>
       <div class="stat-card">
-        <label>Total Registered Users</label>
+        <label>Total Users</label>
         <div class="value" id="statUsers" style="color: var(--primary);">0</div>
       </div>
     </div>
 
-    <!-- Requests List -->
+    <!-- Submissions Queue -->
     <div class="requests-container">
       <div class="section-title">
-        <span><i class="fa-solid fa-clock-rotate-left"></i> Ad Proof Screenshots</span>
-        <span class="badge" id="liveBadge">Live Realtime</span>
+        <span><i class="fa-solid fa-list-check"></i> Verification Requests</span>
+        <span class="badge">Live Realtime</span>
       </div>
 
       <div class="requests-list" id="requestsList">
         <div class="empty-state">
           <i class="fa-solid fa-spinner fa-spin" style="font-size: 24px; margin-bottom: 8px;"></i>
-          <div>Loading submissions...</div>
+          <div>Loading Submissions...</div>
         </div>
       </div>
     </div>
   </div>
 
-  <!-- Screenshot Modal View -->
-  <div class="image-modal" id="imageModal" onclick="closeModal()">
-    <span class="modal-close">&times;</span>
-    <img id="fullImage" src="" alt="Proof Preview" />
+  <!-- Single Image Modal -->
+  <div class="image-modal" id="imageModal">
+    <img id="fullImage" src="" alt="Screenshot Proof" />
+    <button class="modal-close-btn" onclick="closeModal()"><i class="fa-solid fa-xmark"></i> Close Image</button>
   </div>
 
-  <!-- Firebase Modular SDK -->
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
     import { getDatabase, ref, onValue, update, remove, get } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
@@ -310,18 +141,17 @@
     const db = getDatabase(app);
 
     let approvedTodayCount = 0;
+    const imageStore = {}; // Memory cache for images
 
-    // Realtime Users Count Listener
+    // Total Users
     onValue(ref(db, 'users'), (snapshot) => {
       if (snapshot.exists()) {
-        const usersObj = snapshot.val();
-        document.getElementById('statUsers').innerText = Object.keys(usersObj).length;
+        document.getElementById('statUsers').innerText = Object.keys(snapshot.val()).length;
       }
     });
 
-    // Realtime Proof Submissions Listener
-    const submissionsRef = ref(db, 'ad_submissions');
-    onValue(submissionsRef, (snapshot) => {
+    // Submissions Queue Realtime Listener
+    onValue(ref(db, 'ad_submissions'), (snapshot) => {
       const container = document.getElementById('requestsList');
       container.innerHTML = '';
 
@@ -341,25 +171,27 @@
 
       keys.reverse().forEach((key) => {
         const sub = submissions[key];
+        imageStore[key] = sub.screenshot;
+
         const card = document.createElement('div');
         card.className = 'request-card';
-
-        const formattedDate = new Date(sub.timestamp || Date.now()).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
         const reward = parseFloat(sub.rewardAmount || 1.00).toFixed(2);
+        const timeStr = new Date(sub.timestamp || Date.now()).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
 
         card.innerHTML = `
           <div class="user-info">
             <div class="user-name"><i class="fa-solid fa-user"></i> ${sub.username}</div>
             <div class="task-meta">
-              <span>Task ID: #${(sub.adIndex !== undefined ? sub.adIndex + 1 : '1')}</span> • 
-              <span>Reward: <strong style="color: var(--success);">Rs. ${reward}</strong></span> • 
-              <span>Time: ${formattedDate}</span>
+              Task ID: #${(sub.adIndex !== undefined ? sub.adIndex + 1 : '1')} • 
+              Reward: <strong style="color: var(--success);">Rs. ${reward}</strong> • 
+              Time: ${timeStr}
             </div>
           </div>
-          
-          <img src="${sub.screenshot}" class="proof-thumbnail" onclick="window.viewImage('${sub.screenshot}')" alt="Screenshot Proof" title="Click to view full image" />
 
           <div class="action-btns">
+            <button class="btn btn-view" onclick="window.viewImage('${key}')">
+              <i class="fa-solid fa-eye"></i> View Screenshot
+            </button>
             <button class="btn btn-approve" onclick="window.approveTask('${key}', '${sub.username}', ${reward})">
               <i class="fa-solid fa-check"></i> Approve
             </button>
@@ -372,9 +204,24 @@
       });
     });
 
-    // APPROVE TASK FUNCTION
+    // Modal View Control
+    window.viewImage = function(key) {
+      if (!imageStore[key]) {
+        alert("Image load nahi ho saki!");
+        return;
+      }
+      document.getElementById('fullImage').src = imageStore[key];
+      document.getElementById('imageModal').style.display = 'flex';
+    };
+
+    window.closeModal = function() {
+      document.getElementById('imageModal').style.display = 'none';
+      document.getElementById('fullImage').src = "";
+    };
+
+    // Approve Task
     window.approveTask = async function(submissionId, username, reward) {
-      if (!confirm(`Kya aap ${username} ko Rs. ${reward} approve karna chahte hain?`)) return;
+      if (!confirm(`Kya aap ${username} ko Rs. ${reward} Dena chahte hain?`)) return;
 
       try {
         const userRef = ref(db, `users/${username}`);
@@ -386,29 +233,25 @@
           const newBalance = (currentBal + reward).toFixed(2);
           const currentPendingCount = Math.max(0, (userData.pendingApprovalsCount || 1) - 1);
 
-          // Update user balance and decrement pending approval counter
           await update(userRef, {
             balance: newBalance,
             pendingApprovalsCount: currentPendingCount
           });
 
-          // Delete submission from pending queue
           await remove(ref(db, `ad_submissions/${submissionId}`));
 
           approvedTodayCount++;
           document.getElementById('statApproved').innerText = approvedTodayCount;
-          alert(`✅ Success: ${username} ke account me Rs. ${reward} add ho chuke hain!`);
-        } else {
-          alert("❌ Error: User record database me nahi mila!");
+          alert(`✅ Success: ${username} ke balance me Rs. ${reward} add ho gaye hain.`);
         }
       } catch (err) {
         alert("Error: " + err.message);
       }
     };
 
-    // REJECT TASK FUNCTION
+    // Reject Task
     window.rejectTask = async function(submissionId, username) {
-      if (!confirm(`Kya aap ${username} ki submission ko REJECT karna chahte hain?`)) return;
+      if (!confirm(`Kya aap ${username} ki submission Reject karna chahte hain?`)) return;
 
       try {
         const userRef = ref(db, `users/${username}`);
@@ -417,28 +260,14 @@
         if (userSnap.exists()) {
           const userData = userSnap.val();
           const currentPendingCount = Math.max(0, (userData.pendingApprovalsCount || 1) - 1);
-
-          await update(userRef, {
-            pendingApprovalsCount: currentPendingCount
-          });
+          await update(userRef, { pendingApprovalsCount: currentPendingCount });
         }
 
-        // Delete submission request
         await remove(ref(db, `ad_submissions/${submissionId}`));
-        alert(`⚠️ Task Rejected: Submission delete kar di gayi hai.`);
+        alert(`⚠️ Submission Delete kar di gayi.`);
       } catch (err) {
         alert("Error: " + err.message);
       }
-    };
-
-    // Image Modal Handling
-    window.viewImage = function(src) {
-      document.getElementById('fullImage').src = src;
-      document.getElementById('imageModal').style.display = 'flex';
-    };
-
-    window.closeModal = function() {
-      document.getElementById('imageModal').style.display = 'none';
     };
   </script>
 </body>

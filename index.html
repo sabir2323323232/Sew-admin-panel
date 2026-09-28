@@ -300,21 +300,22 @@
     .modal-overlay {
       position: fixed;
       top: 0; left: 0; right: 0; bottom: 0;
-      background: rgba(15, 23, 42, 0.5);
+      background: rgba(15, 23, 42, 0.7);
       display: none;
       justify-content: center;
       align-items: center;
-      z-index: 200;
+      z-index: 1000;
       padding: 12px;
     }
 
     .modal-box {
       background: #ffffff;
       width: 100%;
-      max-width: 360px;
+      max-width: 420px;
       border-radius: 12px;
       padding: 16px;
       position: relative;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.2);
     }
 
     .close-modal {
@@ -322,10 +323,12 @@
       top: 10px; right: 10px;
       background: #f1f5f9;
       border: none;
-      width: 24px; height: 24px;
+      width: 28px; height: 28px;
       border-radius: 50%;
       cursor: pointer;
       font-weight: 800;
+      font-size: 14px;
+      color: #334155;
     }
 
     .img-preview-container {
@@ -464,7 +467,7 @@
         
         <form id="addHpTaskForm" onsubmit="handleAddHpTask(event)">
           <div class="form-group">
-            <label>Task Name (e.g. First Task, Second Task, Third Task)</label>
+            <label>Task Name</label>
             <input type="text" id="hpTaskName" placeholder="e.g. First Task / High Reward" required />
           </div>
 
@@ -492,7 +495,7 @@
       <div id="hpSubmissionsList"></div>
     </section>
 
-    <!-- 5. WINNERS SYSTEM TAB (NEW FEATURE) -->
+    <!-- 5. WINNERS SYSTEM TAB -->
     <section id="winnersTab" class="tab-content">
       <div class="card">
         <h3 style="font-size: 13px; font-weight: 800; margin-bottom: 10px;">
@@ -602,16 +605,20 @@
     </div>
   </div>
 
-  <!-- PROOF IMAGE SINGLE MODAL -->
+  <!-- PROOF IMAGE FULL MODAL (ENHANCED FOR SCREENSHOTS) -->
   <div class="modal-overlay" id="proofModal">
-    <div class="modal-box" style="max-width: 400px; text-align: center;">
+    <div class="modal-box" style="text-align: center;">
       <button class="close-modal" onclick="closeProofModal()">✕</button>
-      <div style="font-size: 13px; font-weight: 800; margin-bottom: 10px;"><i class="fa-solid fa-image"></i> User Proof Screenshot</div>
+      <div style="font-size: 13px; font-weight: 800; margin-bottom: 12px;"><i class="fa-solid fa-image"></i> High Paying Task Screenshot</div>
       
-      <div style="min-height: 150px; display: flex; justify-content: center; align-items: center; background: #f8fafc; border-radius: 8px; padding: 6px;">
-        <span id="proofModalLoading" style="font-size: 11px; color: var(--text-muted);">Loading Image...</span>
-        <img id="proofModalImg" src="" style="max-width: 100%; max-height: 380px; border-radius: 6px; object-fit: contain; display: none;" />
+      <div style="min-height: 200px; max-height:420px; overflow-y:auto; display: flex; flex-direction:column; justify-content: center; align-items: center; background: #f8fafc; border: 1px solid var(--border-color); border-radius: 8px; padding: 10px; margin-bottom: 10px;">
+        <span id="proofModalLoading" style="font-size: 11px; color: var(--text-muted);"><i class="fa-solid fa-spinner fa-spin"></i> Loading Screenshot...</span>
+        <img id="proofModalImg" src="" style="max-width: 100%; height: auto; border-radius: 6px; object-fit: contain; display: none;" />
       </div>
+
+      <a id="proofNewTabBtn" href="#" target="_blank" class="action-btn" style="background: var(--primary); display: inline-block; width: 100%; text-decoration: none; padding: 8px; box-sizing: border-box;">
+        <i class="fa-solid fa-arrow-up-right-from-square"></i> Open Image in New Window
+      </a>
     </div>
   </div>
 
@@ -975,36 +982,56 @@
             </div>
 
             <button class="action-btn" style="background:var(--primary); width:100%; margin-top:4px;" onclick="openProofModal('${sKey}')">
-              <i class="fa-solid fa-image"></i> View Proof Screenshot (1-by-1)
+              <i class="fa-solid fa-image"></i> View Proof Screenshot
             </button>
           </div>
         `;
       });
     });
 
+    // FIXED & IMPROVED PROOF SCREENSHOT DISPLAY FUNCTION
     window.openProofModal = function(sKey) {
       const sub = cachedSubmissionsMap[sKey];
       const imgEl = document.getElementById('proofModalImg');
       const loadEl = document.getElementById('proofModalLoading');
       const modal = document.getElementById('proofModal');
+      const linkBtn = document.getElementById('proofNewTabBtn');
 
-      if (!sub || (!sub.proofImage && !sub.image)) {
-        alert("No proof image submitted by user.");
+      if (!sub) {
+        alert("Submission data not found.");
         return;
       }
 
-      const imageUrl = sub.proofImage || sub.image;
+      // Check all common field names where screenshot might be saved in database
+      let rawImage = sub.proofImage || sub.image || sub.proof || sub.screenshot || sub.ss || sub.proofUrl || sub.screenshotUrl || sub.img;
+
+      if (!rawImage) {
+        alert("No screenshot image attached with this submission.");
+        return;
+      }
+
+      // Clean & format base64 / URL string
+      let imageUrl = rawImage.trim();
+      if (!imageUrl.startsWith('http') && !imageUrl.startsWith('data:image')) {
+        imageUrl = 'data:image/jpeg;base64,' + imageUrl;
+      }
+
       loadEl.style.display = "block";
+      loadEl.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Loading Screenshot...`;
       imgEl.style.display = "none";
       modal.style.display = "flex";
+
+      linkBtn.href = imageUrl;
 
       imgEl.onload = function() {
         loadEl.style.display = "none";
         imgEl.style.display = "block";
       };
+
       imgEl.onerror = function() {
-        loadEl.innerText = "Failed to load screenshot image.";
+        loadEl.innerHTML = `<span style="color:var(--accent-red); font-weight:700;">Direct image preview failed.<br/>Click button below to open directly.</span>`;
       };
+
       imgEl.src = imageUrl;
     };
 
@@ -1021,7 +1048,7 @@
       }
     };
 
-    // 5. WINNERS SYSTEM LOGIC (NEW FEATURE)
+    // 5. WINNERS SYSTEM LOGIC
     window.handleAddWinner = async function(e) {
       e.preventDefault();
       const wData = {
@@ -1053,9 +1080,9 @@
       const winners = snapshot.val();
       Object.keys(winners).reverse().forEach(wKey => {
         const w = winners[wKey];
-        let badgeBg = '#f59e0b'; // Gold for 1st
-        if (w.position.includes('2nd')) badgeBg = '#64748b'; // Silver for 2nd
-        if (w.position.includes('3rd')) badgeBg = '#b45309'; // Bronze for 3rd
+        let badgeBg = '#f59e0b';
+        if (w.position.includes('2nd')) badgeBg = '#64748b';
+        if (w.position.includes('3rd')) badgeBg = '#b45309';
 
         container.innerHTML += `
           <div class="card" style="display:flex; justify-content:space-between; align-items:center;">

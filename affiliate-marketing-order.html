@@ -4,7 +4,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-  <title>SEW - Admin Verification Panel</title>
+  <title>SEW - Admin Panel</title>
   
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
@@ -25,102 +25,81 @@
 
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Plus Jakarta Sans', sans-serif; }
     body { min-height: 100vh; background-color: var(--bg-body); color: var(--text-main); padding: 20px 16px; }
-    .container { max-width: 900px; margin: 0 auto; display: flex; flex-direction: column; gap: 20px; }
+    .container { max-width: 800px; margin: 0 auto; display: flex; flex-direction: column; gap: 20px; }
 
     .header-card {
       background: var(--card-bg); border-radius: 20px; padding: 20px;
       box-shadow: var(--shadow-soft); display: flex; justify-content: space-between;
       align-items: center; border: 1px solid var(--border-color);
     }
-    .header-title { font-size: 18px; font-weight: 800; display: flex; align-items: center; gap: 10px; }
 
     .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 14px; }
-    .stat-card { background: var(--card-bg); padding: 16px; border-radius: 16px; border: 1px solid var(--border-color); box-shadow: var(--shadow-soft); }
-    .stat-card label { font-size: 12px; color: var(--text-muted); font-weight: 600; text-transform: uppercase; }
-    .stat-card .value { font-size: 24px; font-weight: 800; margin-top: 4px; }
+    .stat-card { background: var(--card-bg); padding: 16px; border-radius: 16px; border: 1px solid var(--border-color); }
+    .stat-card label { font-size: 12px; color: var(--text-muted); font-weight: 600; }
+    .stat-card .value { font-size: 22px; font-weight: 800; margin-top: 4px; }
 
-    .requests-container { background: var(--card-bg); border-radius: 20px; padding: 20px; box-shadow: var(--shadow-soft); border: 1px solid var(--border-color); }
-    .section-title { font-size: 16px; font-weight: 800; margin-bottom: 16px; display: flex; align-items: center; justify-content: space-between; }
-    .badge { background: #eff6ff; color: var(--primary); padding: 4px 10px; border-radius: 20px; font-size: 12px; }
+    .requests-container { background: var(--card-bg); border-radius: 20px; padding: 20px; border: 1px solid var(--border-color); }
+    .requests-list { display: flex; flex-direction: column; gap: 12px; margin-top: 15px; }
 
-    .requests-list { display: flex; flex-direction: column; gap: 14px; }
-    .request-card { border: 1.5px solid var(--border-color); border-radius: 16px; padding: 16px; display: flex; flex-direction: column; gap: 12px; background: #fafafa; }
-    
-    @media (min-width: 640px) {
+    .request-card {
+      border: 1px solid var(--border-color); border-radius: 14px; padding: 16px;
+      display: flex; flex-direction: column; gap: 12px; background: #fafafa;
+    }
+    @media(min-width: 600px) {
       .request-card { flex-direction: row; align-items: center; justify-content: space-between; }
     }
 
-    .user-info { display: flex; flex-direction: column; gap: 4px; }
-    .user-name { font-weight: 800; font-size: 15px; color: var(--text-main); }
-    .task-meta { font-size: 12px; color: var(--text-muted); font-weight: 600; }
+    .user-details h4 { font-size: 15px; font-weight: 800; color: var(--text-main); }
+    .user-details p { font-size: 13px; color: var(--text-muted); margin-top: 2px; }
+    .user-details .email-badge { background: #eff6ff; color: var(--primary); padding: 2px 8px; border-radius: 6px; font-size: 12px; font-weight: 600; }
 
     .action-btns { display: flex; gap: 8px; flex-wrap: wrap; }
-    .btn { padding: 8px 14px; border-radius: 12px; border: none; font-weight: 700; font-size: 13px; cursor: pointer; display: flex; align-items: center; gap: 6px; transition: opacity 0.2s; }
-    .btn:hover { opacity: 0.85; }
-    .btn-view { background: #3b82f6; color: #fff; }
-    .btn-approve { background: var(--success); color: #fff; }
-    .btn-reject { background: var(--danger); color: #fff; }
+    .btn { padding: 8px 14px; border-radius: 10px; border: none; font-weight: 700; font-size: 13px; cursor: pointer; color: #fff; }
+    .btn-view { background: var(--primary); }
+    .btn-approve { background: var(--success); }
+    .btn-reject { background: var(--danger); }
 
-    .empty-state { text-align: center; padding: 40px 20px; color: var(--text-muted); font-weight: 600; }
-
-    /* Fast Image Modal */
+    /* Modal for Image Preview */
     .image-modal {
       display: none; position: fixed; top:0; left:0; right:0; bottom:0;
       background: rgba(0,0,0,0.85); z-index: 9999;
       justify-content: center; align-items: center; flex-direction: column; padding: 20px;
     }
-    .image-modal img { max-width: 95%; max-height: 80vh; border-radius: 12px; border: 2px solid #fff; }
-    .modal-close-btn { margin-top: 15px; background: #ef4444; color: white; padding: 10px 24px; border-radius: 30px; font-weight: 700; border: none; cursor: pointer; }
+    .image-modal img { max-width: 90%; max-height: 75vh; border-radius: 12px; border: 2px solid #fff; }
+    .modal-close { margin-top: 15px; background: #ef4444; color: white; padding: 10px 20px; border-radius: 20px; font-weight: 700; border: none; cursor: pointer; }
   </style>
 </head>
 <body>
 
   <div class="container">
     <div class="header-card">
-      <div class="header-title">
-        <i class="fa-solid fa-bolt" style="color: var(--primary);"></i> Admin Verification Panel
-      </div>
-      <button class="btn btn-reject" onclick="location.reload()">
-        <i class="fa-solid fa-rotate-right"></i> Refresh
-      </button>
+      <h2 style="font-size: 18px; font-weight: 800;"><i class="fa-solid fa-user-shield"></i> Admin Ad Task Approvals</h2>
+      <button class="btn btn-reject" onclick="location.reload()">Refresh Data</button>
     </div>
 
-    <!-- Stats Grid -->
     <div class="stats-grid">
       <div class="stat-card">
-        <label>Pending Tasks</label>
+        <label>Pending Submissions</label>
         <div class="value" id="statPending" style="color: var(--warning);">0</div>
       </div>
       <div class="stat-card">
-        <label>Approved Today</label>
-        <div class="value" id="statApproved" style="color: var(--success);">0</div>
-      </div>
-      <div class="stat-card">
-        <label>Total Users</label>
+        <label>Total Registered Users</label>
         <div class="value" id="statUsers" style="color: var(--primary);">0</div>
       </div>
     </div>
 
-    <!-- Submissions Queue -->
     <div class="requests-container">
-      <div class="section-title">
-        <span><i class="fa-solid fa-list-check"></i> Verification Requests</span>
-        <span class="badge">Live Realtime</span>
-      </div>
-
+      <h3 style="font-size: 16px; font-weight: 700;">Task Submissions List</h3>
       <div class="requests-list" id="requestsList">
-        <div class="empty-state">
-          <i class="fa-solid fa-spinner fa-spin" style="font-size: 24px; margin-bottom: 8px;"></i>
-          <div>Loading Submissions...</div>
-        </div>
+        <div style="text-align: center; padding: 30px; color: #64748b;">Loading task submissions...</div>
       </div>
     </div>
   </div>
 
-  <!-- Single Image Modal -->
+  <!-- Image Viewer Modal -->
   <div class="image-modal" id="imageModal">
     <img id="fullImage" src="" alt="Screenshot Proof" />
-    <button class="modal-close-btn" onclick="closeModal()"><i class="fa-solid fa-xmark"></i> Close Image</button>
+    <button class="modal-close" onclick="closeModal()">Close Screenshot</button>
   </div>
 
   <script type="module">
@@ -140,28 +119,23 @@
     const app = initializeApp(firebaseConfig);
     const db = getDatabase(app);
 
-    let approvedTodayCount = 0;
-    const imageStore = {}; // Memory cache for images
+    const imageCache = {};
 
-    // Total Users
-    onValue(ref(db, 'users'), (snapshot) => {
-      if (snapshot.exists()) {
-        document.getElementById('statUsers').innerText = Object.keys(snapshot.val()).length;
+    // Total Users Counter
+    onValue(ref(db, 'users'), (snap) => {
+      if (snap.exists()) {
+        document.getElementById('statUsers').innerText = Object.keys(snap.val()).length;
       }
     });
 
-    // Submissions Queue Realtime Listener
+    // Realtime Submissions Reader
     onValue(ref(db, 'ad_submissions'), (snapshot) => {
       const container = document.getElementById('requestsList');
       container.innerHTML = '';
 
       if (!snapshot.exists()) {
         document.getElementById('statPending').innerText = '0';
-        container.innerHTML = `
-          <div class="empty-state">
-            <i class="fa-solid fa-circle-check" style="font-size: 32px; color: var(--success); margin-bottom: 8px;"></i>
-            <div>Koi pending screenshot nahi hai! Subscriptions clear hain.</div>
-          </div>`;
+        container.innerHTML = `<div style="text-align: center; padding: 30px; color: #10b981; font-weight: 700;">Koi Pending Task Nahi Hai!</div>`;
         return;
       }
 
@@ -171,57 +145,51 @@
 
       keys.reverse().forEach((key) => {
         const sub = submissions[key];
-        imageStore[key] = sub.screenshot;
+        imageCache[key] = sub.screenshot;
 
         const card = document.createElement('div');
         card.className = 'request-card';
         const reward = parseFloat(sub.rewardAmount || 1.00).toFixed(2);
-        const timeStr = new Date(sub.timestamp || Date.now()).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+        const userEmail = sub.email || 'No Email Provided';
 
         card.innerHTML = `
-          <div class="user-info">
-            <div class="user-name"><i class="fa-solid fa-user"></i> ${sub.username}</div>
-            <div class="task-meta">
-              Task ID: #${(sub.adIndex !== undefined ? sub.adIndex + 1 : '1')} • 
-              Reward: <strong style="color: var(--success);">Rs. ${reward}</strong> • 
-              Time: ${timeStr}
-            </div>
+          <div class="user-details">
+            <h4>User: ${sub.username}</h4>
+            <p>Email: <span class="email-badge">${userEmail}</span></p>
+            <p style="margin-top: 4px;">Task: <strong>Ad #${sub.adIndex || 1}</strong> | Reward: <strong style="color: #10b981;">Rs. ${reward}</strong></p>
           </div>
 
           <div class="action-btns">
-            <button class="btn btn-view" onclick="window.viewImage('${key}')">
-              <i class="fa-solid fa-eye"></i> View Screenshot
-            </button>
-            <button class="btn btn-approve" onclick="window.approveTask('${key}', '${sub.username}', ${reward})">
-              <i class="fa-solid fa-check"></i> Approve
-            </button>
-            <button class="btn btn-reject" onclick="window.rejectTask('${key}', '${sub.username}')">
-              <i class="fa-solid fa-xmark"></i> Reject
-            </button>
+            <button class="btn btn-view" onclick="window.viewImage('${key}')">View Screenshot</button>
+            <button class="btn btn-approve" onclick="window.approveTask('${key}', '${sub.username}', ${reward})">Approve (Rs. ${reward})</button>
+            <button class="btn btn-reject" onclick="window.rejectTask('${key}')">Reject</button>
           </div>
         `;
         container.appendChild(card);
       });
+    }, (error) => {
+      document.getElementById('requestsList').innerHTML = `<div style="color:red; text-align:center;">Error: ${error.message}</div>`;
     });
 
-    // Modal View Control
+    // View Screenshot Modal
     window.viewImage = function(key) {
-      if (!imageStore[key]) {
-        alert("Image load nahi ho saki!");
+      const imgData = imageCache[key];
+      if (!imgData) {
+        alert("Image data load nahi ho saki!");
         return;
       }
-      document.getElementById('fullImage').src = imageStore[key];
+      document.getElementById('fullImage').src = imgData;
       document.getElementById('imageModal').style.display = 'flex';
     };
 
     window.closeModal = function() {
       document.getElementById('imageModal').style.display = 'none';
-      document.getElementById('fullImage').src = "";
+      document.getElementById('fullImage').src = '';
     };
 
-    // Approve Task
-    window.approveTask = async function(submissionId, username, reward) {
-      if (!confirm(`Kya aap ${username} ko Rs. ${reward} Dena chahte hain?`)) return;
+    // Approve Task & Add Balance
+    window.approveTask = async function(id, username, reward) {
+      if (!confirm(`Kya aap ${username} ka task approve karke Rs. ${reward} unke account mein add karna chahte hain?`)) return;
 
       try {
         const userRef = ref(db, `users/${username}`);
@@ -230,43 +198,35 @@
         if (userSnap.exists()) {
           const userData = userSnap.val();
           const currentBal = parseFloat(userData.balance || 0);
-          const newBalance = (currentBal + reward).toFixed(2);
-          const currentPendingCount = Math.max(0, (userData.pendingApprovalsCount || 1) - 1);
+          const newBal = (currentBal + reward).toFixed(2);
+          const completedAds = (userData.completedAdsCount || 0) + 1;
 
+          // User Balance Update
           await update(userRef, {
-            balance: newBalance,
-            pendingApprovalsCount: currentPendingCount
+            balance: newBal,
+            completedAdsCount: completedAds
           });
 
-          await remove(ref(db, `ad_submissions/${submissionId}`));
-
-          approvedTodayCount++;
-          document.getElementById('statApproved').innerText = approvedTodayCount;
-          alert(`✅ Success: ${username} ke balance me Rs. ${reward} add ho gaye hain.`);
+          // Submission Delete from DB
+          await remove(ref(db, `ad_submissions/${id}`));
+          alert(`Rs. ${reward} successfully user balance mein add ho gaye!`);
+        } else {
+          alert("User record nahi mila!");
         }
-      } catch (err) {
-        alert("Error: " + err.message);
+      } catch (e) {
+        alert("Approve Error: " + e.message);
       }
     };
 
     // Reject Task
-    window.rejectTask = async function(submissionId, username) {
-      if (!confirm(`Kya aap ${username} ki submission Reject karna chahte hain?`)) return;
+    window.rejectTask = async function(id) {
+      if (!confirm(`Kya aap is submission ko reject karna chahte hain?`)) return;
 
       try {
-        const userRef = ref(db, `users/${username}`);
-        const userSnap = await get(userRef);
-
-        if (userSnap.exists()) {
-          const userData = userSnap.val();
-          const currentPendingCount = Math.max(0, (userData.pendingApprovalsCount || 1) - 1);
-          await update(userRef, { pendingApprovalsCount: currentPendingCount });
-        }
-
-        await remove(ref(db, `ad_submissions/${submissionId}`));
-        alert(`⚠️ Submission Delete kar di gayi.`);
-      } catch (err) {
-        alert("Error: " + err.message);
+        await remove(ref(db, `ad_submissions/${id}`));
+        alert("Task reject kar diya gaya.");
+      } catch (e) {
+        alert("Reject Error: " + e.message);
       }
     };
   </script>

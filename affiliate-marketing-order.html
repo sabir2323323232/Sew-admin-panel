@@ -1,56 +1,300 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Wipe Entire Firebase Database</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>SEW - Admin Panel (Ads Verification)</title>
+  
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+
   <style>
+    :root {
+      --bg-body: #f8fafc;
+      --card-bg: #ffffff;
+      --primary: #2563eb;
+      --primary-hover: #1d4ed8;
+      --text-main: #0f172a;
+      --text-muted: #64748b;
+      --border-color: #e2e8f0;
+      --shadow-soft: 0 10px 25px -5px rgba(0, 0, 0, 0.05);
+      --success: #10b981;
+      --danger: #ef4444;
+      --warning: #f59e0b;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+    }
+
     body {
-      background-color: #0f172a;
-      color: #ffffff;
-      font-family: Arial, sans-serif;
+      min-height: 100vh;
+      background-color: var(--bg-body);
+      color: var(--text-main);
+      padding: 20px 16px;
+    }
+
+    .container {
+      max-width: 900px;
+      margin: 0 auto;
       display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    .header-card {
+      background: var(--card-bg);
+      border-radius: 20px;
+      padding: 20px;
+      box-shadow: var(--shadow-soft);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border: 1px solid var(--border-color);
+    }
+
+    .header-title {
+      font-size: 20px;
+      font-weight: 800;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 14px;
+    }
+
+    .stat-card {
+      background: var(--card-bg);
+      padding: 16px;
+      border-radius: 16px;
+      border: 1px solid var(--border-color);
+      box-shadow: var(--shadow-soft);
+    }
+
+    .stat-card label {
+      font-size: 12px;
+      color: var(--text-muted);
+      font-weight: 600;
+      text-transform: uppercase;
+    }
+
+    .stat-card .value {
+      font-size: 24px;
+      font-weight: 800;
+      margin-top: 4px;
+    }
+
+    .requests-container {
+      background: var(--card-bg);
+      border-radius: 20px;
+      padding: 20px;
+      box-shadow: var(--shadow-soft);
+      border: 1px solid var(--border-color);
+    }
+
+    .section-title {
+      font-size: 16px;
+      font-weight: 800;
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .badge {
+      background: #eff6ff;
+      color: var(--primary);
+      padding: 4px 10px;
+      border-radius: 20px;
+      font-size: 12px;
+    }
+
+    .requests-list {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .request-card {
+      border: 1.5px solid var(--border-color);
+      border-radius: 16px;
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      background: #fafafa;
+    }
+
+    @media (min-width: 640px) {
+      .request-card {
+        flex-direction: row;
+        align-items: center;
+        justify-content: space-between;
+      }
+    }
+
+    .user-info {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .user-name {
+      font-weight: 800;
+      font-size: 15px;
+      color: var(--text-main);
+    }
+
+    .task-meta {
+      font-size: 12px;
+      color: var(--text-muted);
+      font-weight: 600;
+    }
+
+    .proof-thumbnail {
+      width: 100px;
+      height: 70px;
+      object-fit: cover;
+      border-radius: 10px;
+      border: 1px solid var(--border-color);
+      cursor: pointer;
+      transition: transform 0.2s ease;
+    }
+
+    .proof-thumbnail:hover {
+      transform: scale(1.05);
+    }
+
+    .action-btns {
+      display: flex;
+      gap: 8px;
+    }
+
+    .btn {
+      padding: 10px 16px;
+      border-radius: 12px;
+      border: none;
+      font-weight: 700;
+      font-size: 13px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      transition: opacity 0.2s;
+    }
+
+    .btn:hover {
+      opacity: 0.85;
+    }
+
+    .btn-approve {
+      background: var(--success);
+      color: #fff;
+    }
+
+    .btn-reject {
+      background: var(--danger);
+      color: #fff;
+    }
+
+    .empty-state {
+      text-align: center;
+      padding: 40px 20px;
+      color: var(--text-muted);
+      font-weight: 600;
+    }
+
+    /* Modal for Full Screenshot View */
+    .image-modal {
+      display: none;
+      position: fixed;
+      top:0; left:0; right:0; bottom:0;
+      background: rgba(0,0,0,0.8);
+      z-index: 9999;
       justify-content: center;
       align-items: center;
-      height: 100vh;
-      margin: 0;
+      padding: 20px;
     }
-    .card {
-      background: #1e293b;
-      padding: 30px;
+
+    .image-modal img {
+      max-width: 90%;
+      max-height: 85vh;
       border-radius: 12px;
-      text-align: center;
-      border: 1px solid rgba(255,255,255,0.1);
-      max-width: 400px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.5);
     }
-    button {
-      background: #ef4444;
+
+    .modal-close {
+      position: absolute;
+      top: 20px;
+      right: 20px;
       color: white;
-      border: none;
-      padding: 12px 24px;
-      font-size: 16px;
-      font-weight: bold;
-      border-radius: 8px;
+      font-size: 28px;
       cursor: pointer;
-      margin-top: 15px;
     }
-    button:hover { background: #dc2626; }
   </style>
 </head>
 <body>
 
-  <div class="card">
-    <h2 style="color:#f87171;">⚠️ Danger Zone</h2>
-    <p style="color:#94a3b8; font-size:14px; margin-top:10px;">
-      Is button par click karne se aapke Firebase ka **TAMAM DATA** (Users, Orders, Products, Wallets) hamesha ke liye delete ho jayega.
-    </p>
-    <button onclick="wipeAllData()">Delete All Database Data</button>
-    <p id="statusMsg" style="margin-top:15px; font-weight:bold;"></p>
+  <div class="container">
+    <div class="header-card">
+      <div class="header-title">
+        <i class="fa-solid fa-user-shield" style="color: var(--primary);"></i> Admin Verification Dashboard
+      </div>
+      <button class="btn btn-reject" onclick="location.reload()">
+        <i class="fa-solid fa-rotate-right"></i> Refresh
+      </button>
+    </div>
+
+    <!-- Stats Row -->
+    <div class="stats-grid">
+      <div class="stat-card">
+        <label>Pending Submissions</label>
+        <div class="value" id="statPending" style="color: var(--warning);">0</div>
+      </div>
+      <div class="stat-card">
+        <label>Approved Today</label>
+        <div class="value" id="statApproved" style="color: var(--success);">0</div>
+      </div>
+      <div class="stat-card">
+        <label>Total Registered Users</label>
+        <div class="value" id="statUsers" style="color: var(--primary);">0</div>
+      </div>
+    </div>
+
+    <!-- Requests List -->
+    <div class="requests-container">
+      <div class="section-title">
+        <span><i class="fa-solid fa-clock-rotate-left"></i> Ad Proof Screenshots</span>
+        <span class="badge" id="liveBadge">Live Realtime</span>
+      </div>
+
+      <div class="requests-list" id="requestsList">
+        <div class="empty-state">
+          <i class="fa-solid fa-spinner fa-spin" style="font-size: 24px; margin-bottom: 8px;"></i>
+          <div>Loading submissions...</div>
+        </div>
+      </div>
+    </div>
   </div>
 
+  <!-- Screenshot Modal View -->
+  <div class="image-modal" id="imageModal" onclick="closeModal()">
+    <span class="modal-close">&times;</span>
+    <img id="fullImage" src="" alt="Proof Preview" />
+  </div>
+
+  <!-- Firebase Modular SDK -->
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-    import { getDatabase, ref, remove } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+    import { getDatabase, ref, onValue, update, remove, get } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
 
     const firebaseConfig = {
       apiKey: "AIzaSyAsnATksiqZzMHOPO64i_bKqLJW6yjq9lw",
@@ -65,25 +309,136 @@
     const app = initializeApp(firebaseConfig);
     const db = getDatabase(app);
 
-    window.wipeAllData = function() {
-      const confirmCode = prompt("Tamam data delete karne ke liye 'DELETE' likhein:");
-      
-      if (confirmCode === "DELETE") {
-        document.getElementById('statusMsg').innerText = "Deleting data...";
-        
-        // Root '/' ko remove karne se poora database delete ho jata hai
-        remove(ref(db, '/'))
-          .then(() => {
-            document.getElementById('statusMsg').style.color = "#34d399";
-            document.getElementById('statusMsg').innerText = "✅ Poora Firebase Database Bilkul Empty Ho Gaya!";
-          })
-          .catch((err) => {
-            document.getElementById('statusMsg').style.color = "#f87171";
-            document.getElementById('statusMsg').innerText = "Error: " + err.message;
-          });
-      } else {
-        alert("Action Cancelled.");
+    let approvedTodayCount = 0;
+
+    // Realtime Users Count Listener
+    onValue(ref(db, 'users'), (snapshot) => {
+      if (snapshot.exists()) {
+        const usersObj = snapshot.val();
+        document.getElementById('statUsers').innerText = Object.keys(usersObj).length;
       }
+    });
+
+    // Realtime Proof Submissions Listener
+    const submissionsRef = ref(db, 'ad_submissions');
+    onValue(submissionsRef, (snapshot) => {
+      const container = document.getElementById('requestsList');
+      container.innerHTML = '';
+
+      if (!snapshot.exists()) {
+        document.getElementById('statPending').innerText = '0';
+        container.innerHTML = `
+          <div class="empty-state">
+            <i class="fa-solid fa-circle-check" style="font-size: 32px; color: var(--success); margin-bottom: 8px;"></i>
+            <div>Koi pending screenshot nahi hai! Subscriptions clear hain.</div>
+          </div>`;
+        return;
+      }
+
+      const submissions = snapshot.val();
+      const keys = Object.keys(submissions);
+      document.getElementById('statPending').innerText = keys.length;
+
+      keys.reverse().forEach((key) => {
+        const sub = submissions[key];
+        const card = document.createElement('div');
+        card.className = 'request-card';
+
+        const formattedDate = new Date(sub.timestamp || Date.now()).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+        const reward = parseFloat(sub.rewardAmount || 1.00).toFixed(2);
+
+        card.innerHTML = `
+          <div class="user-info">
+            <div class="user-name"><i class="fa-solid fa-user"></i> ${sub.username}</div>
+            <div class="task-meta">
+              <span>Task ID: #${(sub.adIndex !== undefined ? sub.adIndex + 1 : '1')}</span> • 
+              <span>Reward: <strong style="color: var(--success);">Rs. ${reward}</strong></span> • 
+              <span>Time: ${formattedDate}</span>
+            </div>
+          </div>
+          
+          <img src="${sub.screenshot}" class="proof-thumbnail" onclick="window.viewImage('${sub.screenshot}')" alt="Screenshot Proof" title="Click to view full image" />
+
+          <div class="action-btns">
+            <button class="btn btn-approve" onclick="window.approveTask('${key}', '${sub.username}', ${reward})">
+              <i class="fa-solid fa-check"></i> Approve
+            </button>
+            <button class="btn btn-reject" onclick="window.rejectTask('${key}', '${sub.username}')">
+              <i class="fa-solid fa-xmark"></i> Reject
+            </button>
+          </div>
+        `;
+        container.appendChild(card);
+      });
+    });
+
+    // APPROVE TASK FUNCTION
+    window.approveTask = async function(submissionId, username, reward) {
+      if (!confirm(`Kya aap ${username} ko Rs. ${reward} approve karna chahte hain?`)) return;
+
+      try {
+        const userRef = ref(db, `users/${username}`);
+        const userSnap = await get(userRef);
+
+        if (userSnap.exists()) {
+          const userData = userSnap.val();
+          const currentBal = parseFloat(userData.balance || 0);
+          const newBalance = (currentBal + reward).toFixed(2);
+          const currentPendingCount = Math.max(0, (userData.pendingApprovalsCount || 1) - 1);
+
+          // Update user balance and decrement pending approval counter
+          await update(userRef, {
+            balance: newBalance,
+            pendingApprovalsCount: currentPendingCount
+          });
+
+          // Delete submission from pending queue
+          await remove(ref(db, `ad_submissions/${submissionId}`));
+
+          approvedTodayCount++;
+          document.getElementById('statApproved').innerText = approvedTodayCount;
+          alert(`✅ Success: ${username} ke account me Rs. ${reward} add ho chuke hain!`);
+        } else {
+          alert("❌ Error: User record database me nahi mila!");
+        }
+      } catch (err) {
+        alert("Error: " + err.message);
+      }
+    };
+
+    // REJECT TASK FUNCTION
+    window.rejectTask = async function(submissionId, username) {
+      if (!confirm(`Kya aap ${username} ki submission ko REJECT karna chahte hain?`)) return;
+
+      try {
+        const userRef = ref(db, `users/${username}`);
+        const userSnap = await get(userRef);
+
+        if (userSnap.exists()) {
+          const userData = userSnap.val();
+          const currentPendingCount = Math.max(0, (userData.pendingApprovalsCount || 1) - 1);
+
+          await update(userRef, {
+            pendingApprovalsCount: currentPendingCount
+          });
+        }
+
+        // Delete submission request
+        await remove(ref(db, `ad_submissions/${submissionId}`));
+        alert(`⚠️ Task Rejected: Submission delete kar di gayi hai.`);
+      } catch (err) {
+        alert("Error: " + err.message);
+      }
+    };
+
+    // Image Modal Handling
+    window.viewImage = function(src) {
+      document.getElementById('fullImage').src = src;
+      document.getElementById('imageModal').style.display = 'flex';
+    };
+
+    window.closeModal = function() {
+      document.getElementById('imageModal').style.display = 'none';
     };
   </script>
 </body>

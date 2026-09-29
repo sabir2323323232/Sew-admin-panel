@@ -4,43 +4,167 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>SEW - Complete Firebase Data Wipeout</title>
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;700;800&display=swap" rel="stylesheet" />
+  <title>SEW - Admin Panel (Task Approvals)</title>
+  
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
 
   <style>
-    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Plus Jakarta Sans', sans-serif; }
-    body { min-height: 100vh; background-color: #0f172a; color: #ffffff; display: flex; align-items: center; justify-content: center; padding: 20px; }
-    
-    .card { background: #1e293b; border: 1px solid #334155; border-radius: 20px; padding: 32px; width: 100%; max-width: 500px; text-align: center; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.5); }
-    .icon-box { font-size: 48px; color: #ef4444; margin-bottom: 16px; }
-    h1 { font-size: 22px; font-weight: 800; margin-bottom: 8px; color: #f8fafc; }
-    p { font-size: 13px; color: #94a3b8; margin-bottom: 24px; line-height: 1.6; }
-    
-    .danger-btn { width: 100%; background: #dc2626; color: #ffffff; border: none; padding: 14px; border-radius: 12px; font-weight: 800; font-size: 15px; cursor: pointer; transition: background 0.2s; display: flex; align-items: center; justify-content: center; gap: 10px; }
-    .danger-btn:hover { background: #b91c1c; }
-    .danger-btn:disabled { background: #64748b; cursor: not-allowed; }
+    :root {
+      --bg-body: #f8fafc;
+      --card-bg: #ffffff;
+      --primary: #2563eb;
+      --text-main: #0f172a;
+      --text-muted: #64748b;
+      --success: #10b981;
+      --danger: #ef4444;
+      --border-color: #e2e8f0;
+    }
 
-    .status-box { margin-top: 20px; padding: 12px; border-radius: 10px; font-size: 13px; font-weight: 600; display: none; text-align: left; background: #0f172a; border: 1px solid #334155; max-height: 180px; overflow-y: auto; }
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+    }
+
+    body {
+      background-color: var(--bg-body);
+      color: var(--text-main);
+      padding: 20px;
+    }
+
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      max-width: 900px;
+      margin: 0 auto 20px auto;
+      background: var(--card-bg);
+      padding: 16px 20px;
+      border-radius: 16px;
+      border: 1px solid var(--border-color);
+    }
+
+    .header h2 {
+      font-size: 20px;
+      font-weight: 800;
+    }
+
+    .container {
+      max-width: 900px;
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .task-card {
+      background: var(--card-bg);
+      border-radius: 16px;
+      padding: 18px;
+      border: 1px solid var(--border-color);
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
+    }
+
+    .task-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-weight: 700;
+    }
+
+    .user-badge {
+      background: #eff6ff;
+      color: var(--primary);
+      padding: 6px 12px;
+      border-radius: 20px;
+      font-size: 13px;
+    }
+
+    .task-details {
+      font-size: 13px;
+      color: var(--text-muted);
+      display: flex;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+
+    .screenshot-preview {
+      margin-top: 8px;
+      max-width: 100%;
+      border-radius: 12px;
+      border: 1px solid var(--border-color);
+      max-height: 250px;
+      object-fit: contain;
+      background: #f1f5f9;
+    }
+
+    .actions {
+      display: flex;
+      gap: 10px;
+      margin-top: 8px;
+    }
+
+    .btn {
+      flex: 1;
+      padding: 10px 16px;
+      border: none;
+      border-radius: 10px;
+      font-weight: 700;
+      font-size: 13px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      transition: opacity 0.2s;
+    }
+
+    .btn:hover {
+      opacity: 0.9;
+    }
+
+    .btn-approve {
+      background: var(--success);
+      color: white;
+    }
+
+    .btn-reject {
+      background: var(--danger);
+      color: white;
+    }
+
+    .no-data {
+      text-align: center;
+      padding: 40px;
+      background: white;
+      border-radius: 16px;
+      color: var(--text-muted);
+      font-weight: 600;
+    }
   </style>
 </head>
 <body>
 
-  <div class="card">
-    <div class="icon-box"><i class="fa-solid fa-triangle-exclamation"></i></div>
-    <h1>Firebase Data Eraser</h1>
-    <p>Yeh tool aapke Realtime Database ka **sara data** (users, submissions, photos/screenshots) mita dega aur local sessions bhi reset kar dega.</p>
-
-    <button class="danger-btn" id="wipeBtn" onclick="wipeAllData()">
-      <i class="fa-solid fa-trash-can"></i> CLEAR ALL FIREBASE DATA
-    </button>
-
-    <div class="status-box" id="statusLog"></div>
+  <div class="header">
+    <h2><i class="fa-solid fa-user-shield" style="color: var(--primary);"></i> Admin Approval Panel</h2>
+    <div id="pendingCountBadge" style="font-size: 13px; font-weight: 700; background: #fef3c7; color: #d97706; padding: 6px 12px; border-radius: 20px;">
+      Pending Requests: 0
+    </div>
   </div>
 
+  <div class="container" id="tasksList">
+    <div class="no-data">Loading Pending Tasks...</div>
+  </div>
+
+  <!-- Firebase Modular SDK -->
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-    import { getDatabase, ref, remove } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+    import { getDatabase, ref, onValue, get, update, remove } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
 
     const firebaseConfig = {
       apiKey: "AIzaSyAsnATksiqZzMHOPO64i_bKqLJW6yjq9lw",
@@ -55,47 +179,110 @@
     const app = initializeApp(firebaseConfig);
     const db = getDatabase(app);
 
-    function log(msg, isError = false) {
-      const logBox = document.getElementById('statusLog');
-      logBox.style.display = 'block';
-      const p = document.createElement('div');
-      p.style.color = isError ? '#f87171' : '#4ade80';
-      p.style.marginBottom = '4px';
-      p.innerText = msg;
-      logBox.appendChild(p);
-      logBox.scrollTop = logBox.scrollHeight;
-    }
+    // Listen to pending tasks
+    const pendingTasksRef = ref(db, 'admin_pending_tasks');
+    onValue(pendingTasksRef, (snapshot) => {
+      const tasksList = document.getElementById('tasksList');
+      tasksList.innerHTML = '';
 
-    window.wipeAllData = async function() {
-      const confirm1 = confirm("⚠️ KYA AAP SURE HAIN?\nFirebase ka SARA DATA permanently delete ho jayega!");
-      if (!confirm1) return;
+      if (!snapshot.exists()) {
+        tasksList.innerHTML = '<div class="no-data"><i class="fa-solid fa-check-circle" style="color:var(--success); font-size: 24px; margin-bottom:8px; display:block;"></i> Sabhi tasks approved/reviewed hain!</div>';
+        document.getElementById('pendingCountBadge').innerText = 'Pending Requests: 0';
+        return;
+      }
 
-      const btn = document.getElementById('wipeBtn');
-      btn.disabled = true;
-      btn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Deleting Data...`;
+      const tasks = snapshot.val();
+      const taskKeys = Object.keys(tasks);
+      document.getElementById('pendingCountBadge').innerText = `Pending Requests: ${taskKeys.length}`;
+
+      taskKeys.forEach((key) => {
+        const task = tasks[key];
+        const dateStr = new Date(task.timestamp).toLocaleString();
+
+        const card = document.createElement('div');
+        card.className = 'task-card';
+        card.innerHTML = `
+          <div class="task-header">
+            <span class="user-badge"><i class="fa-solid fa-user"></i> ${task.username}</span>
+            <span style="font-size: 14px; font-weight: 800; color: var(--success);">+ Rs. ${parseFloat(task.reward).toFixed(2)}</span>
+          </div>
+
+          <div class="task-details">
+            <span><i class="fa-solid fa-rectangle-ad"></i> Ad #${task.adIndex}</span>
+            <span><i class="fa-solid fa-clock"></i> ${dateStr}</span>
+          </div>
+
+          <!-- Proof Screenshot Image -->
+          ${task.proofUrl ? `<img src="${task.proofUrl}" class="screenshot-preview" alt="Proof Screenshot" />` : '<p style="font-size: 12px; color: var(--danger); font-weight: 600;"><i class="fa-solid fa-triangle-exclamation"></i> Screenshot proof missing / uploaded locally.</p>'}
+
+          <div class="actions">
+            <button class="btn btn-approve" onclick="approveTask('${key}', '${task.username}', ${task.reward})">
+              <i class="fa-solid fa-check"></i> Approve & Pay
+            </button>
+            <button class="btn btn-reject" onclick="rejectTask('${key}', '${task.username}')">
+              <i class="fa-solid fa-xmark"></i> Reject
+            </button>
+          </div>
+        `;
+        tasksList.appendChild(card);
+      });
+    });
+
+    // Approve Task Function
+    window.approveTask = async function(taskKey, username, reward) {
+      if (!confirm(`Are you sure you want to APPROVE task for ${username} and add Rs. ${reward}?`)) return;
 
       try {
-        log("1. Cleaning Realtime Database root...");
-        // Entire DB Wipeout
-        await remove(ref(db, '/'));
-        log("✅ Realtime Database fully cleared (Users + Screenshots).");
+        const userRef = ref(db, 'users/' + username);
+        const userSnap = await get(userRef);
 
-        log("2. Clearing Local Storage & Sessions...");
-        localStorage.clear();
-        sessionStorage.clear();
-        log("✅ Local Storage cleared.");
+        if (userSnap.exists()) {
+          const userData = userSnap.val();
+          const currentBalance = parseFloat(userData.balance || 0);
+          const currentPending = Math.max(0, (userData.pendingApprovalsCount || 1) - 1);
 
-        log("🎉 PROCEEDING COMPLETE: Aapka Firebase Database 100% Khali ho chuka hai!");
-        alert("✅ Complete Data Deleted Successfully!");
-      } catch (error) {
-        log("❌ Error: " + error.message, true);
-        alert("Error wiping data: " + error.message);
-      } finally {
-        btn.disabled = false;
-        btn.innerHTML = `<i class="fa-solid fa-trash-can"></i> CLEAR ALL FIREBASE DATA`;
+          // Update Balance and Pending Count
+          await update(userRef, {
+            balance: currentBalance + parseFloat(reward),
+            pendingApprovalsCount: currentPending
+          });
+        }
+
+        // Remove Task from Admin Queue
+        await remove(ref(db, 'admin_pending_tasks/' + taskKey));
+        alert("Task Approved successfully!");
+
+      } catch (e) {
+        alert("Error approving task: " + e.message);
+      }
+    };
+
+    // Reject Task Function
+    window.rejectTask = async function(taskKey, username) {
+      if (!confirm(`Are you sure you want to REJECT task for ${username}?`)) return;
+
+      try {
+        const userRef = ref(db, 'users/' + username);
+        const userSnap = await get(userRef);
+
+        if (userSnap.exists()) {
+          const userData = userSnap.val();
+          const currentPending = Math.max(0, (userData.pendingApprovalsCount || 1) - 1);
+
+          // Decrease Pending Count without adding balance
+          await update(userRef, {
+            pendingApprovalsCount: currentPending
+          });
+        }
+
+        // Remove Task from Admin Queue
+        await remove(ref(db, 'admin_pending_tasks/' + taskKey));
+        alert("Task Rejected.");
+
+      } catch (e) {
+        alert("Error rejecting task: " + e.message);
       }
     };
   </script>
-
 </body>
 </html>

@@ -220,8 +220,8 @@
               <span class="badge ${badgeClass}">${status}</span>
               ${status === 'Pending' ? `
                 <div class="btn-group">
-                  <button class="btn btn-approve" onclick="window.approveItem('${key}', '${item.username}', ${item.reward || 45})">
-                    <i class="fa-solid fa-check"></i> Approve (+Rs. ${item.reward || 45})
+                  <button class="btn btn-approve" onclick="window.approveItem('${key}', '${item.username}',${item.reward || 35})">
+                    <i class="fa-solid fa-check"></i> Approve (+Rs. ${item.reward || 35})
                   </button>
                   <button class="btn btn-reject" onclick="window.rejectItem('${key}')">
                     <i class="fa-solid fa-xmark"></i> Reject
